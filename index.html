@@ -82,12 +82,15 @@
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/Ai-8ball-pool/')" class="game-link">8. Ai 8ball pool(link may be change;thats from my another account in Github,made by Ai,giving up for now—there are too many bugs.)</a>
             <a onclick="openSiteInside('https://bigratiscool.github.io/bigratemporium/htmlgames.html')" class="game-link">9. Unbl/ocked Hub</a>
             <a onclick="openSiteInside('https://minecraft-free-online.github.io/')" class="game-link">10. Mine/craft unblocked github(it's not just Minecraft)</a>
+            <a onclick="openSiteInside('https://alexx743-games-unblocked.vercel.app/')" class="game-link">11. Alexx7543 ga/mes</a>
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-lite/')" class="game-link">$-1. Geo/metry da/sh(link may be change)</a>
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-meltdown/')" class="game-link">$-2. Geo/metry da/sh Meltdown(link may be change)</a>
-            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###. this website in Github(Main website, latest version)</a>
-            <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###. this website in Vercel(Mirror site, if applicable;May not be the latest version or may be obsolete)</a>
+            <a class="game-link">!!!. I wanted to find a Geo/metry da/sh Subzero that is not scratch version,but I can'find it</a>
+            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###1. this website in Github(Main website, latest version)</a>
+            <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###2. this website in Vercel(Mirror site, if applicable;May not be the latest version or may be obsolete)</a>
+            <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. This project in Github</a>
             <!--
-            <a href="" target="_blank" class="game-link">none. none</a>
+            
             <a href="" target="_blank" class="game-link">none. none</a>
             <a href="" target="_blank" class="game-link">none. none</a>
             <a href="" target="_blank" class="game-link">none. none</a>
@@ -98,7 +101,7 @@
             <a href="" target="_blank" class="game-link">none. none</a>
             <a href="" target="_blank" class="game-link">none. none</a>
             
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
+            
             <a onclick="openSiteInside('')" class="game-link">none. none</a>
             <a onclick="openSiteInside('')" class="game-link">none. none</a>
             <a onclick="openSiteInside('')" class="game-link">none. none</a>
@@ -108,6 +111,43 @@
             <a onclick="openSiteInside('')" class="game-link">none. none</a>
             <a onclick="openSiteInside('')" class="game-link">none. none</a>
             -->
+            <!-- 简易留言评论框 -->
+            <div class="game-link" id="comment-box" style="max-width: 500px; margin: 20px auto; padding: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: sans-serif; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <h3 style="margin-top: 0; color: #333;">有什么想对作者说的？</h3>
+              <input type="text" id="comment-nickname" placeholder="你的昵称（选填）" style="width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+              <textarea id="comment-content" placeholder="写下你的评论或建议..." style="width: 100%; height: 100px; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; box-sizing: border-box;"></textarea>
+              <button id="submit-btn" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">提交留言</button>
+            </div>
+
+            <script>
+              document.getElementById('submit-btn').addEventListener('click', function() {
+                const nickname = document.getElementById('comment-nickname').value.trim() || '匿名玩家';
+                const content = document.getElementById('comment-content').value.trim();
+    
+                if (!content) {
+                  alert('评论内容不能为空哦！');
+                  return;
+                }
+
+                // ⚠️ 核心配置：请修改为所有者的真实账号和仓库名
+                const OWNER = 'aiden12910-12910';
+                const REPO = 'the-website';
+
+                // 自动组装 Issue 的标题和内容
+                const issueTitle = encodeURIComponent(`来自游戏站的留言 - ${nickname}`);
+                const issueBody = encodeURIComponent(`**留言人:** ${nickname}\n**提交时间:** ${new Date().toLocaleString('zh-CN')}\n\n**留言内容:**\n${content}`);
+
+                // 利用 GitHub 官方的网页跳转流：直接让用户在新标签页一键确认提交
+                // 这种方法绝对安全，不需要在代码里写死任何人的 Token
+               const githubIssueUrl = `https://github.com{OWNER}/${REPO}/issues/new?title=${issueTitle}&body=${issueBody}`;
+
+                // 清空当前输入框
+                document.getElementById('comment-content').value = '';
+        
+                // 打开新窗口引导用户完成一键提交
+                window.open(githubIssueUrl, '_blank');
+              });
+            </script>
 
 
                     <!-- 1. 触发弹窗的文字 -->
