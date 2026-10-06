@@ -154,13 +154,66 @@
     
 <script>
 (function() {
-  function logDeviceActionToGitHub(actionType, detail) {
+  var userID = null;
+  var operationLog = [];
+  var logTimer = null;
+
+  // 第一次加载时请求后端生成 UserID
+  function initUserID() {
+    fetch('/api/get-user-id', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+    .then(function(res) {
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && data.userID) {
+        userID = data.userID;
+        console.log('UserID initialized:', userID);
+        addLog('Initial Load', {});
+      }
+    })
+    .catch(function(err) {
+      console.error('Failed to get UserID:', err);
+    });
+  }
+
+  function addLog(actionType, detail) {
+    if (!userID) return; // 如果 userID 还没生成，不记录
+
+    var timestamp = new Date().toLocaleString();
+    var entry = {
+      time: timestamp,
+      type: actionType,
+      url: window.location.href,
+      link: detail.linkUrl || 'None'
+    };
+    operationLog.push(entry);
+    console.log('Log added:', entry);
+    
+    // 500ms 后发送
+    clearTimeout(logTimer);
+    logTimer = setTimeout(sendLog, 500);
+  }
+
+  function sendLog() {
+    if (operationLog.length === 0 || !userID) return;
+
+    var logContent = operationLog.map(function(log) {
+      return log.time + ' | ' + log.type + ' | ' + log.url + ' | ' + log.link;
+    }).join('\n');
+
     var payload = {
-      title: 'Log: ' + actionType,
+      title: 'Log: UserID ' + userID,
       body:
-        'Time: ' + new Date().toLocaleString() + '\n' +
-        'Page: ' + window.location.href + '\n' +
-        'Link: ' + (detail.linkUrl || 'None')
+        'UserID: ' + userID + '\n' +
+        'Session Start: ' + new Date().toLocaleString() + '\n' +
+        '---\n' +
+        logContent
     };
 
     fetch('/api/log-issue', {
@@ -179,7 +232,8 @@
     })
     .then(function(data) {
       if (data && data.ok) {
-        console.log('Log sent, UUID:', data.uuid);
+        console.log('Log sent, total operations:', operationLog.length);
+        operationLog = []; // 清空日志
       }
     })
     .catch(function(err) {
@@ -187,16 +241,23 @@
     });
   }
 
+  // 监听所有点击事件
   document.addEventListener('click', function(event) {
     var target = event.target.closest('a');
-    if (target && target.href && target.href.indexOf('opensiteinside') > -1) {
-      logDeviceActionToGitHub('Click', {
+    if (target && target.href) {
+      addLog('Click Link', {
         linkUrl: target.href
       });
     }
   }, true);
 
-  logDeviceActionToGitHub('Load', {});
+  // 监听页面卸载
+  window.addEventListener('beforeunload', function() {
+    sendLog();
+  });
+
+  // 初始化
+  initUserID();
 })();
 </script>
     
