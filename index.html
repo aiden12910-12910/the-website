@@ -154,26 +154,10 @@
     
 <script>
 (function() {
-  function getDeviceUUID() {
-    var uuid = localStorage.getItem('device_uuid');
-    if (!uuid) {
-      uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0;
-        var v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-      localStorage.setItem('device_uuid', uuid);
-    }
-    return uuid;
-  }
-
-  var currentDeviceUUID = getDeviceUUID();
-
   function logDeviceActionToGitHub(actionType, detail) {
     var payload = {
-      title: 'Log: UUID ' + currentDeviceUUID.slice(0, 8) + ' - ' + actionType,
+      title: 'Log: ' + actionType,
       body:
-        'UUID: ' + currentDeviceUUID + '\n' +
         'Time: ' + new Date().toLocaleString() + '\n' +
         'Page: ' + window.location.href + '\n' +
         'Link: ' + (detail.linkUrl || 'None')
@@ -195,7 +179,7 @@
     })
     .then(function(data) {
       if (data && data.ok) {
-        console.log('Log sent');
+        console.log('Log sent, UUID:', data.uuid);
       }
     })
     .catch(function(err) {
