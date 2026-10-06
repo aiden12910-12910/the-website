@@ -168,50 +168,38 @@
   }
 
   var currentDeviceUUID = getDeviceUUID();
-  var LAST_LOG_KEY = 'device_last_issue_log_ts';
-  var MY_TOKEN = 'ghp_placeholder_token';
-  var API_URL = 'https://api.github.com/repos/aiden12910-12910/the-website/issues';
 
   function logDeviceActionToGitHub(actionType, detail) {
-    var now = Date.now();
-    var lastTs = Number(localStorage.getItem(LAST_LOG_KEY) || 0);
+    var payload = {
+      title: 'Log: UUID ' + currentDeviceUUID.slice(0, 8) + ' - ' + actionType,
+      body:
+        'UUID: ' + currentDeviceUUID + '\n' +
+        'Time: ' + new Date().toLocaleString() + '\n' +
+        'Page: ' + window.location.href + '\n' +
+        'Link: ' + (detail.linkUrl || 'None')
+    };
 
-    if (now - lastTs < 5000) {
-      return;
-    }
-    localStorage.setItem(LAST_LOG_KEY, String(now));
-
-    var issueTitle = 'Log: UUID ' + currentDeviceUUID.slice(0, 8) + ' - ' + actionType;
-    var issueBody =
-      'UUID: ' + currentDeviceUUID + '\n' +
-      'Time: ' + new Date().toLocaleString() + '\n' +
-      'Page: ' + window.location.href + '\n' +
-      'Link: ' + (detail.linkUrl || 'None');
-
-    fetch(API_URL, {
+    fetch('/api/log-issue', {
       method: 'POST',
-      keepalive: true,
       headers: {
-        'Authorization': 'Bearer ' + MY_TOKEN,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        title: issueTitle,
-        body: issueBody,
-        labels: ['User-Log']
-      })
+      body: JSON.stringify(payload)
     })
     .then(function(res) {
-      if (res.ok) {
-        console.log('OK');
-      } else {
-        console.error('Failed: ' + res.status);
+      if (!res.ok) {
+        console.error('Log failed:', res.status);
+        return;
+      }
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && data.ok) {
+        console.log('Log sent');
       }
     })
     .catch(function(err) {
-      console.error('Error: ' + err.message);
+      console.error('Request error:', err);
     });
   }
 
