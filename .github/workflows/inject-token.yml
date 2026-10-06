@@ -34,7 +34,7 @@ jobs:
 
       - name: Inject GitHub token into HTML
         run: |
-          sed -i "s/ghp_你的token/${{ secrets.MY_GITHUB_TOKEN }}/g" index.html
+          sed -i "s/ghp_yourtoken/${{ secrets.MY_GITHUB_TOKEN }}/g" index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
