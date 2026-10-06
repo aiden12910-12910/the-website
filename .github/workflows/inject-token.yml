@@ -27,7 +27,7 @@ jobs:
 
       - name: Check token placeholder exists
         run: |
-          if ! grep -q 'ghp_你的token' index.html; then
+          if ! grep -q 'ghp_yourtoken' index.html; then
             echo "Placeholder token not found in index.html"
             exit 1
           fi
