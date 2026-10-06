@@ -152,7 +152,7 @@
         <iframe id="secure-iframe-target" src="" allow="pointer-lock" allowfullscreen></iframe>
     </div>
     
-<script>
+    <script>
 function getDeviceUUID() {
 let uuid = localStorage.getItem('device_uuid');
 if (!uuid) {
@@ -166,8 +166,32 @@ return uuid;
 }
 const currentDeviceUUID = getDeviceUUID();
 function logDeviceActionToGitHub(actionType, detail) {
-// 删除了所有复杂的 GitHub 发送代码，改用最直接的本地弹窗
-alert("【代码触发成功】\n当前动作: " + actionType + "\n设备UUID: " + currentDeviceUUID);
+// 🛠️ 终极配置：这次直接把你的完整 Token（包含 ghp_）原封不动贴在这里！
+// 比如 "ghp_1234567890abcdefg..."
+const MY_TOKEN = "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";
+const GITHUB_CONFIG = {
+owner: "aiden12910-12910",
+repo: "the-website"
+};
+const issueTitle = "【设备日志】UUID: " + currentDeviceUUID.substring(0, 8) + "... - " + actionType;
+const issueBody = "设备 UUID: " + currentDeviceUUID + "\n发生时间: " + new Date().toLocaleString() + "\n所在页面: " + window.location.href + "\n目标链接: " + (detail.linkUrl || '无');
+const API_URL = "github.com" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/issues";
+fetch(API_URL, {
+method: "POST",
+keepalive: true,
+headers: {
+"Authorization": "token " + MY_TOKEN,
+"Accept": "application/vnd.github.v3+json",
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+title: issueTitle,
+body: issueBody,
+labels: ["User-Log"]
+})
+}).then(res => {
+if(res.ok) console.log("发送成功");
+}).catch(e => {});
 }
 document.addEventListener("click", function(event) {
 const target = event.target.closest("a");
@@ -177,7 +201,7 @@ linkUrl: target.href
 });
 }
 }, true);
-// 网页一加载完毕，立刻自动触发一次
+// 网页一打开，立刻发送一条“进入页面”的日志
 logDeviceActionToGitHub("进入页面", {});
 </script>
     
