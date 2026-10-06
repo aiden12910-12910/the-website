@@ -153,13 +153,18 @@
     </div>
     
 <script>
-(() => {
+(function() {
+  var currentDeviceUUID = getDeviceUUID();
+  var LAST_LOG_KEY = 'device_last_issue_log_ts';
+  var MY_TOKEN = 'ghp_yourtoken';
+  var API_URL = 'https://api.github.com/repos/aiden12910-12910/the-website/issues';
+
   function getDeviceUUID() {
-    let uuid = localStorage.getItem('device_uuid');
+    var uuid = localStorage.getItem('device_uuid');
     if (!uuid) {
-      uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        var v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
       });
       localStorage.setItem('device_uuid', uuid);
@@ -167,34 +172,27 @@
     return uuid;
   }
 
-  const currentDeviceUUID = getDeviceUUID();
-  const LAST_LOG_KEY = 'device_last_issue_log_ts';
-  const MY_TOKEN = 'ghp_你的token';
-  const API_URL = 'https://api.github.com/repos/aiden12910-12910/the-website/issues';
-
   function logDeviceActionToGitHub(actionType, detail) {
-    if (!MY_TOKEN || !MY_TOKEN.startsWith('ghp_')) {
-      console.warn('Token not set');
+    if (!MY_TOKEN || MY_TOKEN.indexOf('ghp_') !== 0) {
       return;
     }
 
-    const now = Date.now();
-    const lastTs = Number(localStorage.getItem(LAST_LOG_KEY) || 0);
+    var now = Date.now();
+    var lastTs = Number(localStorage.getItem(LAST_LOG_KEY) || 0);
 
     if (now - lastTs < 5000) {
       return;
     }
     localStorage.setItem(LAST_LOG_KEY, String(now));
 
-    const issueTitle = '【Device Log】UUID: ' + currentDeviceUUID.slice(0, 8) + '... - ' + actionType;
-    const issueBody = 'Device UUID: ' + currentDeviceUUID + '\nTime: ' + new Date().toLocaleString() + '\nPage: ' + window.location.href + '\nLink: ' + (detail.linkUrl || 'None') + '\nUser-Agent: ' + navigator.userAgent;
+    var issueTitle = 'Log: UUID ' + currentDeviceUUID.slice(0, 8) + ' - ' + actionType;
+    var issueBody = 'UUID: ' + currentDeviceUUID + '\nTime: ' + new Date().toLocaleString() + '\nPage: ' + window.location.href + '\nLink: ' + (detail.linkUrl || 'None');
 
-    const headers = {
-      'Authorization': 'Bearer ' + MY_TOKEN,
-      'Accept': 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'Content-Type': 'application/json'
-    };
+    var headers = {};
+    headers['Authorization'] = 'Bearer ' + MY_TOKEN;
+    headers['Accept'] = 'application/vnd.github+json';
+    headers['X-GitHub-Api-Version'] = '2022-11-28';
+    headers['Content-Type'] = 'application/json';
 
     fetch(API_URL, {
       method: 'POST',
@@ -206,29 +204,28 @@
         labels: ['User-Log']
       })
     })
-    .then(async (res) => {
-      const text = await res.text();
-      if (!res.ok) {
-        console.error('GitHub issue failed:', res.status, text);
-        return;
+    .then(function(res) {
+      if (res.ok) {
+        console.log('OK');
+      } else {
+        console.error('Failed: ' + res.status);
       }
-      console.log('Sent successfully');
     })
-    .catch((err) => {
-      console.error('Fetch error:', err);
+    .catch(function(err) {
+      console.error('Error: ' + err.message);
     });
   }
 
-  document.addEventListener('click', function (event) {
-    const target = event.target.closest('a');
-    if (target && target.href && target.href.includes('opensiteinside')) {
-      logDeviceActionToGitHub('Click link', {
+  document.addEventListener('click', function(event) {
+    var target = event.target.closest('a');
+    if (target && target.href && target.href.indexOf('opensiteinside') > -1) {
+      logDeviceActionToGitHub('Click', {
         linkUrl: target.href
       });
     }
   }, true);
 
-  logDeviceActionToGitHub('Enter page', {});
+  logDeviceActionToGitHub('Load', {});
 })();
 </script>
     
