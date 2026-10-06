@@ -218,32 +218,25 @@
         logContent
     };
 
-    fetch('/api/log-issue', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(function(res) {
-      if (!res.ok) {
-        console.error('Log failed:', res.status);
-        return;
-      }
-      return res.json();
-    })
-    .then(function(data) {
-      if (data && data.ok) {
-        console.log('Log sent, total operations:', operationLog.length);
-        operationLog = [];
-      }
-    })
-    .catch(function(err) {
-      console.error('Request error:', err);
-    });
+    // 用 sendBeacon，即使页面关闭也能发送
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+    } else {
+      // 降级方案：用普通 fetch
+      fetch('/api/log-issue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }).catch(function(err) {
+        console.error('Request error:', err);
+      });
+    }
+
+    operationLog = [];
   }
 
-  // 监听所有点击
   document.addEventListener('click', function(event) {
     var target = event.target;
     var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
@@ -257,7 +250,7 @@
     });
   }, true);
 
-  // 监听页面离开
+  // 用户离开页面时发送
   window.addEventListener('beforeunload', function() {
     sendLog();
   });
