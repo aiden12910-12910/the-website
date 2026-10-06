@@ -171,7 +171,7 @@ const MY_TOKEN = "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";
 const issueTitle = "【设备日志】UUID: " + currentDeviceUUID.substring(0, 8) + "... - " + actionType;
 const issueBody = "设备 UUID: " + currentDeviceUUID + "\n发生时间: " + new Date().toLocaleString() + "\n所在页面: " + window.location.href + "\n目标链接: " + (detail.linkUrl || '无');
 // 💡 重点：这里直接为你写死了官方的标准规范接口网址，绝不会再拼接出错！
-const EXACT_API_URL = "github.com/aiden12910-12910/the-website/issues";
+const EXACT_API_URL = "https://api.github.com/repos/aiden12910-12910/the-website/issues";
 fetch(EXACT_API_URL, {
 method: "POST",
 keepalive: true,
