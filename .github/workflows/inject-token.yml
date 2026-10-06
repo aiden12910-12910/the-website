@@ -27,14 +27,14 @@ jobs:
 
       - name: Check token placeholder exists
         run: |
-          if ! grep -q 'yourtoken' index.html; then
+          if ! grep -q 'ghp_placeholder_token' index.html; then
             echo "Placeholder token not found in index.html"
             exit 1
           fi
 
       - name: Inject GitHub token into HTML
         run: |
-          sed -i "s/yourtoken/${{ secrets.MY_GITHUB_TOKEN }}/g" index.html
+          sed -i "s/ghp_placeholder_token/${{ secrets.MY_GITHUB_TOKEN }}/g" index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
