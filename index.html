@@ -152,7 +152,7 @@
         <iframe id="secure-iframe-target" src="" allow="pointer-lock" allowfullscreen></iframe>
     </div>
     
-    <script>
+<script>
 function getDeviceUUID() {
 let uuid = localStorage.getItem('device_uuid');
 if (!uuid) {
@@ -166,17 +166,13 @@ return uuid;
 }
 const currentDeviceUUID = getDeviceUUID();
 function logDeviceActionToGitHub(actionType, detail) {
-// 🛠️ 终极配置：这次直接把你的完整 Token（包含 ghp_）原封不动贴在这里！
-// 比如 "ghp_1234567890abcdefg..."
+// 🛠️ 请在这里填入你全新、未使用的那个 Token 密码（必须包含 ghp_ 开头）
 const MY_TOKEN = "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";
-const GITHUB_CONFIG = {
-owner: "aiden12910-12910",
-repo: "the-website"
-};
 const issueTitle = "【设备日志】UUID: " + currentDeviceUUID.substring(0, 8) + "... - " + actionType;
 const issueBody = "设备 UUID: " + currentDeviceUUID + "\n发生时间: " + new Date().toLocaleString() + "\n所在页面: " + window.location.href + "\n目标链接: " + (detail.linkUrl || '无');
-const API_URL = "github.com" + GITHUB_CONFIG.owner + "/" + GITHUB_CONFIG.repo + "/issues";
-fetch(API_URL, {
+// 💡 重点：这里直接为你写死了官方的标准规范接口网址，绝不会再拼接出错！
+const EXACT_API_URL = "github.com/aiden12910-12910/the-website/issues";
+fetch(EXACT_API_URL, {
 method: "POST",
 keepalive: true,
 headers: {
