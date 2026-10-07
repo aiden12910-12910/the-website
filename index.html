@@ -152,6 +152,14 @@
     <div id="secure-backdoor-layer">
         <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
     </div>
+
+    <script>
+// 如果网址里面包含 "github.io"，说明用户访问的是旧站，立刻执行跳转
+        if (window.location.hostname.includes("aiden12910-12910.github.io/the-website/index.html")) {
+            window.location.replace("https://vercel.app");
+        }
+    </script>
+
     
 <script>
     (function() {
