@@ -153,52 +153,110 @@
     </div>
     
 <script>
-(function() {
-  function logDeviceActionToGitHub(actionType, detail) {
-    var payload = {
-      title: 'Log: ' + actionType,
-      body:
-        'Time: ' + new Date().toLocaleString() + '\n' +
-        'Page: ' + window.location.href + '\n' +
-        'Link: ' + (detail.linkUrl || 'None')
-    };
+    (function() {
+      var userID = null;
+      var operationLog = [];
+      var logTimer = null;
+      var isInitialized = false;
 
-    fetch('/api/log-issue', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(function(res) {
-      if (!res.ok) {
-        console.error('Log failed:', res.status);
-        return;
+      function initUserID() {
+        fetch('/api/get-user-id', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error('Failed to get user ID');
+          return res.json();
+        })
+        .then(function(data) {
+          if (data && data.userID) {
+            userID = data.userID;
+            isInitialized = true;
+            console.log('UserID initialized:', userID);
+            addLog('Page Load', { page: window.location.href });
+          }
+        })
+        .catch(function(err) {
+          console.error('Failed to get user ID:', err);
+        });
       }
-      return res.json();
-    })
-    .then(function(data) {
-      if (data && data.ok) {
-        console.log('Log sent, UUID:', data.uuid);
-      }
-    })
-    .catch(function(err) {
-      console.error('Request error:', err);
-    });
-  }
 
-  document.addEventListener('click', function(event) {
-    var target = event.target.closest('a');
-    if (target && target.href && target.href.indexOf('opensiteinside') > -1) {
-      logDeviceActionToGitHub('Click', {
-        linkUrl: target.href
+      function addLog(actionType, detail) {
+        if (!isInitialized) return;
+
+        var timestamp = new Date().toLocaleString();
+        var entry = {
+          time: timestamp,
+          type: actionType,
+          page: window.location.href,
+          target: detail && detail.target ? detail.target : 'N/A',
+          href: detail && detail.href ? detail.href : 'N/A',
+          tag: detail && detail.tag ? detail.tag : 'N/A'
+        };
+
+        operationLog.push(entry);
+        console.log('Log added:', entry);
+
+        clearTimeout(logTimer);
+        logTimer = setTimeout(sendLog, 500);
+      }
+
+      function sendLog() {
+        if (!isInitialized || operationLog.length === 0) return;
+
+        var logContent = operationLog.map(function(log) {
+          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href;
+        }).join('\n');
+
+        var payload = {
+          title: 'Log: UserID ' + userID,
+          body:
+            'UserID: ' + userID + '\n' +
+            'Session Start: ' + new Date().toLocaleString() + '\n' +
+            '---\n' +
+            logContent
+        };
+
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+          console.log('Log sent via sendBeacon');
+        } else {
+          fetch('/api/log-issue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).then(function() {
+            console.log('Log sent via fetch');
+          }).catch(function(err) {
+            console.error('Request error:', err);
+          });
+        }
+
+        operationLog = [];
+      }
+
+      document.addEventListener('click', function(event) {
+        var target = event.target;
+        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+        var href = target && target.getAttribute ? target.getAttribute('href') : null;
+        var className = target && target.className ? String(target.className) : '';
+        var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
+
+        addLog('Click', {
+          target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
+          href: href || 'N/A',
+          tag: tag
+        });
+      }, true);
+
+      window.addEventListener('beforeunload', function() {
+        sendLog();
       });
-    }
-  }, true);
 
-  logDeviceActionToGitHub('Load', {});
-})();
-</script>
+      initUserID();
+    })();
+    </script>
     
     <script>
         var layer = document.getElementById('secure-backdoor-layer');
