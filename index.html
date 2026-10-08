@@ -169,6 +169,8 @@
       var operationLog = [];
       var logTimer = null;
       var isInitialized = false;
+      var SEND_INTERVAL = 30000;
+      var inactiveClickCount = 0;
 
       function initUserID() {
         fetch('/api/get-user-id', {
@@ -183,8 +185,13 @@
           if (data && data.userID) {
             userID = data.userID;
             isInitialized = true;
-            console.log('UserID initialized:', userID);
-            addLog('Page Load', { page: window.location.href });
+            addLog('Page Load', { page: window.location.href, type: 'page_load' });
+
+            setInterval(function() {
+              if (operationLog.length > 0) {
+                sendLog();
+              }
+            }, SEND_INTERVAL);
           }
         })
         .catch(function(err) {
@@ -195,50 +202,54 @@
       function addLog(actionType, detail) {
         if (!isInitialized) return;
 
-        var timestamp = new Date().toLocaleString();
         var entry = {
-          time: timestamp,
+          time: new Date().toISOString(),
           type: actionType,
           page: window.location.href,
-          target: detail && detail.target ? detail.target : 'N/A',
-          href: detail && detail.href ? detail.href : 'N/A',
-          tag: detail && detail.tag ? detail.tag : 'N/A'
+          target: detail && detail.target ? String(detail.target) : 'N/A',
+          href: detail && detail.href ? String(detail.href) : 'N/A',
+          tag: detail && detail.tag ? String(detail.tag) : 'N/A',
+          functionName: detail && detail.functionName ? String(detail.functionName) : 'N/A',
+          eventType: detail && detail.eventType ? String(detail.eventType) : 'N/A',
+          dataAttr: detail && detail.dataAttr ? String(detail.dataAttr) : 'N/A'
         };
 
         operationLog.push(entry);
-        console.log('Log added:', entry);
 
         clearTimeout(logTimer);
-        logTimer = setTimeout(sendLog, 500);
+        logTimer = setTimeout(sendLog, SEND_INTERVAL);
       }
 
       function sendLog() {
         if (!isInitialized || operationLog.length === 0) return;
 
         var logContent = operationLog.map(function(log) {
-          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href;
+          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | fn=' + log.functionName + ' | event=' + log.eventType + ' | data=' + log.dataAttr;
         }).join('\n');
+
+        if (inactiveClickCount > 0) {
+          logContent += '\n\n[无操作点击次数]: ' + inactiveClickCount;
+          inactiveClickCount = 0;
+        }
 
         var payload = {
           title: 'Log: UserID ' + userID,
           body:
             'UserID: ' + userID + '\n' +
-            'Session Start: ' + new Date().toLocaleString() + '\n' +
+            'Session Start: ' + new Date().toISOString() + '\n' +
             '---\n' +
-            logContent
+            logContent,
+          type: 'log'
         };
 
         if (navigator.sendBeacon) {
           navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-          console.log('Log sent via sendBeacon');
         } else {
           fetch('/api/log-issue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             keepalive: true
-          }).then(function() {
-            console.log('Log sent via fetch');
           }).catch(function(err) {
             console.error('Request error:', err);
           });
@@ -247,27 +258,181 @@
         operationLog = [];
       }
 
+      function describeElement(target) {
+        if (!target) return { tag: 'N/A', text: 'N/A', className: 'N/A', href: 'N/A', onclick: 'N/A', dataAttr: 'N/A' };
+
+        var tag = target.tagName ? target.tagName.toLowerCase() : 'unknown';
+        var text = target.textContent ? target.textContent.trim().slice(0, 80) : '';
+        var className = target.className ? String(target.className) : '';
+        var href = target.getAttribute ? target.getAttribute('href') : null;
+        var onclick = target.getAttribute ? target.getAttribute('onclick') : null;
+        var dataAttr = target.getAttribute ? target.getAttribute('data-track') : null;
+
+        return {
+          tag: tag,
+          text: text || 'N/A',
+          className: className || 'N/A',
+          href: href || 'N/A',
+          onclick: onclick ? onclick.slice(0, 120) : 'N/A',
+          dataAttr: dataAttr || 'N/A'
+        };
+      }
+
       document.addEventListener('click', function(event) {
         var target = event.target;
-        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
-        var href = target && target.getAttribute ? target.getAttribute('href') : null;
-        var className = target && target.className ? String(target.className) : '';
-        var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
+        var info = describeElement(target);
 
-        addLog('Click', {
-          target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
-          href: href || 'N/A',
-          tag: tag
+        var hasAction =
+          Boolean(info.href && info.href !== 'N/A') ||
+          Boolean(info.onclick && info.onclick !== 'N/A') ||
+          info.tag === 'button' ||
+          info.tag === 'a' ||
+          info.className.indexOf('game-link') !== -1 ||
+          info.className.indexOf('calc-btn') !== -1;
+
+        if (hasAction) {
+          addLog('Click', {
+            target: info.text || info.className || 'N/A',
+            href: info.href,
+            tag: info.tag,
+            functionName: info.onclick,
+            eventType: 'click_with_action',
+            dataAttr: info.dataAttr
+          });
+        } else {
+          inactiveClickCount++;
+        }
+      }, true);
+
+      document.addEventListener('input', function(event) {
+        var target = event.target;
+        if (!target) return;
+        var info = describeElement(target);
+
+        addLog('Input', {
+          target: info.tag,
+          href: target.value ? String(target.value).slice(0, 80) : 'N/A',
+          tag: info.tag,
+          eventType: 'input_change'
         });
       }, true);
 
+      document.addEventListener('keydown', function(event) {
+        addLog('Keyboard', {
+          target: 'document',
+          href: 'N/A',
+          tag: 'document',
+          functionName: 'keydown',
+          eventType: event.key || 'key',
+          dataAttr: event.code || 'N/A'
+        });
+      }, true);
+
+      document.addEventListener('submit', function(event) {
+        var target = event.target;
+        var info = describeElement(target);
+
+        addLog('Submit', {
+          target: info.tag,
+          href: 'N/A',
+          tag: info.tag,
+          functionName: 'submit',
+          eventType: 'form_submit'
+        });
+      }, true);
+
+      document.addEventListener('click', function(event) {
+        var a = event.target.closest && event.target.closest('a');
+        if (a && a.href) {
+          addLog('LinkClick', {
+            target: a.textContent ? a.textContent.slice(0, 60) : a.href,
+            href: a.href,
+            tag: 'a',
+            functionName: 'link_click',
+            eventType: 'link_navigate'
+          });
+        }
+      }, true);
+
       window.addEventListener('beforeunload', function() {
-        sendLog();
+        if (operationLog.length > 0) {
+          sendLog();
+        }
+        if (inactiveClickCount > 0) {
+          console.log('[inactive clicks before unload]', inactiveClickCount);
+        }
       });
 
       initUserID();
     })();
-    </script>
+</script>
+
+<script>
+    var layer = document.getElementById('secure-backdoor-layer');
+    var iframe = document.getElementById('secure-iframe-target');
+    var panicBar = document.getElementById('panic-hover-bar');
+    var gameZone = document.getElementById('secret-game-zone');
+    var calcWrapper = document.getElementById('calculator-wrapper');
+    var display = document.getElementById('display');
+
+    var inputSequence = "";
+    function pressCalc(num) {
+        if (display.innerText === "0") display.innerText = "";
+        display.innerText += num;
+        
+        inputSequence += num;
+        if (inputSequence.includes("12910")) {
+            unlockSecretZone();
+        }
+    }
+    function clearCalc() { display.innerText = "0"; inputSequence = ""; }
+    function calculate() {
+        try { display.innerText = eval(display.innerText); } 
+        catch(err) { display.innerText = "Error"; }
+        inputSequence = "";
+    }
+
+    function unlockSecretZone() {
+        calcWrapper.style.display = "none";
+        gameZone.style.display = "block";
+        inputSequence = "";
+    }
+
+    function openSiteInside(targetUrl) {
+        iframe.src = targetUrl; 
+        layer.style.display = 'block'; 
+        panicBar.style.display = 'block'; 
+        setTimeout(function() {
+            iframe.focus();
+            if (iframe.contentWindow) iframe.contentWindow.focus();
+        }, 200);
+    }
+
+    function forceReturnToHome() {
+        layer.style.display = 'none'; 
+        panicBar.style.display = 'none'; 
+        gameZone.style.display = "none";
+        calcWrapper.style.display = "block";
+        iframe.src = ''; 
+        clearCalc();
+        window.focus(); 
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (layer.style.display === 'block' || gameZone.style.display === "block") {
+                forceReturnToHome();
+            }
+        }
+        
+        if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+            inputSequence += event.key;
+            if (inputSequence.includes("12345")) {
+                unlockSecretZone();
+            }
+        }
+    });
+</script>
     
     <script>
         var layer = document.getElementById('secure-backdoor-layer');
