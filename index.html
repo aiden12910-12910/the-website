@@ -16,10 +16,12 @@
         body {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             padding: 40px 20px;
             box-sizing: border-box;
             text-align: center;
+            min-height: 100vh;
+            overflow: auto;
         }
 
         #calculator-wrapper,
@@ -466,8 +468,35 @@
         var calcWrapper = document.getElementById('calculator-wrapper');
         var display = document.getElementById('display');
         var issueTrigger = document.getElementById('issueTrigger');
+        var body = document.body;
 
         var inputSequence = "";
+
+        function setBodyState(isLocked) {
+            if (isLocked) {
+                body.style.overflow = 'hidden';
+                body.style.paddingRight = '15px';
+            } else {
+                body.style.overflow = 'auto';
+                body.style.paddingRight = '0';
+            }
+        }
+
+        function forceCenter() {
+            var modalOpen =
+                document.getElementById('customModal').style.display === 'flex' ||
+                document.getElementById('customModal2').style.display === 'flex' ||
+                document.getElementById('issueModal').style.display === 'flex' ||
+                document.getElementById('successModal').style.display === 'flex' ||
+                layer.style.display === 'block' ||
+                gameZone.style.display === 'block';
+
+            setBodyState(modalOpen);
+
+            requestAnimationFrame(forceCenter);
+        }
+
+        requestAnimationFrame(forceCenter);
 
         function pressCalc(num) {
             if (display.innerText === "0") display.innerText = "";
