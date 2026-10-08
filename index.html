@@ -102,47 +102,36 @@
             <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. this website in Github(Deprecated(Because code submission using UUIDs and issue IDs is not working.); all users accessing this link will be redirected here.)</a>
             <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. My repo in Github</a>
             <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My repo in Vercel</a>
-            <!--
-            方便使用的<a>标签
-            
-            
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            
-            
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            -->
-            
-           
-            
-            
-                    <!-- 1. 触发弹窗的文字 -->
+
+            <!-- begin: issue comment modal -->
+            <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment</span>
+
+            <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
+                    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment</h3>
+                    <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
+                    <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
+                </div>
+            </div>
+
+            <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
+                    <p style="color: #333; font-size: 16px; margin: 0;">✓ Issue submitted successfully!</p>
+                    <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
+                </div>
+            </div>
+            <!-- end: issue comment modal -->
+
             <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
 
-            <!-- 2. 弹窗本体（包含遮罩与纯白卡片） -->
             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
-                    <!-- X号关闭按钮 -->
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
-                    <!-- 弹窗内的文字内容 -->
                     <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
                 </div>
             </div>
-            
-            \n        </div>
+        </div>
     </div>
 
     <!-- 顶部隐形跑路条 -->
@@ -160,7 +149,6 @@
         }
     </script>
 
-    <!-- === 日志监听脚本：插在这里 === -->
     <script>
     (function() {
       var userID = null;
@@ -266,7 +254,7 @@
       initUserID();
     })();
     </script>
-
+    
     <script>
         var layer = document.getElementById('secure-backdoor-layer');
         var iframe = document.getElementById('secure-iframe-target');
@@ -274,6 +262,7 @@
         var gameZone = document.getElementById('secret-game-zone');
         var calcWrapper = document.getElementById('calculator-wrapper');
         var display = document.getElementById('display');
+        var issueTrigger = document.getElementById('issueTrigger');
 
         // 计算器基础运行逻辑
         var inputSequence = "";
@@ -296,10 +285,48 @@
 
         // 解锁暗门函数
         function unlockSecretZone() {
-            calcWrapper.style.display = "none"; // 隐藏计算器
-            gameZone.style.display = "block"; // 显示隐藏的游戏区
+            calcWrapper.style.display = "none";
+            gameZone.style.display = "block";
+            if (issueTrigger) issueTrigger.style.display = 'inline-block';
             inputSequence = "";
         }
+
+        // 提交匿名留言
+        window.submitIssue = function() {
+            var content = document.getElementById('issueContent').value.trim();
+            
+            if (!content) {
+                alert('Please enter a message');
+                return;
+            }
+
+            var payload = {
+                title: 'User Comment (Anonymous)',
+                body: content,
+                type: 'comment'
+            };
+
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+            } else {
+                fetch('/api/log-issue', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                }).catch(function(err) {
+                    console.error('Request error:', err);
+                });
+            }
+
+            document.getElementById('issueContent').value = '';
+            document.getElementById('issueModal').style.display = 'none';
+            document.getElementById('successModal').style.display = 'flex';
+
+            setTimeout(function() {
+                document.getElementById('successModal').style.display = 'none';
+            }, 3000);
+        };
 
         // 同页面原地全屏打开函数
         function openSiteInside(targetUrl) {
@@ -320,6 +347,7 @@
             calcWrapper.style.display = "block"; // 强行拉回计算器
             iframe.src = ''; 
             clearCalc();
+            if (issueTrigger) issueTrigger.style.display = 'none';
             window.focus(); 
         }
 
