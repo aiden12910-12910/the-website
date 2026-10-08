@@ -10,7 +10,7 @@ jobs:
   clear-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete User-Log Issues
+      - name: Delete User-Log Issues Only
         uses: actions/github-script@v7
         with:
           script: |
@@ -19,6 +19,7 @@ jobs:
             const maxRetries = 5;
             const issueThreshold = 50;
             let retryCount = 0;
+            let deletedIssues = [];
 
             while (retryCount < maxRetries) {
               console.log(`\n第 ${retryCount + 1} 次处理...`);
@@ -42,12 +43,12 @@ jobs:
                 console.log(`⚠️ 超过 ${issueThreshold} 条阈值，自动清空所有 User-Log issues`);
               } else {
                 console.log(`将要关闭以下列表：\n`);
-                console.log('─'.repeat(80));
+                console.log('─'.repeat(100));
                 issues.data.forEach((issue, index) => {
                   console.log(`${index + 1}. [#${issue.number}] ${issue.title}`);
                   console.log(`   作者: ${issue.user.login} | 创建时间: ${issue.created_at}`);
                 });
-                console.log('─'.repeat(80));
+                console.log('─'.repeat(100));
               }
 
               for (const issue of issues.data) {
@@ -56,6 +57,12 @@ jobs:
                   repo,
                   issue_number: issue.number,
                   state: 'closed',
+                });
+                deletedIssues.push({
+                  number: issue.number,
+                  title: issue.title,
+                  author: issue.user.login,
+                  createdAt: issue.created_at
                 });
                 console.log(`  ✓ 已关闭 issue #${issue.number}: ${issue.title}`);
               }
@@ -68,4 +75,26 @@ jobs:
               }
             }
 
-            console.log(`\n✨ 处理完成！共进行了 ${retryCount} 次处理尝试。`);
+            // 生成最终报告表格
+            console.log(`\n\n${'='.repeat(100)}`);
+            console.log(`✨ 处理完成！共进行了 ${retryCount} 次处理尝试。`);
+            console.log(`${'='.repeat(100)}\n`);
+
+            if (deletedIssues.length > 0) {
+              console.log(`📊 删除的 User-Log Issues 汇总表（共 ${deletedIssues.length} 条）：\n`);
+              console.log('| # | Issue ID | Title | Author | Created At |');
+              console.log('|---|---|---|---|---|');
+              deletedIssues.forEach((issue, index) => {
+                const title = issue.title.length > 60 ? issue.title.substring(0, 57) + '...' : issue.title;
+                const createdAt = new Date(issue.createdAt).toLocaleString('en-US', { 
+                  year: 'numeric', 
+                  month: '2-digit', 
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+                console.log(`| ${index + 1} | #${issue.number} | ${title} | ${issue.author} | ${createdAt} |`);
+              });
+            } else {
+              console.log(`📊 没有删除任何 User-Log Issues`);
+            }
