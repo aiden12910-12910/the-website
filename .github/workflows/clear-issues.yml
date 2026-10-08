@@ -17,6 +17,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const maxRetries = 5;
+            const issueThreshold = 50;  // 超过 50 条自动清空
             let retryCount = 0;
 
             while (retryCount < maxRetries) {
@@ -35,16 +36,24 @@ jobs:
                 break;
               }
 
-              console.log(`\n📋 发现 ${issues.data.length} 个 issues，将要关闭以下列表：\n`);
-              console.log('─'.repeat(80));
+              console.log(`\n📋 发现 ${issues.data.length} 个 issues`);
+              
+              // 检查是否超过阈值
+              if (issues.data.length > issueThreshold) {
+                console.log(`⚠️  超过 ${issueThreshold} 条阈值，自动清空所有 issues（跳过手动确认）！\n`);
+              } else {
+                console.log(`将要关闭以下列表：\n`);
+                console.log('─'.repeat(80));
 
-              // 输出所有 issues 列表供确认
-              issues.data.forEach((issue, index) => {
-                console.log(`${index + 1}. [#${issue.number}] ${issue.title}`);
-                console.log(`   作者: ${issue.user.login} | 创建时间: ${issue.created_at}`);
-              });
+                // 输出所有 issues 列表供确认
+                issues.data.forEach((issue, index) => {
+                  console.log(`${index + 1}. [#${issue.number}] ${issue.title}`);
+                  console.log(`   作者: ${issue.user.login} | 创建时间: ${issue.created_at}`);
+                });
 
-              console.log('─'.repeat(80));
+                console.log('─'.repeat(80));
+              }
+
               console.log(`\n开始关闭这 ${issues.data.length} 个 issues...\n`);
 
               // 逐个关闭 issues
