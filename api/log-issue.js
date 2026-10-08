@@ -27,11 +27,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const labels = ['User-Log'];
+    let labels = [];
 
-    if (type === 'comment') labels.push('comment');
-    else if (type === 'message') labels.push('message');
-    else if (type === 'error') labels.push('error');
+    if (type === 'log') {
+      labels = ['User-Log'];
+    } else if (type === 'comment') {
+      labels = ['comment'];
+    } else if (type === 'message') {
+      labels = ['message'];
+    } else if (type === 'error') {
+      labels = ['error'];
+    } else {
+      labels = ['User-Log']; // 兜底，避免完全没标签
+    }
 
     const response = await fetch('https://api.github.com/repos/aiden12910-12910/the-website/issues', {
       method: 'POST',
