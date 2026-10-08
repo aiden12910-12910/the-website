@@ -4,59 +4,52 @@ on:
   schedule:
     - cron: '0 0 * * *'   # 每天午夜 00:00 运行一次
     - cron: '0 12 * * *'  # 每天中午 12:00 运行一次
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   clear-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Issues
-        uses: actions/github-script@v6
+      - name: Delete User-Log Issues
+        uses: actions/github-script@v7
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const maxRetries = 5;
-            const issueThreshold = 50;  // 超过 50 条自动清空
+            const issueThreshold = 50;
             let retryCount = 0;
 
             while (retryCount < maxRetries) {
               console.log(`\n第 ${retryCount + 1} 次处理...`);
 
-              // 获取所有开放的 issues
               const issues = await github.rest.issues.listForRepo({
                 owner,
                 repo,
                 state: 'open',
+                labels: 'User-Log',
                 per_page: 100,
               });
 
               if (issues.data.length === 0) {
-                console.log('✅ 没有剩余的 issues，处理完成！');
+                console.log('✅ 没有剩余的 User-Log issues，处理完成！');
                 break;
               }
 
-              console.log(`\n📋 发现 ${issues.data.length} 个 issues`);
-              
-              // 检查是否超过阈值
+              console.log(`\n📋 发现 ${issues.data.length} 个 User-Log issues`);
+
               if (issues.data.length > issueThreshold) {
-                console.log(`⚠️  超过 ${issueThreshold} 条阈值，自动清空所有 issues（跳过手动确认）！\n`);
+                console.log(`⚠️ 超过 ${issueThreshold} 条阈值，自动清空所有 User-Log issues`);
               } else {
                 console.log(`将要关闭以下列表：\n`);
                 console.log('─'.repeat(80));
-
-                // 输出所有 issues 列表供确认
                 issues.data.forEach((issue, index) => {
                   console.log(`${index + 1}. [#${issue.number}] ${issue.title}`);
                   console.log(`   作者: ${issue.user.login} | 创建时间: ${issue.created_at}`);
                 });
-
                 console.log('─'.repeat(80));
               }
 
-              console.log(`\n开始关闭这 ${issues.data.length} 个 issues...\n`);
-
-              // 逐个关闭 issues
               for (const issue of issues.data) {
                 await github.rest.issues.update({
                   owner,
@@ -69,7 +62,6 @@ jobs:
 
               retryCount++;
 
-              // 如果还有 issues 且未达到最大重试次数，稍等后重新检查
               if (retryCount < maxRetries) {
                 console.log(`\n⏳ 等待 2 秒后再次检查...`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
