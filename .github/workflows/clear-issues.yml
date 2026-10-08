@@ -16,6 +16,9 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+            
+            console.log('欢迎使用🚀 开始执行清理 User-Log Issues 任务...');
+            
             let deletedIssues = [];
 
             // 先列出所有 open 的 log issues
