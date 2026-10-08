@@ -160,12 +160,23 @@
             color: #4a5568;
         }
 
-        .modal-scroll-area {
-            max-height: 80vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 8px;
+        .modal-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             box-sizing: border-box;
+        }
+
+        .modal-wrapper.success {
+            z-index: 10000;
         }
 
         .modal-panel {
@@ -181,8 +192,30 @@
             margin: 0 auto;
         }
 
-        .issue-panel {
+        .modal-panel.issue-panel {
             width: min(90vw, 500px);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #999;
+            user-select: none;
+            border: none;
+            background: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #333;
         }
 
         .gif-40 {
@@ -195,8 +228,8 @@
             border: 1px solid #e2e8f0;
         }
 
-        .tiny-center {
-            text-align: center;
+        .modal-content {
+            padding-top: 20px;
         }
     </style>
 </head>
@@ -251,12 +284,6 @@
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geo/metry da/sh Subzero(link may be change)</a>
 
             <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</span>
-            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div class="modal-panel modal-scroll-area">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026</p>
-                </div>
-            </div>
 
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geo/metry da/sh World(link may be change)</a>
             <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. this website in Vercel(Main Site, Latest version)</a>
@@ -266,35 +293,54 @@
 
             <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment</span>
 
-            <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div class="modal-panel issue-panel modal-scroll-area">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
-                    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px; text-align: center;">Leave an Issue / Comment</h3>
-                    <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
-                    <div style="text-align: center;">
-                        <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div class="modal-panel modal-scroll-area">
-                    <p style="color: #333; font-size: 16px; margin: 0; text-align: center;">✓ Issue submitted successfully!</p>
-                    <div style="text-align: center;">
-                        <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
-                    </div>
-                </div>
-            </div>
-
             <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px; text-align: center; display: inline-block;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
+        </div>
+    </div>
 
-            <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div class="modal-panel modal-scroll-area">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0; text-align: center;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
+    <!-- Modal 1: More Info about Subzero -->
+    <div id="customModal2" class="modal-wrapper" onclick="if(event.target===this) this.style.display='none'">
+        <div class="modal-panel">
+            <button class="close-btn" onclick="document.getElementById('customModal2').style.display='none'">&times;</button>
+            <div class="modal-content">
+                <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026</p>
+            </div>
+        </div>
+    </div>
 
-                    <img src="https://raw.githubusercontent.com/aiden12910-12910/the-website/main/qinshihuang.gif" alt="qinshihuang gif" class="gif-40">
+    <!-- Modal 2: Issue Comment -->
+    <div id="issueModal" class="modal-wrapper" onclick="if(event.target===this) this.style.display='none'">
+        <div class="modal-panel issue-panel">
+            <button class="close-btn" onclick="document.getElementById('issueModal').style.display='none'">&times;</button>
+            <div class="modal-content">
+                <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px; text-align: center;">Leave an Issue / Comment</h3>
+                <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="submitIssue()" style="padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Success -->
+    <div id="successModal" class="modal-wrapper success" onclick="if(event.target===this) this.style.display='none'">
+        <div class="modal-panel" style="max-height: none;">
+            <button class="close-btn" onclick="document.getElementById('successModal').style.display='none'">&times;</button>
+            <div class="modal-content">
+                <p style="color: #333; font-size: 16px; margin: 0; text-align: center;">✓ Issue submitted successfully!</p>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="document.getElementById('successModal').style.display='none'" style="padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: More Info with GIF -->
+    <div id="customModal" class="modal-wrapper" onclick="if(event.target===this) this.style.display='none'">
+        <div class="modal-panel">
+            <button class="close-btn" onclick="document.getElementById('customModal').style.display='none'">&times;</button>
+            <div class="modal-content">
+                <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0; text-align: center;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
+                <img src="https://raw.githubusercontent.com/aiden12910-12910/the-website/main/qinshihuang.gif" alt="qinshihuang gif" class="gif-40">
             </div>
         </div>
     </div>
@@ -331,7 +377,6 @@
           if (data && data.userID) {
             userID = data.userID;
             isInitialized = true;
-            console.log('UserID initialized:', userID);
             addLog('Page Load', { page: window.location.href });
           }
         })
@@ -354,7 +399,6 @@
         };
 
         operationLog.push(entry);
-        console.log('Log added:', entry);
 
         clearTimeout(logTimer);
         logTimer = setTimeout(sendLog, 500);
@@ -378,15 +422,12 @@
 
         if (navigator.sendBeacon) {
           navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-          console.log('Log sent via sendBeacon');
         } else {
           fetch('/api/log-issue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             keepalive: true
-          }).then(function() {
-            console.log('Log sent via fetch');
           }).catch(function(err) {
             console.error('Request error:', err);
           });
@@ -427,10 +468,10 @@
         var issueTrigger = document.getElementById('issueTrigger');
 
         var inputSequence = "";
+
         function pressCalc(num) {
             if (display.innerText === "0") display.innerText = "";
             display.innerText += num;
-
             inputSequence += num;
             if (inputSequence.includes("12910")) {
                 unlockSecretZone();
