@@ -5,39 +5,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Linear Matrix & Equation Calculator 12345</title>
     <style>
-        /* 🎨 全新极简纯白学术风 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 40px; margin: 0; }
-        
-        /* 计算器外壳样式 */
-        .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: #1a202c; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
-        .calc-btn:hover { background: #edf2f7; }
-        
-        /* 默认隐藏的游戏区域 */
-        #secret-game-zone { display: none; }
-        h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
-        .link-container { display: flex; flex-direction: column; gap: 12px; max-width: 600px; }
-        .game-link { font-size: 15px; color: #0066cc; text-decoration: none; padding: 12px 16px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
-        .game-link:hover { background: #edf2f7; color: #004499; border-color: #cbd5e0; }
-
-        /* 全屏游戏视窗 */
-        #secure-backdoor-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; background: #000; }
-        #secure-backdoor-layer iframe { width: 100%; height: 100%; border: none; }
-
-        /* 顶部隐形跑路条 */
-        #panic-hover-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif;
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #ffffff;
+            color: #333333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #calculator-wrapper,
+        #secret-game-zone {
+            width: min(760px, 92vw);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .calculator-box {
+            width: min(320px, 80vw);
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            box-sizing: border-box;
+        }
+
+        .calc-screen {
+            width: 100%;
+            height: 50px;
+            background: #ffffff;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 20px;
+            text-align: right;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-family: monospace;
+            color: #1a202c;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calc-btn {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .calc-btn:hover {
+            background: #edf2f7;
+        }
+
+        #secret-game-zone {
+            display: none;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            color: #111111;
+            text-align: center;
+        }
+
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: min(700px, 90vw);
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .game-link {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 15px;
+            color: #0066cc;
+            text-decoration: none;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .game-link:hover {
+            background: #edf2f7;
+            color: #004499;
+            border-color: #cbd5e0;
+        }
+
+        #secure-backdoor-layer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            background: #000;
+        }
+
+        #secure-backdoor-layer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #panic-hover-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background-color: rgba(0, 0, 0, 0.02);
+            z-index: 1000000;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+            text-align: center;
+            font-size: 10px;
+            color: transparent;
+            line-height: 12px;
+            font-family: sans-serif;
+        }
+
+        #panic-hover-bar:hover {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .modal-scroll-area {
+            max-height: 80vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 8px;
+            box-sizing: border-box;
+        }
+
+        .modal-panel {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            width: min(90vw, 450px);
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .issue-panel {
+            width: min(90vw, 500px);
+        }
+
+        .gif-40 {
+            display: block;
+            width: 40%;
+            max-width: 40%;
+            height: auto;
+            margin: 18px auto 0;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tiny-center {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <!-- === 表面伪装：可正常使用的真实计算器 === -->
     <div id="calculator-wrapper">
-        <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px;">Scientific Array Solver</h2>
+        <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px; text-align: center;">Scientific Array Solver</h2>
         <div class="calculator-box">
             <div class="calc-screen" id="display">0</div>
             <div class="calc-grid">
@@ -60,17 +226,14 @@
             </div>
         </div>
     </div>
-    
-    
 
-    <!-- === 核心暗门：只有密码正确才会解锁的区域 === -->
     <div id="secret-game-zone">
         <h1>🎮Sites(Save this URL right away)</h1>
         <div class="link-container">
             <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise" page, or you can press the Esc key twice (the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view). Some websites may open in a new tab because they reject requests to load within the existing page.</small></a>
             <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is only one URL-the Vercel page—the current website.</small></a>
             <a><small>I can track what you do on this site and at what time; even though I don't know your name, I have a pseudo-UUID for your tab—I added two JS files to capture this data and submit it to GitHub Issues, but GitHub couldn't handle it, which is why I abandoned GitHub Pages in favor of Vercel. Don't even think about getting my GitHub PAT (Personal Access Token,if anyone get it,they can edit or delete my things); I'm not stupid enough to hardcode it into the HTML or JS.</small></a>
-            
+
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2(very slow on Chromebook，not recommended for use on a Chromebook; it may cause the system to freeze,link may be change)</a>
             <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link#1-Mine/craft Java 1.5.2</a>
             <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link#2-Mine/craft Java 1.5.2</a>
@@ -86,64 +249,63 @@
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-lite/')" class="game-link">￥-1. Geo/metry da/sh(link may be change)</a>
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-meltdown/')" class="game-link">￥-2. Geo/metry da/sh Meltdown(link may be change)</a>
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geo/metry da/sh Subzero(link may be change)</a>
-            
+
             <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</span>
             <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
-                    <!-- X号关闭按钮 -->
+                <div class="modal-panel modal-scroll-area">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
-                    <!-- 弹窗内的文字内容 -->
                     <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026</p>
                 </div>
             </div>
-            
+
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geo/metry da/sh World(link may be change)</a>
             <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. this website in Vercel(Main Site, Latest version)</a>
             <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. this website in Github(Deprecated(Because code submission using UUIDs and issue IDs is not working.); all users accessing this link will be redirected here.)</a>
             <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. My repo in Github</a>
             <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My repo in Vercel</a>
 
-            <!-- begin: issue comment modal -->
             <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment</span>
 
             <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
+                <div class="modal-panel issue-panel modal-scroll-area">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
-                    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment</h3>
+                    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px; text-align: center;">Leave an Issue / Comment</h3>
                     <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
-                    <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
+                    <div style="text-align: center;">
+                        <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
+                    </div>
                 </div>
             </div>
 
             <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
-                    <p style="color: #333; font-size: 16px; margin: 0;">✓ Issue submitted successfully!</p>
-                    <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
+                <div class="modal-panel modal-scroll-area">
+                    <p style="color: #333; font-size: 16px; margin: 0; text-align: center;">✓ Issue submitted successfully!</p>
+                    <div style="text-align: center;">
+                        <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
+                    </div>
                 </div>
             </div>
-            <!-- end: issue comment modal -->
 
-            <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
+            <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px; text-align: center; display: inline-block;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
 
             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                <div class="modal-panel modal-scroll-area">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
+                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0; text-align: center;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
+
+                    <img src="https://raw.githubusercontent.com/aiden12910-12910/the-website/main/qinshihuang.gif" alt="qinshihuang gif" class="gif-40">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 顶部隐形跑路条 -->
     <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
 
-    <!-- 全屏隐藏游戏视窗 -->
     <div id="secure-backdoor-layer">
         <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
     </div>
 
     <script>
-        // 如果网址里面包含 "github.io"，说明用户访问的是旧站，立刻执行跳转
         if (window.location.hostname.includes("github.io")) {
             window.location.replace("https://aiden12910-12910.vercel.app");
         }
@@ -254,7 +416,7 @@
       initUserID();
     })();
     </script>
-    
+
     <script>
         var layer = document.getElementById('secure-backdoor-layer');
         var iframe = document.getElementById('secure-iframe-target');
@@ -264,26 +426,28 @@
         var display = document.getElementById('display');
         var issueTrigger = document.getElementById('issueTrigger');
 
-        // 计算器基础运行逻辑
         var inputSequence = "";
         function pressCalc(num) {
             if (display.innerText === "0") display.innerText = "";
             display.innerText += num;
-            
-            // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
+
             inputSequence += num;
             if (inputSequence.includes("12910")) {
                 unlockSecretZone();
             }
         }
-        function clearCalc() { display.innerText = "0"; inputSequence = ""; }
-        function calculate() {
-            try { display.innerText = eval(display.innerText); } 
-            catch(err) { display.innerText = "Error"; }
-            inputSequence = ""; // 清空密码流
+
+        function clearCalc() {
+            display.innerText = "0";
+            inputSequence = "";
         }
 
-        // 解锁暗门函数
+        function calculate() {
+            try { display.innerText = eval(display.innerText); }
+            catch(err) { display.innerText = "Error"; }
+            inputSequence = "";
+        }
+
         function unlockSecretZone() {
             calcWrapper.style.display = "none";
             gameZone.style.display = "block";
@@ -291,10 +455,9 @@
             inputSequence = "";
         }
 
-        // 提交匿名留言
         window.submitIssue = function() {
             var content = document.getElementById('issueContent').value.trim();
-            
+
             if (!content) {
                 alert('Please enter a message');
                 return;
@@ -328,39 +491,34 @@
             }, 3000);
         };
 
-        // 同页面原地全屏打开函数
         function openSiteInside(targetUrl) {
-            iframe.src = targetUrl; 
-            layer.style.display = 'block'; 
-            panicBar.style.display = 'block'; 
+            iframe.src = targetUrl;
+            layer.style.display = 'block';
+            panicBar.style.display = 'block';
             setTimeout(function() {
                 iframe.focus();
                 if (iframe.contentWindow) iframe.contentWindow.focus();
             }, 200);
         }
 
-        // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
         function forceReturnToHome() {
-            layer.style.display = 'none'; 
-            panicBar.style.display = 'none'; 
-            gameZone.style.display = "none"; // 重新隐藏游戏列表
-            calcWrapper.style.display = "block"; // 强行拉回计算器
-            iframe.src = ''; 
+            layer.style.display = 'none';
+            panicBar.style.display = 'none';
+            gameZone.style.display = "none";
+            calcWrapper.style.display = "block";
+            iframe.src = '';
             clearCalc();
             if (issueTrigger) issueTrigger.style.display = 'none';
-            window.focus(); 
+            window.focus();
         }
 
-        // 键盘按键与后门解锁双重监听
         document.addEventListener('keydown', function(event) {
-            // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
             if (event.key === 'Escape') {
                 if (layer.style.display === 'block' || gameZone.style.display === "block") {
                     forceReturnToHome();
                 }
             }
-            
-            // 允许你上课直接用电脑键盘敲数字快速解锁
+
             if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
                 inputSequence += event.key;
                 if (inputSequence.includes("12345")) {
