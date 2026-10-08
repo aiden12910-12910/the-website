@@ -2,7 +2,8 @@ name: Clear GitHub Issues
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天午夜运行一次
+    - cron: '0 0 * * *'   # 每天午夜 00:00 运行一次
+    - cron: '0 12 * * *'  # 每天中午 12:00 运行一次
   workflow_dispatch: # 允许手动触发
 
 jobs:
@@ -17,26 +18,24 @@ jobs:
             const repo = context.repo.repo;
             const maxRetries = 5;
             let retryCount = 0;
-            
+
             while (retryCount < maxRetries) {
               console.log(`\n第 ${retryCount + 1} 次处理...`);
-              
-              // 获取所有开放的 issues
+
               const issues = await github.rest.issues.listForRepo({
                 owner,
                 repo,
                 state: 'open',
                 per_page: 100,
               });
-              
+
               if (issues.data.length === 0) {
                 console.log('✅ 没有剩余的 issues，处理完成！');
                 break;
               }
-              
+
               console.log(`📋 发现 ${issues.data.length} 个 issues，开始关闭...`);
-              
-              // 逐个关闭 issues
+
               for (const issue of issues.data) {
                 await github.rest.issues.update({
                   owner,
@@ -46,14 +45,13 @@ jobs:
                 });
                 console.log(`  ✓ 关闭 issue #${issue.number}: ${issue.title}`);
               }
-              
+
               retryCount++;
-              
-              // 如果还有 issues 且未达到最大重试次数，稍等后重新检查
+
               if (retryCount < maxRetries) {
                 console.log(`⏳ 等待 2 秒后再次检查...`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
               }
             }
-            
+
             console.log(`\n✨ 处理完成！共进行了 ${retryCount} 次处理尝试。`);
