@@ -142,20 +142,25 @@
         <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
     </div>
 
-    <script>
-// 确保页面加载完成后再执行检测
+   <script>
 window.onload = function() {
+    // 1. 检测 URL 中是否包含 github
     if (window.location.href.includes('github')) {
-        // 使用 setTimeout 给予浏览器一定的渲染缓冲时间
-        setTimeout(function() {
-            alert('This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.');
-            
-            // 只有当用户点击了上面的“确定”关闭弹窗后，这一行才会执行
-            window.location.replace('https://aiden12910-12910.vercel.app/index.html'); 
-        }, 500); // 延迟 500 毫秒触发，防止浏览器拦截或跳过
+        
+        // 2. 使用 confirm（确认框）代替 alert
+        // confirm 会强制浏览器暂停，并返回用户的点击结果（true 或 false）
+        var userConfirmed = confirm("This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
+        // 3. 只有当用户真正点击了“确定”，才会执行跳转逻辑
+        if (userConfirmed) {
+            window.location.replace('https://aiden12910-12910.vercel.app/index.html'); // 在这里替换你想跳转的网址
+        } else {
+            // 如果用户点取消，可以留在这个页面，或者强制再次弹窗
+            alert('您取消了跳转，将留在当前页面。');
+        }
     }
 }
-    </script>
+</script>
+
 
     <script>
     (function() {
