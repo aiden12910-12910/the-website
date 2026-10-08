@@ -10,7 +10,7 @@
         
         /* 计算器外壳样式 */
         .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 10px; }
+        .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: #1a202c; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
         .calc-btn:hover { background: #edf2f7; }
@@ -28,7 +28,7 @@
 
         /* 顶部隐形跑路条 */
         #panic-hover-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif;
         }
         #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
     </style>
@@ -67,39 +67,39 @@
     <div id="secret-game-zone">
         <h1>🎮Sites(Save this URL right away)</h1>
         <div class="link-container">
-            <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise[...]
-            <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is on[...]
-            <a><small>I can track what you do on this site and at what time; even though I don't know your name, I have a pseudo-UUID for your tab—I added two JS files to capture this data and s[...]
+            <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise" page, or you can press the Esc key twice (the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view). Some websites may open in a new tab because they reject requests to load within the existing page.</small></a>
+            <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is only one URL-the Vercel page—the current website.</small></a>
+            <a><small>I can track what you do on this site and at what time; even though I don't know your name, I have a pseudo-UUID for your tab—I added two JS files to capture this data and submit it to GitHub Issues, but GitHub couldn't handle it, which is why I abandoned GitHub Pages in favor of Vercel. Don't even think about getting my GitHub PAT (Personal Access Token,if anyone get it,they can edit or delete my things); I'm not stupid enough to hardcode it into the HTML or JS.</small></a>
             
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2(very slow on Chromebook，not recommended [...]
+            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2(very slow on Chromebook，not recommended for use on a Chromebook; it may cause the system to freeze,link may be change)</a>
             <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link#1-Mine/craft Java 1.5.2</a>
-            <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link#2-Mine/craft Ja[...]
+            <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link#2-Mine/craft Java 1.5.2</a>
             <a onclick="openSiteInside('https://bilibili.com')" class="game-link">2. 哔哩哔哩 (Bilibili Main Node)</a>
             <a onclick="openSiteInside('https://slope-pro.github.io/')" class="game-link">3. Slope Pro (recommend)</a>
             <a href="https://neal.fun" target="_blank" class="game-link">4. Neal.F/un (Interactive Sand/box,in a new tab)</a>
             <a onclick="openSiteInside('https://dnrweqffuwjtx.cloudfront.net/')" class="game-link">5. Chromebook Unlocked Hub</a>
-            <a href="https://www.google.com/search?q=%E2%80%AAGoogle+games&sca_esv=bc87673d3ad1280f&hl=en&ei=Ycz4abfqJeS9ptQP8b7k4Ag&biw=1366&bih=599&ved=0ahUKEwj3nvLkiaCUAxXknokEHXEfGYwQ4dUDCBE&u[...]
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Unblocked-Websites/gamesites.html')" class="game-link">7. Unbl/ocked websites(link may be change;thats from my another a[...]
+            <a href="https://www.google.com/search?q=%E2%80%AAGoogle+games&sca_esv=bc87673d3ad1280f&hl=en&ei=Ycz4abfqJeS9ptQP8b7k4Ag&biw=1366&bih=599&ved=0ahUKEwj3nvLkiaCUAxXknokEHXEfGYwQ4dUDCBE&uact=5&oq=%E2%80%AAGoogle+games&gs_lp=Egxnd3Mtd2l6LXNlcnAiD-KAqkdvb2dsZSBnYW1lczIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeSIQxUABYxSVwAHgBkAECmAHDCqAB30iqAQszLTEuMS4xLjIuNbgBA8gBAPgBAZgCBqACrinCAgIQJsICCBAAGIAEGKIEwgIFEAAY7wXCAgQQABgemAMAkgcJNC0yLjAuMi4yoAfxLbIHCTQtMi4wLjIuMrgHrinCBwMzLTbIB0WACAE&sclient=gws-wiz-serp&safe=active&ssui=on" target="_blank" class="game-link">6. Google Doodles(another way to play this is search 'Google Games',in a new tab)</a>
+            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Unblocked-Websites/gamesites.html')" class="game-link">7. Unbl/ocked websites(link may be change;thats from my another account in Github,forked)</a>
             <a onclick="openSiteInside('https://bigratiscool.github.io/bigratemporium/htmlgames.html')" class="game-link">8. Unbl/ocked Hub</a>
             <a onclick="openSiteInside('https://minecraft-free-online.github.io/')" class="game-link">9. Mine/craft unblocked github(it's not just Minecraft)</a>
-            <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-lite.html')" class="game-link">￥. Some more Geometry dash games(link may be change,link ￥-3 and [...]
+            <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-lite.html')" class="game-link">￥. Some more Geometry dash games(link may be change,link ￥-3 and 4 is from here,similar to geometry-dash-unbanned.github.io,but that was blocked after we played it)</a>
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-lite/')" class="game-link">￥-1. Geo/metry da/sh(link may be change)</a>
             <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-meltdown/')" class="game-link">￥-2. Geo/metry da/sh Meltdown(link may be change)</a>
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geo/metry da/sh Subzero(link may be change)</a>
             
-            <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</s[...]
-            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-conte[...]
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-bo[...]
+            <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</span>
+            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
                     <!-- X号关闭按钮 -->
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('[...]
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
                     <!-- 弹窗内的文字内容 -->
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long [...]
+                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026</p>
                 </div>
             </div>
             
             <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geo/metry da/sh World(link may be change)</a>
             <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. this website in Vercel(Main Site, Latest version)</a>
-            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. this website in Github(Deprecated(Because code submission using UUIDs and issue IDs i[...]
+            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. this website in Github(Deprecated(Because code submission using UUIDs and issue IDs is not working.); all users accessing this link will be redirected here.)</a>
             <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. My repo in Github</a>
             <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My repo in Vercel</a>
             <!--
@@ -127,25 +127,23 @@
             -->
             
            
-             
-             
-                     <!-- 1. 触发弹窗的文字 -->
-             <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
+            
+            
+                    <!-- 1. 触发弹窗的文字 -->
+            <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
 
-             <!-- 2. 弹窗本体（包含遮罩与纯白卡片） -->
-             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-conte[...]
-                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-b[...]
-                     <!-- X号关闭按钮 -->
-                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('[...]
-                     <!-- 弹窗内的文字内容 -->
-                     <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden1291[...]
-                 </div>
-             </div>
-             
-             
-         
-         </div>
-     </div>
+            <!-- 2. 弹窗本体（包含遮罩与纯白卡片） -->
+            <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <!-- X号关闭按钮 -->
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
+                    <!-- 弹窗内的文字内容 -->
+                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
+                </div>
+            </div>
+            
+            \n        </div>
+    </div>
 
     <!-- 顶部隐形跑路条 -->
     <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
@@ -162,24 +160,13 @@
         }
     </script>
 
+    <!-- === 日志监听脚本：插在这里 === -->
     <script>
     (function() {
       var userID = null;
       var operationLog = [];
       var logTimer = null;
       var isInitialized = false;
-      var SEND_INTERVAL = 30000;
-      var inactiveClickCount = 0;
-
-      // UI 元素引用
-      var layer = document.getElementById('secure-backdoor-layer');
-      var iframe = document.getElementById('secure-iframe-target');
-      var panicBar = document.getElementById('panic-hover-bar');
-      var gameZone = document.getElementById('secret-game-zone');
-      var calcWrapper = document.getElementById('calculator-wrapper');
-      var display = document.getElementById('display');
-
-      var inputSequence = "";
 
       function initUserID() {
         fetch('/api/get-user-id', {
@@ -194,13 +181,8 @@
           if (data && data.userID) {
             userID = data.userID;
             isInitialized = true;
-            addLog('Page Load', { page: window.location.href, type: 'page_load' });
-
-            setInterval(function() {
-              if (operationLog.length > 0) {
-                sendLog();
-              }
-            }, SEND_INTERVAL);
+            console.log('UserID initialized:', userID);
+            addLog('Page Load', { page: window.location.href });
           }
         })
         .catch(function(err) {
@@ -211,54 +193,50 @@
       function addLog(actionType, detail) {
         if (!isInitialized) return;
 
+        var timestamp = new Date().toLocaleString();
         var entry = {
-          time: new Date().toISOString(),
+          time: timestamp,
           type: actionType,
           page: window.location.href,
-          target: detail && detail.target ? String(detail.target) : 'N/A',
-          href: detail && detail.href ? String(detail.href) : 'N/A',
-          tag: detail && detail.tag ? String(detail.tag) : 'N/A',
-          functionName: detail && detail.functionName ? String(detail.functionName) : 'N/A',
-          eventType: detail && detail.eventType ? String(detail.eventType) : 'N/A',
-          dataAttr: detail && detail.dataAttr ? String(detail.dataAttr) : 'N/A'
+          target: detail && detail.target ? detail.target : 'N/A',
+          href: detail && detail.href ? detail.href : 'N/A',
+          tag: detail && detail.tag ? detail.tag : 'N/A'
         };
 
         operationLog.push(entry);
+        console.log('Log added:', entry);
 
         clearTimeout(logTimer);
-        logTimer = setTimeout(sendLog, SEND_INTERVAL);
+        logTimer = setTimeout(sendLog, 500);
       }
 
       function sendLog() {
         if (!isInitialized || operationLog.length === 0) return;
 
         var logContent = operationLog.map(function(log) {
-          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | fn=' + log.functionName + ' | event=' + log.eventType + ' | data=' + log.dataAttr;
+          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href;
         }).join('\n');
-
-        if (inactiveClickCount > 0) {
-          logContent += '\n\n[无操作点击次数]: ' + inactiveClickCount;
-          inactiveClickCount = 0;
-        }
 
         var payload = {
           title: 'Log: UserID ' + userID,
           body:
             'UserID: ' + userID + '\n' +
-            'Session Start: ' + new Date().toISOString() + '\n' +
+            'Session Start: ' + new Date().toLocaleString() + '\n' +
             '---\n' +
-            logContent,
-          type: 'log'
+            logContent
         };
 
         if (navigator.sendBeacon) {
           navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+          console.log('Log sent via sendBeacon');
         } else {
           fetch('/api/log-issue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             keepalive: true
+          }).then(function() {
+            console.log('Log sent via fetch');
           }).catch(function(err) {
             console.error('Request error:', err);
           });
@@ -267,177 +245,101 @@
         operationLog = [];
       }
 
-      function describeElement(target) {
-        if (!target) return { tag: 'N/A', text: 'N/A', className: 'N/A', href: 'N/A', onclick: 'N/A', dataAttr: 'N/A' };
+      document.addEventListener('click', function(event) {
+        var target = event.target;
+        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+        var href = target && target.getAttribute ? target.getAttribute('href') : null;
+        var className = target && target.className ? String(target.className) : '';
+        var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
 
-        var tag = target.tagName ? target.tagName.toLowerCase() : 'unknown';
-        var text = target.textContent ? target.textContent.trim().slice(0, 80) : '';
-        var className = target.className ? String(target.className) : '';
-        var href = target.getAttribute ? target.getAttribute('href') : null;
-        var onclick = target.getAttribute ? target.getAttribute('onclick') : null;
-        var dataAttr = target.getAttribute ? target.getAttribute('data-track') : null;
-
-        return {
-          tag: tag,
-          text: text || 'N/A',
-          className: className || 'N/A',
+        addLog('Click', {
+          target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
           href: href || 'N/A',
-          onclick: onclick ? onclick.slice(0, 120) : 'N/A',
-          dataAttr: dataAttr || 'N/A'
-        };
-      }
-
-      // === 计算器函数 ===
-      window.pressCalc = function(num) {
-        if (display.innerText === "0") display.innerText = "";
-        display.innerText += num;
-        inputSequence += num;
-        if (inputSequence.includes("12910")) {
-          unlockSecretZone();
-        }
-      };
-
-      window.clearCalc = function() {
-        display.innerText = "0";
-        inputSequence = "";
-      };
-
-      window.calculate = function() {
-        try { display.innerText = eval(display.innerText); }
-        catch(err) { display.innerText = "Error"; }
-        inputSequence = "";
-      };
-
-      // === 解锁暗门函数 ===
-      window.unlockSecretZone = function() {
-        calcWrapper.style.display = "none";
-        gameZone.style.display = "block";
-        inputSequence = "";
-      };
-
-      window.openSiteInside = function(targetUrl) {
-        iframe.src = targetUrl;
-        layer.style.display = 'block';
-        panicBar.style.display = 'block';
-        setTimeout(function() {
-          iframe.focus();
-          if (iframe.contentWindow) iframe.contentWindow.focus();
-        }, 200);
-      };
-
-      window.forceReturnToHome = function() {
-        layer.style.display = 'none';
-        panicBar.style.display = 'none';
-        gameZone.style.display = "none";
-        calcWrapper.style.display = "block";
-        iframe.src = '';
-        clearCalc();
-        window.focus();
-      };
-
-      // === 事件监听 ===
-      document.addEventListener('click', function(event) {
-        var target = event.target;
-        var info = describeElement(target);
-
-        var hasAction =
-          Boolean(info.href && info.href !== 'N/A') ||
-          Boolean(info.onclick && info.onclick !== 'N/A') ||
-          info.tag === 'button' ||
-          info.tag === 'a' ||
-          info.className.indexOf('game-link') !== -1 ||
-          info.className.indexOf('calc-btn') !== -1;
-
-        if (hasAction) {
-          addLog('Click', {
-            target: info.text || info.className || 'N/A',
-            href: info.href,
-            tag: info.tag,
-            functionName: info.onclick,
-            eventType: 'click_with_action',
-            dataAttr: info.dataAttr
-          });
-        } else {
-          inactiveClickCount++;
-        }
-      }, true);
-
-      document.addEventListener('input', function(event) {
-        var target = event.target;
-        if (!target) return;
-        var info = describeElement(target);
-
-        addLog('Input', {
-          target: info.tag,
-          href: target.value ? String(target.value).slice(0, 80) : 'N/A',
-          tag: info.tag,
-          eventType: 'input_change'
+          tag: tag
         });
-      }, true);
-
-      document.addEventListener('keydown', function(event) {
-        // 键盘日志记录
-        addLog('Keyboard', {
-          target: 'document',
-          href: 'N/A',
-          tag: 'document',
-          functionName: 'keydown',
-          eventType: event.key || 'key',
-          dataAttr: event.code || 'N/A'
-        });
-
-        // === 密码逻辑 ===
-        if (event.key === 'Escape') {
-          if (layer.style.display === 'block' || gameZone.style.display === "block") {
-            forceReturnToHome();
-          }
-        }
-
-        if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
-          inputSequence += event.key;
-          if (inputSequence.includes("12345")) {
-            unlockSecretZone();
-          }
-        }
-      }, true);
-
-      document.addEventListener('submit', function(event) {
-        var target = event.target;
-        var info = describeElement(target);
-
-        addLog('Submit', {
-          target: info.tag,
-          href: 'N/A',
-          tag: info.tag,
-          functionName: 'submit',
-          eventType: 'form_submit'
-        });
-      }, true);
-
-      document.addEventListener('click', function(event) {
-        var a = event.target.closest && event.target.closest('a');
-        if (a && a.href) {
-          addLog('LinkClick', {
-            target: a.textContent ? a.textContent.slice(0, 60) : a.href,
-            href: a.href,
-            tag: 'a',
-            functionName: 'link_click',
-            eventType: 'link_navigate'
-          });
-        }
       }, true);
 
       window.addEventListener('beforeunload', function() {
-        if (operationLog.length > 0) {
-          sendLog();
-        }
-        if (inactiveClickCount > 0) {
-          console.log('[inactive clicks before unload]', inactiveClickCount);
-        }
+        sendLog();
       });
 
       initUserID();
     })();
+    </script>
+
+    <script>
+        var layer = document.getElementById('secure-backdoor-layer');
+        var iframe = document.getElementById('secure-iframe-target');
+        var panicBar = document.getElementById('panic-hover-bar');
+        var gameZone = document.getElementById('secret-game-zone');
+        var calcWrapper = document.getElementById('calculator-wrapper');
+        var display = document.getElementById('display');
+
+        // 计算器基础运行逻辑
+        var inputSequence = "";
+        function pressCalc(num) {
+            if (display.innerText === "0") display.innerText = "";
+            display.innerText += num;
+            
+            // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
+            inputSequence += num;
+            if (inputSequence.includes("12910")) {
+                unlockSecretZone();
+            }
+        }
+        function clearCalc() { display.innerText = "0"; inputSequence = ""; }
+        function calculate() {
+            try { display.innerText = eval(display.innerText); } 
+            catch(err) { display.innerText = "Error"; }
+            inputSequence = ""; // 清空密码流
+        }
+
+        // 解锁暗门函数
+        function unlockSecretZone() {
+            calcWrapper.style.display = "none"; // 隐藏计算器
+            gameZone.style.display = "block"; // 显示隐藏的游戏区
+            inputSequence = "";
+        }
+
+        // 同页面原地全屏打开函数
+        function openSiteInside(targetUrl) {
+            iframe.src = targetUrl; 
+            layer.style.display = 'block'; 
+            panicBar.style.display = 'block'; 
+            setTimeout(function() {
+                iframe.focus();
+                if (iframe.contentWindow) iframe.contentWindow.focus();
+            }, 200);
+        }
+
+        // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
+        function forceReturnToHome() {
+            layer.style.display = 'none'; 
+            panicBar.style.display = 'none'; 
+            gameZone.style.display = "none"; // 重新隐藏游戏列表
+            calcWrapper.style.display = "block"; // 强行拉回计算器
+            iframe.src = ''; 
+            clearCalc();
+            window.focus(); 
+        }
+
+        // 键盘按键与后门解锁双重监听
+        document.addEventListener('keydown', function(event) {
+            // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
+            if (event.key === 'Escape') {
+                if (layer.style.display === 'block' || gameZone.style.display === "block") {
+                    forceReturnToHome();
+                }
+            }
+            
+            // 允许你上课直接用电脑键盘敲数字快速解锁
+            if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+                inputSequence += event.key;
+                if (inputSequence.includes("12345")) {
+                    unlockSecretZone();
+                }
+            }
+        });
     </script>
 
 </body>
