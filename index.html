@@ -143,11 +143,18 @@
     </div>
 
     <script>
-        if (window.location.href.includes('github')) {
-            alert('This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to https://aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.');
-        window.location.href = 'https://aiden12910-12910.vercel.app/index.html'; // 在这里替换你想重定向去的网址
-        }
-
+// 确保页面加载完成后再执行检测
+window.onload = function() {
+    if (window.location.href.includes('github')) {
+        // 使用 setTimeout 给予浏览器一定的渲染缓冲时间
+        setTimeout(function() {
+            alert('This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.');
+            
+            // 只有当用户点击了上面的“确定”关闭弹窗后，这一行才会执行
+            window.location.replace('https://aiden12910-12910.vercel.app/index.html'); 
+        }, 500); // 延迟 500 毫秒触发，防止浏览器拦截或跳过
+    }
+}
     </script>
 
     <script>
