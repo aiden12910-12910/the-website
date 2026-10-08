@@ -1,176 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Linear Matrix & Equation Calculator 12345</title>
-    <style>
-        /* 🎨 全新极简纯白学术风 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 40px; margin: 0; }
-        
-        /* 计算器外壳样式 */
-        .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; mar[...] }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
-        .calc-btn:hover { background: #edf2f7; }
-        
-        /* 默认隐藏的游戏区域 */
-        #secret-game-zone { display: none; }
-        h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
-        .link-container { display: flex; flex-direction: column; gap: 12px; max-width: 600px; }
-        .game-link { font-size: 15px; color: #0066cc; text-decoration: none; padding: 12px 16px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: al[...] }
-        .game-link:hover { background: #edf2f7; color: #004499; border-color: #cbd5e0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Linear Matrix & Equation Calculator 12345</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      padding: 40px;
+      margin: 0;
+    }
 
-        /* 全屏游戏视窗 */
-        #secure-backdoor-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; background: #000; }
-        #secure-backdoor-layer iframe { width: 100%; height: 100%; border: none; }
+    .calculator-box {
+      max-width: 320px;
+      background: #f8f9fa;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
 
-        /* 顶部隐形跑路条 */
-        #panic-hover-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none;[...]
-        }
-        #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
-    </style>
+    .calc-screen {
+      width: 100%;
+      height: 50px;
+      background: #ffffff;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 20px;
+      text-align: right;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .calc-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .calc-btn:hover {
+      background: #edf2f7;
+    }
+
+    #secret-game-zone { display: none; }
+    h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
+    .link-container { display: flex; flex-direction: column; gap: 12px; max-width: 600px; }
+    .game-link {
+      font-size: 15px;
+      color: #0066cc;
+      text-decoration: none;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .game-link:hover {
+      background: #edf2f7;
+      color: #004499;
+      border-color: #cbd5e0;
+    }
+
+    #secure-backdoor-layer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 999999;
+      background: #000;
+    }
+
+    #secure-backdoor-layer iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #panic-hover-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 12px;
+      background-color: rgba(0,0,0,0.02);
+      z-index: 1000000;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: none;
+    }
+
+    #panic-hover-bar:hover {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- === 表面伪装：可正常使用的真实计算器 === -->
-    <div id="calculator-wrapper">
-        <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px;">Scientific Array Solver</h2>
-        <div class="calculator-box">
-            <div class="calc-screen" id="display">0</div>
-            <div class="calc-grid">
-                <div class="calc-btn" onclick="clearCalc()">C</div>
-                <div class="calc-btn" onclick="pressCalc('/')">/</div>
-                <div class="calc-btn" onclick="pressCalc('*')">*</div>
-                <div class="calc-btn" onclick="pressCalc('-')">-</div>
-                <div class="calc-btn" onclick="pressCalc('7')">7</div>
-                <div class="calc-btn" onclick="pressCalc('8')">8</div>
-                <div class="calc-btn" onclick="pressCalc('9')">9</div>
-                <div class="calc-btn" onclick="pressCalc('+')">+</div>
-                <div class="calc-btn" onclick="pressCalc('4')">4</div>
-                <div class="calc-btn" onclick="pressCalc('5')">5</div>
-                <div class="calc-btn" onclick="pressCalc('6')">6</div>
-                <div class="calc-btn" onclick="calculate()">=</div>
-                <div class="calc-btn" onclick="pressCalc('1')">1</div>
-                <div class="calc-btn" onclick="pressCalc('2')">2</div>
-                <div class="calc-btn" onclick="pressCalc('3')">3</div>
-                <div class="calc-btn" onclick="pressCalc('0')">0</div>
-            </div>
+  <div id="calculator-wrapper">
+    <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px;">Scientific Array Solver</h2>
+    <div class="calculator-box">
+      <div class="calc-screen" id="display">0</div>
+      <div class="calc-grid">
+        <div class="calc-btn" onclick="clearCalc()">C</div>
+        <div class="calc-btn" onclick="pressCalc('/')">/</div>
+        <div class="calc-btn" onclick="pressCalc('*')">*</div>
+        <div class="calc-btn" onclick="pressCalc('-')">-</div>
+        <div class="calc-btn" onclick="pressCalc('7')">7</div>
+        <div class="calc-btn" onclick="pressCalc('8')">8</div>
+        <div class="calc-btn" onclick="pressCalc('9')">9</div>
+        <div class="calc-btn" onclick="pressCalc('+')">+</div>
+        <div class="calc-btn" onclick="pressCalc('4')">4</div>
+        <div class="calc-btn" onclick="pressCalc('5')">5</div>
+        <div class="calc-btn" onclick="pressCalc('6')">6</div>
+        <div class="calc-btn" onclick="calculate()">=</div>
+        <div class="calc-btn" onclick="pressCalc('1')">1</div>
+        <div class="calc-btn" onclick="pressCalc('2')">2</div>
+        <div class="calc-btn" onclick="pressCalc('3')">3</div>
+        <div class="calc-btn" onclick="pressCalc('0')">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="secret-game-zone">
+    <h1>🎮Sites(Save this URL right away)</h1>
+    <div class="link-container">
+      <a onclick="openSiteInside('https://aiden12910-129100.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2</a>
+      <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link#1-Mine/craft Java 1.5.2</a>
+      <a onclick="openSiteInside('https://bilibili.com')" class="game-link">2. 哔哩哔哩 (Bilibili Main Node)</a>
+      <a onclick="openSiteInside('https://slope-pro.github.io/')" class="game-link">3. Slope Pro (recommend)</a>
+      <a href="https://neal.fun" target="_blank" class="game-link">4. Neal.F/un (Interactive Sand/box,in a new tab)</a>
+      <a onclick="openSiteInside('https://dnrweqffuwjtx.cloudfront.net/')" class="game-link">5. Chromebook Unlocked Hub</a>
+
+      <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
+      <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+          <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">×</span>
+          <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance.</p>
         </div>
+      </div>
     </div>
-    
+  </div>
 
+  <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
 
-    <!-- === 核心暗门：只有密码正确才会解锁的区域 === -->
-    <div id="secret-game-zone">
-        <h1>🎮Sites(Save this URL right away)</h1>
-        <div class="link-container">
-            <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise[...]
-            <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is on[...]
-            <a><small>I can track what you do on this site and at what time; even though I don't know your name, I have a pseudo-UUID for your tab—I added two JS files to capture this data and s[...]
-            
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2(very slow on Chromebook，not recommended [...]
-            <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link#1-Mine/craft Java 1.5.2</a>
-            <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link#2-Mine/craft Ja[...]
-            <a onclick="openSiteInside('https://bilibili.com')" class="game-link">2. 哔哩哔哩 (Bilibili Main Node)</a>
-            <a onclick="openSiteInside('https://slope-pro.github.io/')" class="game-link">3. Slope Pro (recommend)</a>
-            <a href="https://neal.fun" target="_blank" class="game-link">4. Neal.F/un (Interactive Sand/box,in a new tab)</a>
-            <a onclick="openSiteInside('https://dnrweqffuwjtx.cloudfront.net/')" class="game-link">5. Chromebook Unlocked Hub</a>
-            <a href="https://www.google.com/search?q=%E2%80%AAGoogle+games&sca_esv=bc87673d3ad1280f&hl=en&ei=Ycz4abfqJeS9ptQP8b7k4Ag&biw=1366&bih=599&ved=0ahUKEwj3nvLkiaCUAxXknokEHXEfGYwQ4dUDCBE&u[...]
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/Unblocked-Websites/gamesites.html')" class="game-link">7. Unbl/ocked websites(link may be change;thats from my another a[...]
-            <a onclick="openSiteInside('https://bigratiscool.github.io/bigratemporium/htmlgames.html')" class="game-link">8. Unbl/ocked Hub</a>
-            <a onclick="openSiteInside('https://minecraft-free-online.github.io/')" class="game-link">9. Mine/craft unblocked github(it's not just Minecraft)</a>
-            <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-lite.html')" class="game-link">￥. Some more Geometry dash games(link may be change,link ￥-3 and [...]
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-lite/')" class="game-link">￥-1. Geo/metry da/sh(link may be change)</a>
-            <a onclick="openSiteInside('https://aiden12910-129100.github.io/geometry-dash-meltdown/')" class="game-link">￥-2. Geo/metry da/sh Meltdown(link may be change)</a>
-            <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geo/metry da/sh Subzero(link may be change)</a>
-            
-            <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</s[...]
-            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-conte[...]
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-bo[...]
-                    <!-- X号关闭按钮 -->
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('[...]
-                    <!-- 弹窗内的文字内容 -->
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long [...]
-                </div>
-            </div>
-            
-            <a onclick="openSiteInside('https://geo-dash-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geo/metry da/sh World(link may be change)</a>
-            <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. this website in Vercel(Main Site, Latest version)</a>
-            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. this website in Github(Deprecated(Because code submission using UUIDs and issue IDs i[...]
-            <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. My repo in Github</a>
-            <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My repo in Vercel</a>
-            <!--
-            方便使用的<a>标签
-            
-            
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            <a href="" target="_blank" class="game-link">none. none</a>
-            
-            
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            <a onclick="openSiteInside('')" class="game-link">none. none</a>
-            -->
-            
-           
-             
-             
-                     <!-- 1. 触发弹窗的文字 -->
-             <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
+  <div id="secure-backdoor-layer">
+    <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
+  </div>
 
-             <!-- 2. 弹窗本体（包含遮罩与纯白卡片） -->
-             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-conte[...]
-                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-b[...]
-                     <!-- X号关闭按钮 -->
-                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById([...]
-                     <!-- 弹窗内的文字内容 -->
-                     <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden1291[...]
-                 </div>
-             </div>
-             
-             
-         
-         </div>
-     </div>
+  <script>
+    if (window.location.hostname.includes("github.io")) {
+      window.location.replace("https://aiden12910-12910.vercel.app");
+    }
+  </script>
 
-    <!-- 顶部隐形跑路条 -->
-    <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
-
-    <!-- 全屏隐藏游戏视窗 -->
-    <div id="secure-backdoor-layer">
-        <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
-    </div>
-
-    <script>
-        // 如果网址里面包含 "github.io"，说明用户访问的是旧站，立刻执行跳转
-        if (window.location.hostname.includes("github.io")) {
-            window.location.replace("https://aiden12910-12910.vercel.app");
-        }
-    </script>
-
-    
-<script>
+  <script>
     (function() {
       var userID = null;
       var operationLog = [];
       var logTimer = null;
       var isInitialized = false;
-      var SEND_INTERVAL = 30000; // 30 秒发送一次
-      var inactiveClickCount = 0; // 记录无操作点击的数量
+      var SEND_INTERVAL = 30000;
+      var inactiveClickCount = 0;
 
       function initUserID() {
         fetch('/api/get-user-id', {
@@ -185,10 +189,8 @@
           if (data && data.userID) {
             userID = data.userID;
             isInitialized = true;
-            console.log('UserID initialized:', userID);
             addLog('Page Load', { page: window.location.href, type: 'page_load' });
-            
-            // 每 30 秒检查一次是否有日志需要发送
+
             setInterval(function() {
               if (operationLog.length > 0) {
                 sendLog();
@@ -204,23 +206,20 @@
       function addLog(actionType, detail) {
         if (!isInitialized) return;
 
-        var timestamp = new Date().toLocaleString();
         var entry = {
-          time: timestamp,
+          time: new Date().toISOString(),
           type: actionType,
           page: window.location.href,
-          target: detail && detail.target ? detail.target : 'N/A',
-          href: detail && detail.href ? detail.href : 'N/A',
-          tag: detail && detail.tag ? detail.tag : 'N/A',
-          function: detail && detail.function ? detail.function : 'N/A',
-          eventType: detail && detail.eventType ? detail.eventType : 'N/A',
-          dataAttr: detail && detail.dataAttr ? detail.dataAttr : 'N/A'
+          target: detail && detail.target ? String(detail.target) : 'N/A',
+          href: detail && detail.href ? String(detail.href) : 'N/A',
+          tag: detail && detail.tag ? String(detail.tag) : 'N/A',
+          functionName: detail && detail.functionName ? String(detail.functionName) : 'N/A',
+          eventType: detail && detail.eventType ? String(detail.eventType) : 'N/A',
+          dataAttr: detail && detail.dataAttr ? String(detail.dataAttr) : 'N/A'
         };
 
         operationLog.push(entry);
-        console.log('Log added:', entry);
 
-        // 如果有日志，立刻清除之前的定时器，不再等待 30 秒
         clearTimeout(logTimer);
         logTimer = setTimeout(sendLog, SEND_INTERVAL);
       }
@@ -229,10 +228,9 @@
         if (!isInitialized || operationLog.length === 0) return;
 
         var logContent = operationLog.map(function(log) {
-          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | func=' + log.function + ' | eventType=' + log.eventType + ' | data=' + log.dataAttr;
+          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | fn=' + log.functionName + ' | event=' + log.eventType + ' | data=' + log.dataAttr;
         }).join('\n');
 
-        // 如果有无操作点击，附加在日志底部
         if (inactiveClickCount > 0) {
           logContent += '\n\n[无操作点击次数]: ' + inactiveClickCount;
           inactiveClickCount = 0;
@@ -242,23 +240,20 @@
           title: 'Log: UserID ' + userID,
           body:
             'UserID: ' + userID + '\n' +
-            'Session Start: ' + new Date().toLocaleString() + '\n' +
+            'Session Start: ' + new Date().toISOString() + '\n' +
             '---\n' +
             logContent,
-          type: 'log' // 指定为 log 类型
+          type: 'log'
         };
 
         if (navigator.sendBeacon) {
           navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-          console.log('Log sent via sendBeacon');
         } else {
           fetch('/api/log-issue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             keepalive: true
-          }).then(function() {
-            console.log('Log sent via fetch');
           }).catch(function(err) {
             console.error('Request error:', err);
           });
@@ -267,144 +262,184 @@
         operationLog = [];
       }
 
-      // 全局点击监听，监听所有操作
+      function describeElement(target) {
+        if (!target) return { tag: 'N/A', text: 'N/A', className: 'N/A', href: 'N/A', onclick: 'N/A', dataAttr: 'N/A' };
+
+        var tag = target.tagName ? target.tagName.toLowerCase() : 'unknown';
+        var text = target.textContent ? target.textContent.trim().slice(0, 80) : '';
+        var className = target.className ? String(target.className) : '';
+        var href = target.getAttribute ? target.getAttribute('href') : null;
+        var onclick = target.getAttribute ? target.getAttribute('onclick') : null;
+        var dataAttr = target.getAttribute ? target.getAttribute('data-track') : null;
+
+        return {
+          tag: tag,
+          text: text || 'N/A',
+          className: className || 'N/A',
+          href: href || 'N/A',
+          onclick: onclick ? onclick.slice(0, 120) : 'N/A',
+          dataAttr: dataAttr || 'N/A'
+        };
+      }
+
       document.addEventListener('click', function(event) {
         var target = event.target;
-        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
-        var href = target && target.getAttribute ? target.getAttribute('href') : null;
-        var className = target && target.className ? String(target.className) : '';
-        var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
-        var dataAttr = target && target.getAttribute ? target.getAttribute('data-track') : null;
-        
-        // 获取元素上绑定的 onclick 函数
-        var onclickAttr = target && target.getAttribute ? target.getAttribute('onclick') : null;
-        
-        // 判断是否触发了实际操作
-        var hasAction = href || onclickAttr || (tag === 'button') || (tag === 'a') || className.includes('game-link') || className.includes('calc-btn');
+        var info = describeElement(target);
+
+        var hasAction =
+          Boolean(info.href && info.href !== 'N/A') ||
+          Boolean(info.onclick && info.onclick !== 'N/A') ||
+          info.tag === 'button' ||
+          info.tag === 'a' ||
+          info.className.indexOf('game-link') !== -1 ||
+          info.className.indexOf('calc-btn') !== -1;
 
         if (hasAction) {
           addLog('Click', {
-            target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
-            href: href || 'N/A',
-            tag: tag,
-            function: onclickAttr ? onclickAttr.slice(0, 100) : 'N/A',
+            target: info.text || info.className || 'N/A',
+            href: info.href,
+            tag: info.tag,
+            functionName: info.onclick,
             eventType: 'click_with_action',
-            dataAttr: dataAttr || 'N/A'
+            dataAttr: info.dataAttr
           });
         } else {
-          // 无操作点击，只记录次数
           inactiveClickCount++;
         }
       }, true);
 
-      // 监听所有 input 输入
       document.addEventListener('input', function(event) {
         var target = event.target;
-        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
-        var value = target && target.value ? target.value.slice(0, 50) : '';
+        if (!target) return;
+        var info = describeElement(target);
 
         addLog('Input', {
-          target: tag,
-          eventType: 'input_change',
-          href: value
+          target: info.tag,
+          href: target.value ? String(target.value).slice(0, 80) : 'N/A',
+          tag: info.tag,
+          eventType: 'input_change'
         });
       }, true);
 
-      // 监听页面中的链接跳转
+      document.addEventListener('keydown', function(event) {
+        addLog('Keyboard', {
+          target: 'document',
+          href: 'N/A',
+          tag: 'document',
+          functionName: 'keydown',
+          eventType: event.key || 'key',
+          dataAttr: event.code || 'N/A'
+        });
+      }, true);
+
+      document.addEventListener('submit', function(event) {
+        var target = event.target;
+        var info = describeElement(target);
+
+        addLog('Submit', {
+          target: info.tag,
+          href: 'N/A',
+          tag: info.tag,
+          functionName: 'submit',
+          eventType: 'form_submit'
+        });
+      }, true);
+
       document.addEventListener('click', function(event) {
-        if (event.target && event.target.tagName === 'A' && event.target.href) {
-          var url = event.target.href;
-          var target = event.target.getAttribute('target');
+        var a = event.target.closest && event.target.closest('a');
+        if (a && a.href) {
           addLog('LinkClick', {
-            href: url,
-            target: target || '_self',
+            target: a.textContent ? a.textContent.slice(0, 60) : a.href,
+            href: a.href,
+            tag: 'a',
+            functionName: 'link_click',
             eventType: 'link_navigate'
           });
         }
       }, true);
 
       window.addEventListener('beforeunload', function() {
-        sendLog();
+        if (operationLog.length > 0) {
+          sendLog();
+        }
+        if (inactiveClickCount > 0) {
+          console.log('[inactive clicks before unload]', inactiveClickCount);
+        }
       });
 
       initUserID();
     })();
-    </script>
-    
-    <script>
-        var layer = document.getElementById('secure-backdoor-layer');
-        var iframe = document.getElementById('secure-iframe-target');
-        var panicBar = document.getElementById('panic-hover-bar');
-        var gameZone = document.getElementById('secret-game-zone');
-        var calcWrapper = document.getElementById('calculator-wrapper');
-        var display = document.getElementById('display');
+  </script>
 
-        // 计算器基础运行逻辑
-        var inputSequence = "";
-        function pressCalc(num) {
-            if (display.innerText === "0") display.innerText = "";
-            display.innerText += num;
-            
-            // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
-            inputSequence += num;
-            if (inputSequence.includes("12910")) {
-                unlockSecretZone();
-            }
+  <script>
+    var layer = document.getElementById('secure-backdoor-layer');
+    var iframe = document.getElementById('secure-iframe-target');
+    var panicBar = document.getElementById('panic-hover-bar');
+    var gameZone = document.getElementById('secret-game-zone');
+    var calcWrapper = document.getElementById('calculator-wrapper');
+    var display = document.getElementById('display');
+
+    var inputSequence = "";
+    function pressCalc(num) {
+      if (display.innerText === "0") display.innerText = "";
+      display.innerText += num;
+      inputSequence += num;
+      if (inputSequence.includes("12910")) {
+        unlockSecretZone();
+      }
+    }
+
+    function clearCalc() {
+      display.innerText = "0";
+      inputSequence = "";
+    }
+
+    function calculate() {
+      try { display.innerText = eval(display.innerText); }
+      catch(err) { display.innerText = "Error"; }
+      inputSequence = "";
+    }
+
+    function unlockSecretZone() {
+      calcWrapper.style.display = "none";
+      gameZone.style.display = "block";
+      inputSequence = "";
+    }
+
+    function openSiteInside(targetUrl) {
+      iframe.src = targetUrl;
+      layer.style.display = 'block';
+      panicBar.style.display = 'block';
+      setTimeout(function() {
+        iframe.focus();
+        if (iframe.contentWindow) iframe.contentWindow.focus();
+      }, 200);
+    }
+
+    function forceReturnToHome() {
+      layer.style.display = 'none';
+      panicBar.style.display = 'none';
+      gameZone.style.display = "none";
+      calcWrapper.style.display = "block";
+      iframe.src = '';
+      clearCalc();
+      window.focus();
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        if (layer.style.display === 'block' || gameZone.style.display === "block") {
+          forceReturnToHome();
         }
-        function clearCalc() { display.innerText = "0"; inputSequence = ""; }
-        function calculate() {
-            try { display.innerText = eval(display.innerText); } 
-            catch(err) { display.innerText = "Error"; }
-            inputSequence = ""; // 清空密码流
+      }
+
+      if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+        inputSequence += event.key;
+        if (inputSequence.includes("12345")) {
+          unlockSecretZone();
         }
-
-        // 解锁暗门函数
-        function unlockSecretZone() {
-            calcWrapper.style.display = "none"; // 隐藏计算器
-            gameZone.style.display = "block"; // 显示隐藏的游戏区
-            inputSequence = "";
-        }
-
-        // 同页面原地全屏打开函数
-        function openSiteInside(targetUrl) {
-            iframe.src = targetUrl; 
-            layer.style.display = 'block'; 
-            panicBar.style.display = 'block'; 
-            setTimeout(function() {
-                iframe.focus();
-                if (iframe.contentWindow) iframe.contentWindow.focus();
-            }, 200);
-        }
-
-        // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
-        function forceReturnToHome() {
-            layer.style.display = 'none'; 
-            panicBar.style.display = 'none'; 
-            gameZone.style.display = "none"; // 重新隐藏游戏列表
-            calcWrapper.style.display = "block"; // 强行拉回计算器
-            iframe.src = ''; 
-            clearCalc();
-            window.focus(); 
-        }
-
-        // 键盘按键与后门解锁双重监听
-        document.addEventListener('keydown', function(event) {
-            // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
-            if (event.key === 'Escape') {
-                if (layer.style.display === 'block' || gameZone.style.display === "block") {
-                    forceReturnToHome();
-                }
-            }
-            
-            // 允许你上课直接用电脑键盘敲数字快速解锁
-            if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
-                inputSequence += event.key;
-                if (inputSequence.includes("12345")) {
-                    unlockSecretZone();
-                }
-            }
-        });
-    </script>
-
+      }
+    });
+  </script>
 </body>
 </html>
