@@ -5,7 +5,6 @@ export default async function handler(req, res) {
 
   let body = req.body;
 
-  // 处理 sendBeacon 发送的格式
   if (typeof body === 'string') {
     try {
       body = JSON.parse(body);
@@ -15,7 +14,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const { title, body: issueBody } = body || {};
+  const { title, body: issueBody, type = 'log' } = body || {};
 
   if (!title || !issueBody) {
     console.error('Missing title or body:', { title, issueBody });
@@ -28,6 +27,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    const labels = ['User-Log'];
+
+    if (type === 'comment') labels.push('comment');
+    else if (type === 'message') labels.push('message');
+    else if (type === 'error') labels.push('error');
+
     const response = await fetch('https://api.github.com/repos/aiden12910-12910/the-website/issues', {
       method: 'POST',
       headers: {
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         title,
         body: issueBody,
-        labels: ['User-Log']
+        labels
       })
     });
 
