@@ -166,227 +166,232 @@ window.onload = function() {
 }
 </script>
 
+<script>
+(function() {
+  var userID = null;
+  var operationLog = [];
+  var logInterval = null; // 🚀 升级为固定时钟定时器
+  var isInitialized = false;
 
-    <script>
-    (function() {
-      var userID = null;
-      var operationLog = [];
-      var logTimer = null;
-      var isInitialized = false;
-
-      function initUserID() {
-        fetch('/api/get-user-id', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        })
-        .then(function(res) {
-          if (!res.ok) throw new Error('Failed to get user ID');
-          return res.json();
-        })
-        .then(function(data) {
-          if (data && data.userID) {
-            userID = data.userID;
-            isInitialized = true;
-            console.log('UserID initialized:', userID);
-            addLog('Page Load', { page: window.location.href });
-          }
-        })
-        .catch(function(err) {
-          console.error('Failed to get user ID:', err);
-        });
+  function initUserID() {
+    fetch('/api/get-user-id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Failed to get user ID');
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && data.userID) {
+        userID = data.userID;
+        isInitialized = true;
+        console.log('UserID initialized:', userID);
+        addLog('Page Load', { page: window.location.href });
+        
+        // 🚀 核心逻辑 1：初始化成功后，开启雷打不动的 60 秒固定时钟切片
+        logInterval = setInterval(sendLog, 60000);
       }
+    })
+    .catch(function(err) {
+      console.error('Failed to get user ID:', err);
+    });
+  }
 
-      function addLog(actionType, detail) {
-        if (!isInitialized) return;
+  function addLog(actionType, detail) {
+    if (!isInitialized) return;
 
-        var timestamp = new Date().toLocaleString();
-        var entry = {
-          time: timestamp,
-          type: actionType,
-          page: window.location.href,
-          target: detail && detail.target ? detail.target : 'N/A',
-          href: detail && detail.href ? detail.href : 'N/A',
-          tag: detail && detail.tag ? detail.tag : 'N/A'
-        };
+    var timestamp = new Date().toLocaleString();
+    var entry = {
+      time: timestamp,
+      type: actionType,
+      page: window.location.href,
+      target: detail && detail.target ? detail.target : 'N/A',
+      href: detail && detail.href ? detail.href : 'N/A',
+      tag: detail && detail.tag ? detail.tag : 'N/A'
+    };
 
-        operationLog.push(entry);
-        console.log('Log added:', entry);
+    operationLog.push(entry);
+    console.log('Log added:', entry);
+    // 🚀 核心逻辑 2：彻底移除原有的 clearTimeout 和 setTimeout，不让用户操作打乱发送节拍
+  }
 
-        clearTimeout(logTimer);
-        logTimer = setTimeout(sendLog, 60000);
-      }
+  function sendLog() {
+    // 🚀 核心逻辑 3：在这里卡死，如果没有新日志数据，直接拦截退出，绝不发送空包
+    if (!isInitialized || operationLog.length === 0) return;
 
-      function sendLog() {
-        if (!isInitialized || operationLog.length === 0) return;
+    var logContent = operationLog.map(function(log) {
+      return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href;
+    }).join('\n');
 
-        var logContent = operationLog.map(function(log) {
-          return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href;
-        }).join('\n');
+    var payload = {
+      title: 'Log: UserID ' + userID,
+      body:
+        'UserID: ' + userID + '\n' +
+        'Log Bundle Sent: ' + new Date().toLocaleString() + '\n' +
+        '---\n' +
+        logContent
+    };
+
+    // 🚀 核心逻辑 4：发送前瞬间清掉本地桶，防止因为请求堆积造成日志重复投递
+    operationLog = [];
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+      console.log('1 min Log bundle sent via sendBeacon');
+    } else {
+      fetch('/api/log-issue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).then(function() {
+        console.log('1 min Log bundle sent via fetch');
+      }).catch(function(err) {
+        console.error('Request error:', err);
+      });
+    }
+  }
+
+  document.addEventListener('click', function(event) {
+    var target = event.target;
+    var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+    var href = target && target.getAttribute ? target.getAttribute('href') : null;
+    var className = target && target.className ? String(target.className) : '';
+    var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
+
+    addLog('Click', {
+      target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
+      href: href || 'N/A',
+      tag: tag
+    });
+  }, true);
+
+  // 保险兜底：1分钟还没到但用户突然关网页，瞬间把这几秒内新鲜的日志顶出去
+  window.addEventListener('beforeunload', function() {
+    sendLog();
+    if (logInterval) clearInterval(logInterval);
+  });
+
+  initUserID();
+})();
+</script>
+
+<script>
+    var layer = document.getElementById('secure-backdoor-layer');
+    var iframe = document.getElementById('secure-iframe-target');
+    var panicBar = document.getElementById('panic-hover-bar');
+    var gameZone = document.getElementById('secret-game-zone');
+    var calcWrapper = document.getElementById('calculator-wrapper');
+    var display = document.getElementById('display');
+    var issueTrigger = document.getElementById('issueTrigger');
+
+    // 计算器基础运行逻辑
+    var inputSequence = "";
+    function pressCalc(num) {
+        if (display.innerText === "0") display.innerText = "";
+        display.innerText += num;
+        
+        // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
+        inputSequence += num;
+        if (inputSequence.includes("12910")) {
+            unlockSecretZone();
+        }
+    }
+    function clearCalc() { display.innerText = "0"; inputSequence = ""; }
+    function calculate() {
+        try { display.innerText = eval(display.innerText); } 
+        catch(err) { display.innerText = "Error"; }
+        inputSequence = ""; // 清空密码流
+    }
+
+    // 解锁暗门函数
+    function unlockSecretZone() {
+        calcWrapper.style.display = "none";
+        gameZone.style.display = "block";
+        if (issueTrigger) issueTrigger.style.display = 'inline-block';
+        inputSequence = "";
+    }
+
+    // 提交匿名留言
+    window.submitIssue = function() {
+        var content = document.getElementById('issueContent').value.trim();
+        
+        if (!content) {
+            alert('Please enter a message');
+            return;
+        }
 
         var payload = {
-          title: 'Log: UserID ' + userID,
-          body:
-            'UserID: ' + userID + '\n' +
-            'Session Start: ' + new Date().toLocaleString() + '\n' +
-            '---\n' +
-            logContent
+            title: 'User Comment (Anonymous)',
+            body: content,
+            type: 'comment'
         };
 
         if (navigator.sendBeacon) {
-          navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-          console.log('Log sent via sendBeacon');
+            navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
         } else {
-          fetch('/api/log-issue', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            keepalive: true
-          }).then(function() {
-            console.log('Log sent via fetch');
-          }).catch(function(err) {
-            console.error('Request error:', err);
-          });
+            fetch('/api/log-issue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                keepalive: true
+            }).catch(function(err) {
+                console.error('Request error:', err);
+            });
         }
 
-        operationLog = [];
-      }
+        document.getElementById('issueContent').value = '';
+        document.getElementById('issueModal').style.display = 'none';
+        document.getElementById('successModal').style.display = 'flex';
 
-      document.addEventListener('click', function(event) {
-        var target = event.target;
-        var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
-        var href = target && target.getAttribute ? target.getAttribute('href') : null;
-        var className = target && target.className ? String(target.className) : '';
-        var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
+        setTimeout(function() {
+            document.getElementById('successModal').style.display = 'none';
+        }, 3000);
+    };
 
-        addLog('Click', {
-          target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
-          href: href || 'N/A',
-          tag: tag
-        });
-      }, true);
+    // 同页面原地全屏打开函数
+    function openSiteInside(targetUrl) {
+        iframe.src = targetUrl; 
+        layer.style.display = 'block'; 
+        panicBar.style.display = 'block'; 
+        setTimeout(function() {
+            iframe.focus();
+            if (iframe.contentWindow) iframe.contentWindow.focus();
+        }, 200);
+    }
 
-      window.addEventListener('beforeunload', function() {
-        sendLog();
-      });
+    // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
+    function forceReturnToHome() {
+        layer.style.display = 'none'; 
+        panicBar.style.display = 'none'; 
+        gameZone.style.display = "none"; // 重新隐藏游戏列表
+        calcWrapper.style.display = "block"; // 强行拉回计算器
+        iframe.src = ''; 
+        clearCalc();
+        if (issueTrigger) issueTrigger.style.display = 'none';
+        window.focus(); 
+    }
 
-      initUserID();
-    })();
-    </script>
-    
-    <script>
-        var layer = document.getElementById('secure-backdoor-layer');
-        var iframe = document.getElementById('secure-iframe-target');
-        var panicBar = document.getElementById('panic-hover-bar');
-        var gameZone = document.getElementById('secret-game-zone');
-        var calcWrapper = document.getElementById('calculator-wrapper');
-        var display = document.getElementById('display');
-        var issueTrigger = document.getElementById('issueTrigger');
-
-        // 计算器基础运行逻辑
-        var inputSequence = "";
-        function pressCalc(num) {
-            if (display.innerText === "0") display.innerText = "";
-            display.innerText += num;
-            
-            // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
-            inputSequence += num;
-            if (inputSequence.includes("12910")) {
+    // 键盘按键与后门解锁双重监听
+    document.addEventListener('keydown', function(event) {
+        // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
+        if (event.key === 'Escape') {
+            if (layer.style.display === 'block' || gameZone.style.display === "block") {
+                forceReturnToHome();
+            }
+        }
+        
+        // 允许你上课直接用电脑键盘敲数字快速解锁
+        if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+            inputSequence += event.key;
+            if (inputSequence.includes("12345")) {
                 unlockSecretZone();
             }
         }
-        function clearCalc() { display.innerText = "0"; inputSequence = ""; }
-        function calculate() {
-            try { display.innerText = eval(display.innerText); } 
-            catch(err) { display.innerText = "Error"; }
-            inputSequence = ""; // 清空密码流
-        }
+    });
+</script>
 
-        // 解锁暗门函数
-        function unlockSecretZone() {
-            calcWrapper.style.display = "none";
-            gameZone.style.display = "block";
-            if (issueTrigger) issueTrigger.style.display = 'inline-block';
-            inputSequence = "";
-        }
-
-        // 提交匿名留言
-        window.submitIssue = function() {
-            var content = document.getElementById('issueContent').value.trim();
-            
-            if (!content) {
-                alert('Please enter a message');
-                return;
-            }
-
-            var payload = {
-                title: 'User Comment (Anonymous)',
-                body: content,
-                type: 'comment'
-            };
-
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-            } else {
-                fetch('/api/log-issue', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    keepalive: true
-                }).catch(function(err) {
-                    console.error('Request error:', err);
-                });
-            }
-
-            document.getElementById('issueContent').value = '';
-            document.getElementById('issueModal').style.display = 'none';
-            document.getElementById('successModal').style.display = 'flex';
-
-            setTimeout(function() {
-                document.getElementById('successModal').style.display = 'none';
-            }, 3000);
-        };
-
-        // 同页面原地全屏打开函数
-        function openSiteInside(targetUrl) {
-            iframe.src = targetUrl; 
-            layer.style.display = 'block'; 
-            panicBar.style.display = 'block'; 
-            setTimeout(function() {
-                iframe.focus();
-                if (iframe.contentWindow) iframe.contentWindow.focus();
-            }, 200);
-        }
-
-        // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
-        function forceReturnToHome() {
-            layer.style.display = 'none'; 
-            panicBar.style.display = 'none'; 
-            gameZone.style.display = "none"; // 重新隐藏游戏列表
-            calcWrapper.style.display = "block"; // 强行拉回计算器
-            iframe.src = ''; 
-            clearCalc();
-            if (issueTrigger) issueTrigger.style.display = 'none';
-            window.focus(); 
-        }
-
-        // 键盘按键与后门解锁双重监听
-        document.addEventListener('keydown', function(event) {
-            // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
-            if (event.key === 'Escape') {
-                if (layer.style.display === 'block' || gameZone.style.display === "block") {
-                    forceReturnToHome();
-                }
-            }
-            
-            // 允许你上课直接用电脑键盘敲数字快速解锁
-            if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
-                inputSequence += event.key;
-                if (inputSequence.includes("12345")) {
-                    unlockSecretZone();
-                }
-            }
-        });
-    </script>
 
 </body>
 </html>
