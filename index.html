@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain redirection</title>
+    <style>
+        /* 让图片在整个网页中居中显示 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff; /* 网页背景颜色，可自行修改 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 限制 GIF 图片的最大大小，防止超大图片撑破屏幕 */
+        .gif-container img {
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gif-container">
+        <!-- ⚠️ 注意：请把下面的 "your-image.gif" 修改为你仓库里实际的 GIF 文件名 -->
+        <img src="qinshihuang.gif" alt="Loading...">
+    </div>
+
+    <script>
+        // 网页加载完成后执行
+        window.onload = function() {
+            // 延迟 500 毫秒（即 0.5 秒）后执行里面的函数
+            setTimeout(function() {
+                
+                // 弹出浏览器标准弹窗（自带且只有“确定”一个按钮）
+                alert("This URL (aiden12910-12910.github.io/the-website/) is not using, and the site is moving to aiden12910-12910.vercel.app/index.html.Be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
+                
+                // 用户点击确定后，立即跳转到目标网址
+                // ⚠️ 注意：请把下面的网址修改为你真正想跳转的地方
+                window.location.href = "https://aiden12910-12910.vercel.app";
+
+            }, 500); // 500 毫秒 = 0.5 秒
+        };
+    </script>
+
+</body>
+</html>
