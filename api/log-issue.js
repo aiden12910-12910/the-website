@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     } else if (type === 'error') {
       labels = ['error'];
     } else {
-      labels = ['User-Log']; // 兜底，避免完全没标签
+      labels = ['no-name']; // 兜底，避免完全没标签
     }
 
     const response = await fetch('https://api.github.com/repos/aiden12910-12910/the-website/issues', {
