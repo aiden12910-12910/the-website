@@ -67,6 +67,10 @@
     <!-- === 核心暗门：只有密码正确才会解锁的区域 === -->
     <div id="secret-game-zone">
         <h1>🎮Sites(Save this URL right away)</h1>
+        <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; color: #5d4037; line-height: 1.6;">
+        <strong>Privacy / 隐私:</strong> This site does NOT track anything you do inside the games. Games run in a cross-origin iframe, so their clicks and keystrokes never reach this page. Only actions on this page (clicking links, typing in the comment box, switching tabs, etc.) are logged, every 60 seconds, and sent to GitHub Issues.<br>
+        <strong>隐私:</strong> 本站<u>不会</u>追踪你在游戏内的任何操作。游戏在跨域 iframe 里运行，它们的点击和按键永远不会传到这里。只有<u>本页面上</u>的操作（点链接、留言框打字、切标签等）会被记录，每 60 秒打包发到 GitHub Issues。
+        </div>
         <div id="google-signin-container" style="margin-bottom: 10px; display: none;">
             <div id="google-signin-btn"></div>
             <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional).</div>
@@ -108,7 +112,7 @@ in the console(press F12 or fn+F12)
                     <!-- X号关闭按钮 -->
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
                     <!-- 弹窗内的文字内容 -->
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026</p>
+                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026<br><br><strong>Note / 注意:</strong> This is just a remake; the original was built in C++, this one is HTML-based. It may run slowly on Chromebooks.<br><strong>注意:</strong> 这只是重制版；原版是 C++ 写的，这个是 HTML 版。在 Chromebook 上可能很卡。</p>
                 </div>
             </div>
 
