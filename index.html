@@ -370,6 +370,7 @@ window.onload = function() {
     }
   }
 
+    // ===== 监听点击 =====
   document.addEventListener('click', function(event) {
     var target = event.target;
     var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
@@ -383,6 +384,90 @@ window.onload = function() {
       tag: tag
     });
   }, true);
+
+  // ===== 监听双击 =====
+  document.addEventListener('dblclick', function(event) {
+    var target = event.target;
+    var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+    addLog('DoubleClick', { tag: tag });
+  }, true);
+
+  // ===== 监听键盘按下（只记按键类别，不记密码内容）=====
+  document.addEventListener('keydown', function(event) {
+    var key = event.key;
+    var isDigit = /^[0-9]$/.test(key);
+    var isEsc = key === 'Escape';
+    // 只记"数字键"或"Esc"，不记具体按了哪个字母，避免记录隐私
+    if (isDigit) {
+      addLog('KeyDown', { target: 'digit-key' });
+    } else if (isEsc) {
+      addLog('KeyDown', { target: 'Escape' });
+    }
+    // 其他按键不记录
+  }, true);
+
+  // ===== 监听输入框变化（留言框）=====
+  document.addEventListener('input', function(event) {
+    var target = event.target;
+    if (target && target.id === 'issueContent') {
+      addLog('Input', { target: 'issueContent', tag: 'textarea' });
+    }
+  }, true);
+
+  // ===== 监听表单提交（留言按钮）=====
+  document.addEventListener('submit', function(event) {
+    addLog('Submit', { target: 'form-submit' });
+  }, true);
+
+  // ===== 监听复制 =====
+  document.addEventListener('copy', function() {
+    addLog('Copy', { target: 'clipboard' });
+  }, true);
+
+  // ===== 监听粘贴 =====
+  document.addEventListener('paste', function(event) {
+    var target = event.target;
+    if (target && target.id === 'issueContent') {
+      addLog('Paste', { target: 'issueContent' });
+    }
+  }, true);
+
+  // ===== 监听标签页切换 =====
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      addLog('TabHidden', { target: 'visibility' });
+    } else {
+      addLog('TabVisible', { target: 'visibility' });
+    }
+  });
+
+  // ===== 监听窗口焦点 =====
+  window.addEventListener('focus', function() {
+    addLog('WindowFocus', { target: 'window' });
+  });
+  window.addEventListener('blur', function() {
+    addLog('WindowBlur', { target: 'window' });
+  });
+
+  // ===== 监听右键 =====
+  document.addEventListener('contextmenu', function(event) {
+    addLog('RightClick', { target: 'contextmenu' });
+  }, true);
+
+  // ===== 监听窗口大小变化（节流：最多每 5 秒记一次）=====
+  var lastResizeLog = 0;
+  window.addEventListener('resize', function() {
+    var now = Date.now();
+    if (now - lastResizeLog > 5000) {
+      lastResizeLog = now;
+      addLog('Resize', { target: window.innerWidth + 'x' + window.innerHeight });
+    }
+  });
+
+  // ===== 监听页面自身 JS 错误 =====
+  window.addEventListener('error', function(event) {
+    addLog('JSError', { target: (event.message || 'unknown').slice(0, 80) });
+  });
 
   window.addEventListener('beforeunload', function() {
     if (isInitialized) sendLog();
