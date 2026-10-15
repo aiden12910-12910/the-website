@@ -191,8 +191,8 @@ window.onload = function() {
         console.log('UserID initialized:', userID);
         addLog('Page Load', { page: window.location.href });
         
-        // 🚀 核心逻辑 1：初始化成功后，开启雷打不动的 30 秒固定时钟切片
-        logInterval = setInterval(sendLog, 30000);
+        // 🚀 核心逻辑 1：初始化成功后，开启雷打不动的 60 秒固定时钟切片
+        logInterval = setInterval(sendLog, 60000);
       }
     })
     .catch(function(err) {
