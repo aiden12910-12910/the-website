@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         title,
-        body: issueBody,
+        body: email ? `**Reporter Email:** ${email}\n\n---\n\n${issueBody}` : issueBody,
         labels
       })
     });
