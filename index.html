@@ -7,10 +7,9 @@
     <script src="https://accounts.google.com/gsi/client" async></script>
     <style>
         /* 🎨 全新极简纯白学术风 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 40px; margin: 0; }
-        
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 20px 40px; margin: 0; }
         /* 计算器外壳样式 */
-        .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .calculator-box { max-width: 480px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: #1a202c; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
@@ -19,7 +18,12 @@
         /* 默认隐藏的游戏区域 */
         #secret-game-zone { display: none; }
         h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
-        .link-container { display: flex; flex-direction: column; gap: 12px; max-width: 600px; }
+        .link-container { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+        gap: 12px; 
+        max-width: 100%; 
+        }
         .game-link { font-size: 15px; color: #0066cc; text-decoration: none; padding: 12px 16px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
         .game-link:hover { background: #edf2f7; color: #004499; border-color: #cbd5e0; }
 
@@ -157,6 +161,9 @@
             <div id="google-signin-btn"></div>
             <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional).</div>
         </div>
+        <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
+        <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode</button>
+        </div>
         <div class="link-container">
             <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise" page, or you can press the Esc key twice (the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view). Some websites may open in a new tab because they reject requests to load within the existing page.</small></a>
             <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is only one URL-the Vercel page—the current website.</small></a>
@@ -235,17 +242,11 @@
 
    <script>
 window.onload = function() {
-    // 1. 检测 URL 中是否包含 github
     if (window.location.href.includes('github')) {
-        
-        // 2. 使用 confirm（确认框）代替 alert
-        // confirm 会强制浏览器暂停，并返回用户的点击结果（true 或 false）
         var userConfirmed = confirm("This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
-        // 3. 只有当用户真正点击了“确定”，才会执行跳转逻辑
         if (userConfirmed) {
-            window.location.replace('https://aiden12910-12910.vercel.app/index.html'); // 在这里替换你想跳转的网址
+            window.location.replace('https://aiden12910-12910.vercel.app/index.html');
         } else {
-            // 如果用户点取消，可以留在这个页面，或者强制再次弹窗
             alert('您取消了跳转，将留在当前页面。');
         }
     }
@@ -364,6 +365,7 @@ window.onload = function() {
       }, 100);
     }
   };
+
   function triggerGoogleLogin() {
     var container = document.getElementById('google-signin-container');
     if (container) container.style.display = 'block';
@@ -389,7 +391,7 @@ window.onload = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
 
-        if (cachedID && !isSessionExpired()) {
+    if (cachedID && !isSessionExpired()) {
       userID = cachedID;
       userEmail = cachedEmail;
       window.currentUserEmail = cachedEmail;
@@ -647,7 +649,7 @@ window.onload = function() {
         }, 3000);
     };
 
-        function openSiteInside(targetUrl) {
+    function openSiteInside(targetUrl) {
         iframe.src = targetUrl;
         layer.style.display = 'block';
         panicBar.style.display = 'block';
@@ -684,7 +686,8 @@ window.onload = function() {
             }
         }
     });
-        // ===== 开发者模式 =====
+
+    // ===== 开发者模式 =====
     var DEV_ALLOWED_EMAILS = ['aidenliu2026@gmail.com'];
     var devUrlHistory = [];
 
@@ -742,9 +745,40 @@ window.onload = function() {
         if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
             var panel = document.getElementById('dev-panel');
             if (panel) panel.style.display = 'block';
+
+            var toggleContainer = document.getElementById('dev-toggle-container');
+            if (toggleContainer) toggleContainer.style.display = 'block';
+
             console.log('Dev mode enabled for', email);
         }
     };
+
+    window.toggleDevPanel = function() {
+        var panel = document.getElementById('dev-panel');
+        if (!panel) return;
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+        }
+    };
+
+    // ===== 页面加载时立即检查 Dev Mode（不依赖解锁）=====
+    (function() {
+        try {
+            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
+            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+                window.currentUserEmail = cachedEmail;
+
+                var toggleContainer = document.getElementById('dev-toggle-container');
+                if (toggleContainer) toggleContainer.style.display = 'block';
+
+                console.log('Dev mode auto-enabled on page load for', cachedEmail);
+            }
+        } catch (e) {
+            console.warn('Dev mode check failed:', e);
+        }
+    })();
 </script>
 <!-- 开发者面板 -->
 <div id="dev-panel">
