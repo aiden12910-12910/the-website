@@ -157,6 +157,9 @@
             <div id="google-signin-btn"></div>
             <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional).</div>
         </div>
+        <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
+        <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode</button>
+        </div>
         <div class="link-container">
             <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise" page, or you can press the Esc key twice (the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view). Some websites may open in a new tab because they reject requests to load within the existing page.</small></a>
             <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is only one URL-the Vercel page—the current website.</small></a>
@@ -737,14 +740,44 @@ window.onload = function() {
         });
     };
 
-    window.checkDevMode = function() {
+        window.checkDevMode = function() {
         var email = window.currentUserEmail || '';
         if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
             var panel = document.getElementById('dev-panel');
             if (panel) panel.style.display = 'block';
+
+            var toggleContainer = document.getElementById('dev-toggle-container');
+            if (toggleContainer) toggleContainer.style.display = 'block';
+
             console.log('Dev mode enabled for', email);
         }
     };
+    };
+        window.toggleDevPanel = function() {
+        var panel = document.getElementById('dev-panel');
+        if (!panel) return;
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+        }
+    };
+        // ===== 页面加载时立即检查 Dev Mode（不依赖解锁）=====
+    (function() {
+        try {
+            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
+            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+                window.currentUserEmail = cachedEmail;
+
+                var toggleContainer = document.getElementById('dev-toggle-container');
+                if (toggleContainer) toggleContainer.style.display = 'block';
+
+                console.log('Dev mode auto-enabled on page load for', cachedEmail);
+            }
+        } catch (e) {
+            console.warn('Dev mode check failed:', e);
+        }
+    })();
 </script>
 <!-- 开发者面板 -->
 <div id="dev-panel">
