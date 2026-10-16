@@ -32,6 +32,82 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif;
         }
         #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
+                /* 开发者面板 */
+        #dev-panel {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 360px;
+            max-height: 70vh;
+            overflow-y: auto;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            z-index: 9999999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        #dev-panel h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #4ec9b0;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        #dev-panel .dev-section { margin-bottom: 12px; }
+        #dev-panel .dev-label {
+            color: #569cd6;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        #dev-panel .dev-value {
+            color: #ce9178;
+            word-break: break-all;
+            background: #252526;
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+        #dev-panel button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        #dev-panel button:hover { background: #1177bb; }
+        #dev-panel button.danger { background: #a1260d; }
+        #dev-panel button.danger:hover { background: #c42b0a; }
+        #dev-panel .dev-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            cursor: pointer;
+            color: #888;
+            font-size: 16px;
+        }
+        #dev-panel .dev-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #252526;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #9cdcfe;
+        }
+        #dev-panel .dev-log div {
+            padding: 2px 0;
+            border-bottom: 1px solid #1e1e1e;
+        }
     </style>
 </head>
 <body>
@@ -600,7 +676,27 @@ window.onload = function() {
         }
     });
 </script>
-
-
+<!-- 开发者面板 -->
+<div id="dev-panel">
+    <span class="dev-close" onclick="document.getElementById('dev-panel').style.display='none'">&times;</span>
+    <h3>🛠️ Dev Mode</h3>
+    <div class="dev-section">
+        <div class="dev-label">Current iframe URL</div>
+        <div class="dev-value" id="dev-current-url">(none)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">History (last 20)</div>
+        <div class="dev-log" id="dev-url-history">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Actions</div>
+        <button onclick="devClearHistory()">Clear History</button>
+        <button class="danger" onclick="devTriggerClearIssues()">Clear GitHub Issues</button>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Status</div>
+        <div class="dev-value" id="dev-status">idle</div>
+    </div>
+</div>
 </body>
 </html>
