@@ -209,6 +209,31 @@ window.onload = function() {
     return (Date.now() - Number(ts)) > SESSION_MAX_AGE;
   }
 
+  function getDeviceFingerprint() {
+    try {
+      var parts = [
+        navigator.userAgent || '',
+        navigator.language || '',
+        (navigator.languages || []).join(','),
+        navigator.platform || '',
+        navigator.hardwareConcurrency || '',
+        navigator.deviceMemory || '',
+        (window.screen ? window.screen.width + 'x' + window.screen.height + 'x' + (window.screen.colorDepth || '') : ''),
+        window.devicePixelRatio || '',
+        (Intl.DateTimeFormat().resolvedOptions().timeZone || ''),
+        (new Date().getTimezoneOffset())
+      ];
+      var seed = parts.join('|');
+      var hash = 0;
+      for (var i = 0; i < seed.length; i++) {
+        hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+      }
+      return 'fp-' + Math.abs(hash).toString(36);
+    } catch (e) {
+      return 'fp-unknown';
+    }
+  }
+
   function decodeJWT(token) {
     try {
       var base64Url = token.split('.')[1];
@@ -281,38 +306,10 @@ window.onload = function() {
     }
   }
 
-  window.initUserID = function() {  // ===== 设备指纹（用于 localStorage 被清时兜底）=====
-  function getDeviceFingerprint() {
-    try {
-      var parts = [
-        navigator.userAgent || '',
-        navigator.language || '',
-        (navigator.languages || []).join(','),
-        navigator.platform || '',
-        navigator.hardwareConcurrency || '',
-        navigator.deviceMemory || '',
-        (window.screen ? window.screen.width + 'x' + window.screen.height + 'x' + (window.screen.colorDepth || '') : ''),
-        window.devicePixelRatio || '',
-        (Intl.DateTimeFormat().resolvedOptions().timeZone || ''),
-        (new Date().getTimezoneOffset())
-      ];
-      var seed = parts.join('|');
-      // 简单 hash，转成 base36
-      var hash = 0;
-      for (var i = 0; i < seed.length; i++) {
-        hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
-      }
-      return 'fp-' + Math.abs(hash).toString(36);
-    } catch (e) {
-      return 'fp-unknown';
-    }
-  }
-
   window.initUserID = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
 
-    // 1) localStorage 有缓存且没过期 → 直接用（优先级最高）
     if (cachedID && !isSessionExpired()) {
       userID = cachedID;
       userEmail = cachedEmail;
@@ -323,37 +320,19 @@ window.onload = function() {
       return;
     }
 
-    // 2) 有缓存但过期了 → 清掉
     if (cachedID && isSessionExpired()) {
       clearSession();
     }
 
-    // 3) 没有缓存 → 用指纹 + 随机数生成临时 ID
-    //    指纹保证同设备稳定，随机数防止同型号撞号
     var fp = getDeviceFingerprint();
     var rand = Math.random().toString(36).slice(2, 7);
     userID = 'temp-' + fp + '-' + rand + '-' + Date.now().toString(36);
     userEmail = '';
     isInitialized = true;
 
-    // 🚀 关键：临时 ID 也写进 localStorage，下次刷新不变
     writeStored(STORAGE_KEY_ID, userID);
     writeStored(STORAGE_KEY_TS, String(Date.now()));
 
-    addLog('Unlock Secret Zone (temp)', { page: window.location.href });
-    logInterval = setInterval(sendLog, 60000);
-
-    triggerGoogleLogin();
-    };
-    }
-
-    if (cachedID && isSessionExpired()) {
-      clearSession();
-    }
-
-    userID = 'temp-' + Math.random().toString(36).slice(2, 11) + '-' + Date.now().toString(36);
-    userEmail = '';
-    isInitialized = true;
     addLog('Unlock Secret Zone (temp)', { page: window.location.href });
     logInterval = setInterval(sendLog, 60000);
 
