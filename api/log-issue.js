@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const { title, body: issueBody, type = 'log' } = body || {};
+  const { title, body: issueBody, type = 'log', email = '' } = body || {};
 
   if (!title || !issueBody) {
     console.error('Missing title or body:', { title, issueBody });
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         title,
-        body: issueBody,
+        body: email ? `**Reporter Email:** ${email}\n\n---\n\n${issueBody}` : issueBody,
         labels
       })
     });
