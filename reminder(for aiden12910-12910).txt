@@ -1,0 +1,18 @@
+https://console.cloud.google.com/apis/credentials?project=aiden-website-511722&supportedpurview=project
+^That is the link for google OAuth 2.0 ID
+
+⚠️ About OAuth 2.0 / 关于 OAuth 2.0
+
+This site uses Google Identity Services (OAuth 2.0) for optional sign-in.
+Your Google password is NEVER seen by this site — Google handles the login
+and only returns your email and a unique ID.
+
+You can revoke access anytime at:
+https://myaccount.google.com/permissions
+
+本站使用 Google Identity Services（OAuth 2.0）提供可选的登录功能。
+本站永远看不到你的 Google 密码 —— 登录由 Google 处理，
+只返回你的邮箱和一个唯一 ID。
+
+你可以随时在以下地址撤销授权：
+https://myaccount.google.com/permissions
