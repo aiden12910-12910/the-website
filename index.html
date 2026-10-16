@@ -191,29 +191,29 @@ window.onload = function() {
   var logInterval = null;
   var isInitialized = false;
 
-  var STORAGE_KEY_ID = 'site_user_id_v1';
-  var STORAGE_KEY_EMAIL = 'site_user_email_v1';
-  var STORAGE_KEY_TS = 'site_login_ts_v1';
-  var SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 天
-
-  function readStored(key) {
-    try { return window.localStorage.getItem(key) || ''; } catch (e) { return ''; }
-  }
-  function writeStored(key, val) {
-    try { window.localStorage.setItem(key, val); } catch (e) {}
-  }
-  function removeStored(key) {
-    try { window.localStorage.removeItem(key); } catch (e) {}
-  }
-  function clearSession() {
-    removeStored(STORAGE_KEY_ID);
-    removeStored(STORAGE_KEY_EMAIL);
-    removeStored(STORAGE_KEY_TS);
-  }
-  function isSessionExpired() {
-    var ts = readStored(STORAGE_KEY_TS);
-    if (!ts) return true;
-    return (Date.now() - Number(ts)) > SESSION_MAX_AGE;
+  function initUserID() {
+    fetch('/api/get-user-id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Failed to get user ID');
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && data.userID) {
+        userID = data.userID;
+        isInitialized = true;
+        console.log('UserID initialized:', userID);
+        addLog('Page Load', { page: window.location.href });
+        
+        // 🚀 核心逻辑 1：初始化成功后，开启雷打不动的 30 秒固定时钟切片
+        logInterval = setInterval(sendLog, 30000);
+      }
+    })
+    .catch(function(err) {
+      console.error('Failed to get user ID:', err);
+    });
   }
 
   function decodeJWT(token) {
@@ -497,7 +497,7 @@ window.onload = function() {
         
         // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
         inputSequence += num;
-        if (inputSequence.includes("12345")) {
+        if (inputSequence.includes("12910")) {
             unlockSecretZone();
         }
     }
