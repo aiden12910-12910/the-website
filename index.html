@@ -191,29 +191,29 @@ window.onload = function() {
   var logInterval = null;
   var isInitialized = false;
 
-  function initUserID() {
-    fetch('/api/get-user-id', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(function(res) {
-      if (!res.ok) throw new Error('Failed to get user ID');
-      return res.json();
-    })
-    .then(function(data) {
-      if (data && data.userID) {
-        userID = data.userID;
-        isInitialized = true;
-        console.log('UserID initialized:', userID);
-        addLog('Page Load', { page: window.location.href });
-        
-        // 🚀 核心逻辑 1：初始化成功后，开启雷打不动的 30 秒固定时钟切片
-        logInterval = setInterval(sendLog, 30000);
-      }
-    })
-    .catch(function(err) {
-      console.error('Failed to get user ID:', err);
-    });
+  var STORAGE_KEY_ID = 'site_user_id_v1';
+  var STORAGE_KEY_EMAIL = 'site_user_email_v1';
+  var STORAGE_KEY_TS = 'site_login_ts_v1';
+  var SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+  function readStored(key) {
+    try { return window.localStorage.getItem(key) || ''; } catch (e) { return ''; }
+  }
+  function writeStored(key, val) {
+    try { window.localStorage.setItem(key, val); } catch (e) {}
+  }
+  function removeStored(key) {
+    try { window.localStorage.removeItem(key); } catch (e) {}
+  }
+  function clearSession() {
+    removeStored(STORAGE_KEY_ID);
+    removeStored(STORAGE_KEY_EMAIL);
+    removeStored(STORAGE_KEY_TS);
+  }
+  function isSessionExpired() {
+    var ts = readStored(STORAGE_KEY_TS);
+    if (!ts) return true;
+    return (Date.now() - Number(ts)) > SESSION_MAX_AGE;
   }
 
   function decodeJWT(token) {
@@ -273,7 +273,7 @@ window.onload = function() {
 
     if (window.google && window.google.accounts) {
       window.google.accounts.id.initialize({
-        client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com', // ← 换成你真实的
+        client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
         callback: window.handleGoogleCredential,
         prompt: 'select_account'
       });
@@ -374,7 +374,6 @@ window.onload = function() {
     }
   }
 
-    // ===== 监听点击 =====
   document.addEventListener('click', function(event) {
     var target = event.target;
     var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
@@ -389,28 +388,23 @@ window.onload = function() {
     });
   }, true);
 
-  // ===== 监听双击 =====
   document.addEventListener('dblclick', function(event) {
     var target = event.target;
     var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
     addLog('DoubleClick', { tag: tag });
   }, true);
 
-  // ===== 监听键盘按下（只记按键类别，不记密码内容）=====
   document.addEventListener('keydown', function(event) {
     var key = event.key;
     var isDigit = /^[0-9]$/.test(key);
     var isEsc = key === 'Escape';
-    // 只记"数字键"或"Esc"，不记具体按了哪个字母，避免记录隐私
     if (isDigit) {
       addLog('KeyDown', { target: 'digit-key' });
     } else if (isEsc) {
       addLog('KeyDown', { target: 'Escape' });
     }
-    // 其他按键不记录
   }, true);
 
-  // ===== 监听输入框变化（留言框）=====
   document.addEventListener('input', function(event) {
     var target = event.target;
     if (target && target.id === 'issueContent') {
@@ -418,17 +412,14 @@ window.onload = function() {
     }
   }, true);
 
-  // ===== 监听表单提交（留言按钮）=====
   document.addEventListener('submit', function(event) {
     addLog('Submit', { target: 'form-submit' });
   }, true);
 
-  // ===== 监听复制 =====
   document.addEventListener('copy', function() {
     addLog('Copy', { target: 'clipboard' });
   }, true);
 
-  // ===== 监听粘贴 =====
   document.addEventListener('paste', function(event) {
     var target = event.target;
     if (target && target.id === 'issueContent') {
@@ -436,7 +427,6 @@ window.onload = function() {
     }
   }, true);
 
-  // ===== 监听标签页切换 =====
   document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
       addLog('TabHidden', { target: 'visibility' });
@@ -445,7 +435,6 @@ window.onload = function() {
     }
   });
 
-  // ===== 监听窗口焦点 =====
   window.addEventListener('focus', function() {
     addLog('WindowFocus', { target: 'window' });
   });
@@ -453,12 +442,10 @@ window.onload = function() {
     addLog('WindowBlur', { target: 'window' });
   });
 
-  // ===== 监听右键 =====
   document.addEventListener('contextmenu', function(event) {
     addLog('RightClick', { target: 'contextmenu' });
   }, true);
 
-  // ===== 监听窗口大小变化（节流：最多每 5 秒记一次）=====
   var lastResizeLog = 0;
   window.addEventListener('resize', function() {
     var now = Date.now();
@@ -468,7 +455,6 @@ window.onload = function() {
     }
   });
 
-  // ===== 监听页面自身 JS 错误 =====
   window.addEventListener('error', function(event) {
     addLog('JSError', { target: (event.message || 'unknown').slice(0, 80) });
   });
@@ -489,42 +475,38 @@ window.onload = function() {
     var display = document.getElementById('display');
     var issueTrigger = document.getElementById('issueTrigger');
 
-    // 计算器基础运行逻辑
     var inputSequence = "";
     function pressCalc(num) {
         if (display.innerText === "0") display.innerText = "";
         display.innerText += num;
-        
-        // 🚨 核心黑科技：密码监听。这里会暗中记录你敲击的数字
-        inputSequence += num;
-        if (inputSequence.includes("12910")) {
+
+        inputSequence = (inputSequence + num).slice(-10);
+        if (inputSequence.includes("12345")) {
             unlockSecretZone();
         }
     }
     function clearCalc() { display.innerText = "0"; inputSequence = ""; }
     function calculate() {
-        try { display.innerText = eval(display.innerText); } 
+        try { display.innerText = eval(display.innerText); }
         catch(err) { display.innerText = "Error"; }
-        inputSequence = ""; // 清空密码流
+        inputSequence = "";
     }
 
-       function unlockSecretZone() {
+    function unlockSecretZone() {
         calcWrapper.style.display = "none";
         gameZone.style.display = "block";
         if (issueTrigger) issueTrigger.style.display = 'inline-block';
         inputSequence = "";
 
-        // 🚀 首次解锁才启动追踪 + Google 登录
         if (!window.trackingStarted) {
             window.trackingStarted = true;
             if (window.initUserID) window.initUserID();
         }
     }
 
-    // 提交匿名留言
     window.submitIssue = function() {
         var content = document.getElementById('issueContent').value.trim();
-        
+
         if (!content) {
             alert('Please enter a message');
             return;
@@ -558,41 +540,36 @@ window.onload = function() {
         }, 3000);
     };
 
-    // 同页面原地全屏打开函数
     function openSiteInside(targetUrl) {
-        iframe.src = targetUrl; 
-        layer.style.display = 'block'; 
-        panicBar.style.display = 'block'; 
+        iframe.src = targetUrl;
+        layer.style.display = 'block';
+        panicBar.style.display = 'block';
         setTimeout(function() {
             iframe.focus();
             if (iframe.contentWindow) iframe.contentWindow.focus();
         }, 200);
     }
 
-    // 强行跳回函数：这次会直接重新锁死，回到计算器界面！
     function forceReturnToHome() {
-        layer.style.display = 'none'; 
-        panicBar.style.display = 'none'; 
-        gameZone.style.display = "none"; // 重新隐藏游戏列表
-        calcWrapper.style.display = "block"; // 强行拉回计算器
-        iframe.src = ''; 
+        layer.style.display = 'none';
+        panicBar.style.display = 'none';
+        gameZone.style.display = "none";
+        calcWrapper.style.display = "block";
+        iframe.src = '';
         clearCalc();
         if (issueTrigger) issueTrigger.style.display = 'none';
-        window.focus(); 
+        window.focus();
     }
 
-    // 键盘按键与后门解锁双重监听
     document.addEventListener('keydown', function(event) {
-        // 老师走过来时：只要按键盘左上角 Esc 键，直接拉下窗帘，秒变回纯白计算器！
         if (event.key === 'Escape') {
             if (layer.style.display === 'block' || gameZone.style.display === "block") {
                 forceReturnToHome();
             }
         }
-        
-        // 允许你上课直接用电脑键盘敲数字快速解锁
+
         if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
-            inputSequence += event.key;
+            inputSequence = (inputSequence + event.key).slice(-10);
             if (inputSequence.includes("12345")) {
                 unlockSecretZone();
             }
