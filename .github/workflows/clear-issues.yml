@@ -5,8 +5,6 @@ on:
     - cron: '0 0 * * *'   # 每天午夜 00:00 运行一次
     - cron: '0 12 * * *'  # 每天中午 12:00 运行一次
   workflow_dispatch:
-  repository_dispatch:
-    types: [clear-issues]
 
 jobs:
   clear-issues:
