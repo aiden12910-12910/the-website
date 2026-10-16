@@ -358,9 +358,12 @@ window.onload = function() {
 
       var container = document.getElementById('google-signin-container');
       if (container) container.style.display = 'none';
+
+      setTimeout(function() {
+        if (window.checkDevMode) window.checkDevMode();
+      }, 100);
     }
   };
-
   function triggerGoogleLogin() {
     var container = document.getElementById('google-signin-container');
     if (container) container.style.display = 'block';
@@ -386,13 +389,17 @@ window.onload = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
 
-    if (cachedID && !isSessionExpired()) {
+        if (cachedID && !isSessionExpired()) {
       userID = cachedID;
       userEmail = cachedEmail;
       window.currentUserEmail = cachedEmail;
       isInitialized = true;
       addLog('Page Load (cached)', { page: window.location.href });
       logInterval = setInterval(sendLog, 60000);
+
+      setTimeout(function() {
+        if (window.checkDevMode) window.checkDevMode();
+      }, 100);
       return;
     }
 
@@ -640,7 +647,7 @@ window.onload = function() {
         }, 3000);
     };
 
-    function openSiteInside(targetUrl) {
+        function openSiteInside(targetUrl) {
         iframe.src = targetUrl;
         layer.style.display = 'block';
         panicBar.style.display = 'block';
@@ -648,6 +655,8 @@ window.onload = function() {
             iframe.focus();
             if (iframe.contentWindow) iframe.contentWindow.focus();
         }, 200);
+
+        if (window.devRecordUrl) window.devRecordUrl(targetUrl);
     }
 
     function forceReturnToHome() {
@@ -675,6 +684,67 @@ window.onload = function() {
             }
         }
     });
+        // ===== 开发者模式 =====
+    var DEV_ALLOWED_EMAILS = ['aidenliu2026@gmail.com'];
+    var devUrlHistory = [];
+
+    window.devRecordUrl = function(url) {
+        if (!url) return;
+        var entry = new Date().toLocaleTimeString() + ' — ' + url;
+        devUrlHistory.unshift(entry);
+        if (devUrlHistory.length > 20) devUrlHistory.pop();
+
+        var currentEl = document.getElementById('dev-current-url');
+        if (currentEl) currentEl.textContent = url;
+
+        var historyEl = document.getElementById('dev-url-history');
+        if (historyEl) {
+            historyEl.innerHTML = devUrlHistory.map(function(e) {
+                return '<div>' + e + '</div>';
+            }).join('');
+        }
+    };
+
+    window.devClearHistory = function() {
+        devUrlHistory = [];
+        var c = document.getElementById('dev-current-url');
+        if (c) c.textContent = '(none)';
+        var h = document.getElementById('dev-url-history');
+        if (h) h.innerHTML = '(empty)';
+    };
+
+    window.devTriggerClearIssues = function() {
+        var statusEl = document.getElementById('dev-status');
+        if (statusEl) statusEl.textContent = 'triggering...';
+
+        fetch('/api/trigger-clear-issues', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: window.currentUserEmail || '' })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (statusEl) {
+                if (data.ok) {
+                    statusEl.textContent = '✓ triggered at ' + new Date().toLocaleTimeString();
+                } else {
+                    statusEl.textContent = '✗ ' + (data.error || 'unknown error');
+                }
+            }
+        })
+        .catch(function(err) {
+            if (statusEl) statusEl.textContent = '✗ ' + err.message;
+        });
+    };
+
+    window.checkDevMode = function() {
+        var email = window.currentUserEmail || '';
+        if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
+            var panel = document.getElementById('dev-panel');
+            if (panel) panel.style.display = 'block';
+            console.log('Dev mode enabled for', email);
+        }
+    };
 </script>
 <!-- 开发者面板 -->
 <div id="dev-panel">
