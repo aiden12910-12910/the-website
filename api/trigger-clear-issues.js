@@ -11,33 +11,40 @@ export default async function handler(req, res) {
   }
 
   const { email = '' } = body || {};
-
-  // 白名单：只有这些邮箱才能触发
-  const ALLOWED_EMAILS = [
-    'aidenliu2026@gmail.com'
-  ];
-
-  if (!email || !ALLOWED_EMAILS.includes(email)) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+  const normalized = String(email).trim().toLowerCase();
 
   const token = process.env.MY_GITHUB_TOKEN;
   if (!token) {
     return res.status(500).json({ error: 'Token not configured' });
   }
 
+  const REPO = 'aiden12910-12910/the-website';
+  const FILE_PATH = 'api/allowed-emails.json';
+  const API_BASE = 'https://api.github.com';
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
   try {
-    const response = await fetch('https://api.github.com/repos/aiden12910-12910/the-website/dispatches', {
+    const getRes = await fetch(`${API_BASE}/repos/${REPO}/contents/${FILE_PATH}`, { headers });
+    if (!getRes.ok) {
+      return res.status(500).json({ error: 'Failed to read allowed-emails.json' });
+    }
+    const fileData = await getRes.json();
+    const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf-8'));
+    const developers = (content.developers || []).map(e => e.toLowerCase());
+
+    if (!normalized || !developers.includes(normalized)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const response = await fetch(`${API_BASE}/repos/${REPO}/dispatches`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        event_type: 'clear-issues'
-      })
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_type: 'clear-issues' })
     });
 
     if (!response.ok) {
