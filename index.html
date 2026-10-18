@@ -289,4 +289,405 @@ window.onload = function() {
     };
     operationLog.push(entry);
     window.devLogBufferCount = operationLog.length;
-    if (window.devRefresh
+    if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+    console.log('Log added:', entry);
+  }
+
+  function sendLog() {
+    if (!isInitialized || operationLog.length === 0) return;
+    var logContent = operationLog.map(function(log) {
+      return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | ' + log.meta;
+    }).join('\n');
+    var isTemp = userID && userID.indexOf('temp-') === 0;
+    var titlePrefix = isTemp ? '[TEMP] ' : '';
+    var payload = {
+      title: titlePrefix + 'Log: ' + (userEmail || userID),
+      body: 'UserID: ' + userID + '\n' +
+        'Email: ' + (userEmail || '(not logged in)') + '\n' +
+        'Identity Type: ' + (isTemp ? 'TEMP' : 'Google') + '\n' +
+        'Log Bundle Sent: ' + new Date().toLocaleString() + '\n' +
+        '---\n' + logContent,
+      email: userEmail || ''
+    };
+    operationLog = [];
+    window.devLogBufferCount = 0;
+    window.devLogSentCount = (window.devLogSentCount || 0) + 1;
+    if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
+      console.log('1 min Log bundle sent via sendBeacon');
+    } else {
+      fetch('/api/log-issue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).then(function() { console.log('1 min Log bundle sent via fetch'); })
+      .catch(function(err) { console.error('Request error:', err); });
+    }
+  }
+
+  window.forceSendLog = sendLog;
+  window.getLogSnapshot = function() {
+    return operationLog.slice(-10).map(function(e) { return e.time + ' | ' + e.type + ' | ' + e.target; });
+  };
+
+  document.addEventListener('click', function(event) {
+    var target = event.target;
+    var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+    var href = target && target.getAttribute ? target.getAttribute('href') : null;
+    var className = target && target.className ? String(target.className) : '';
+    var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
+    addLog('Click', { target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'), href: href || 'N/A', tag: tag });
+  }, true);
+
+  document.addEventListener('dblclick', function(event) {
+    var target = event.target;
+    var tag = target && target.tagName ? target.tagName.toLowerCase() : 'unknown';
+    addLog('DoubleClick', { tag: tag });
+  }, true);
+
+  document.addEventListener('keydown', function(event) {
+    var key = event.key;
+    if (/^[0-9]$/.test(key)) { addLog('KeyDown', { target: 'digit-key' }); }
+    else if (key === 'Escape') { addLog('KeyDown', { target: 'Escape' }); }
+  }, true);
+
+  document.addEventListener('input', function(event) {
+    var target = event.target;
+    if (target && target.id === 'issueContent') { addLog('Input', { target: 'issueContent', tag: 'textarea' }); }
+  }, true);
+
+  document.addEventListener('submit', function() { addLog('Submit', { target: 'form-submit' }); }, true);
+  document.addEventListener('copy', function() { addLog('Copy', { target: 'clipboard' }); }, true);
+  document.addEventListener('paste', function(event) {
+    var target = event.target;
+    if (target && target.id === 'issueContent') { addLog('Paste', { target: 'issueContent' }); }
+  }, true);
+  document.addEventListener('visibilitychange', function() {
+    addLog(document.hidden ? 'TabHidden' : 'TabVisible', { target: 'visibility' });
+  });
+  window.addEventListener('focus', function() { addLog('WindowFocus', { target: 'window' }); });
+  window.addEventListener('blur', function() { addLog('WindowBlur', { target: 'window' }); });
+  document.addEventListener('contextmenu', function() { addLog('RightClick', { target: 'contextmenu' }); }, true);
+
+  var lastResizeLog = 0;
+  window.addEventListener('resize', function() {
+    var now = Date.now();
+    if (now - lastResizeLog > 5000) {
+      lastResizeLog = now;
+      addLog('Resize', { target: window.innerWidth + 'x' + window.innerHeight });
+    }
+  });
+
+  window.addEventListener('error', function(event) {
+    addLog('JSError', { target: (event.message || 'unknown').slice(0, 80) });
+  });
+
+  window.addEventListener('beforeunload', function() {
+    if (isInitialized) sendLog();
+    if (logInterval) clearInterval(logInterval);
+  });
+})();
+</script>
+
+<script>
+    var layer = document.getElementById('secure-backdoor-layer');
+    var iframe = document.getElementById('secure-iframe-target');
+    var panicBar = document.getElementById('panic-hover-bar');
+    var gameZone = document.getElementById('secret-game-zone');
+    var calcWrapper = document.getElementById('calculator-wrapper');
+    var display = document.getElementById('display');
+    var issueTrigger = document.getElementById('issueTrigger');
+
+    var inputSequence = "";
+    function pressCalc(num) {
+        if (display.innerText === "0") display.innerText = "";
+        display.innerText += num;
+        inputSequence = (inputSequence + num).slice(-10);
+        if (inputSequence.includes("12345")) { unlockSecretZone(); }
+    }
+    function clearCalc() { display.innerText = "0"; inputSequence = ""; }
+    function calculate() {
+        try { display.innerText = eval(display.innerText); }
+        catch(err) { display.innerText = "Error"; }
+        inputSequence = "";
+    }
+
+    function unlockSecretZone() {
+        calcWrapper.style.display = "none";
+        gameZone.style.display = "block";
+        if (issueTrigger) issueTrigger.style.display = 'inline-block';
+        inputSequence = "";
+        if (!window.trackingStarted) {
+            window.trackingStarted = true;
+            if (window.initUserID) window.initUserID();
+        }
+    }
+
+    window.submitIssue = function() {
+        var content = document.getElementById('issueContent').value.trim();
+        if (!content) { alert('Please enter a message'); return; }
+        var payload = { title: 'User Comment (Anonymous)', body: content, type: 'comment', email: window.currentUserEmail || '' };
+        if (navigator.sendBeacon) { navigator.sendBeacon('/api/log-issue', JSON.stringify(payload)); }
+        else {
+            fetch('/api/log-issue', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload), keepalive: true
+            }).catch(function(err) { console.error('Request error:', err); });
+        }
+        document.getElementById('issueContent').value = '';
+        document.getElementById('issueModal').style.display = 'none';
+        document.getElementById('successModal').style.display = 'flex';
+        setTimeout(function() { document.getElementById('successModal').style.display = 'none'; }, 3000);
+    };
+
+    function openSiteInside(targetUrl) {
+        iframe.src = targetUrl;
+        layer.style.display = 'block';
+        panicBar.style.display = 'block';
+        setTimeout(function() {
+            iframe.focus();
+            if (iframe.contentWindow) iframe.contentWindow.focus();
+        }, 200);
+        if (window.devRecordUrl) window.devRecordUrl(targetUrl);
+    }
+
+    function forceReturnToHome() {
+        layer.style.display = 'none';
+        panicBar.style.display = 'none';
+        gameZone.style.display = "none";
+        calcWrapper.style.display = "block";
+        iframe.src = '';
+        clearCalc();
+        if (issueTrigger) issueTrigger.style.display = 'none';
+        window.focus();
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (layer.style.display === 'block' || gameZone.style.display === "block") { forceReturnToHome(); }
+        }
+        if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+            inputSequence = (inputSequence + event.key).slice(-10);
+            if (inputSequence.includes("12345")) { unlockSecretZone(); }
+        }
+    });
+
+    // ===== 开发者模式 =====
+    var DEV_ALLOWED_EMAILS = ['aidenliu2026@gmail.com'];
+    var devUrlHistory = [];
+
+    window.devRecordUrl = function(url) {
+        if (!url) return;
+        var entry = new Date().toLocaleTimeString() + ' — ' + url;
+        devUrlHistory.unshift(entry);
+        if (devUrlHistory.length > 20) devUrlHistory.pop();
+        var currentEl = document.getElementById('dev-current-url');
+        if (currentEl) currentEl.textContent = url;
+        var historyEl = document.getElementById('dev-url-history');
+        if (historyEl) {
+            historyEl.innerHTML = devUrlHistory.map(function(e) { return '<div>' + e + '</div>'; }).join('');
+        }
+    };
+
+    window.devClearHistory = function() {
+        devUrlHistory = [];
+        var c = document.getElementById('dev-current-url');
+        if (c) c.textContent = '(none)';
+        var h = document.getElementById('dev-url-history');
+        if (h) h.innerHTML = '(empty)';
+    };
+
+    window.devTriggerClearIssues = function() {
+        var statusEl = document.getElementById('dev-status');
+        if (statusEl) statusEl.textContent = 'triggering...';
+        fetch('/api/trigger-clear-issues', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: window.currentUserEmail || '' })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (statusEl) {
+                statusEl.textContent = data.ok ? ('✓ triggered at ' + new Date().toLocaleTimeString()) : ('✗ ' + (data.error || 'unknown error'));
+            }
+        })
+        .catch(function(err) {
+            if (statusEl) statusEl.textContent = '✗ ' + err.message;
+        });
+    };
+
+    window.devFlushLog = function() {
+        if (window.forceSendLog) window.forceSendLog();
+        var statusEl = document.getElementById('dev-status');
+        if (statusEl) statusEl.textContent = '✓ flushed at ' + new Date().toLocaleTimeString();
+    };
+
+    window.devClearStorage = function() {
+        if (!confirm('清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
+        try {
+            localStorage.removeItem('site_user_id_v1');
+            localStorage.removeItem('site_user_email_v1');
+            localStorage.removeItem('site_login_ts_v1');
+            window.currentUserEmail = '';
+            if (window.devRefreshIdentity) window.devRefreshIdentity();
+            var statusEl = document.getElementById('dev-status');
+            if (statusEl) statusEl.textContent = '✓ localStorage cleared (please refresh)';
+        } catch (e) {
+            var statusEl = document.getElementById('dev-status');
+            if (statusEl) statusEl.textContent = '✗ ' + e.message;
+        }
+    };
+
+    window.checkDevMode = function() {
+        var email = window.currentUserEmail || '';
+        if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
+            var panel = document.getElementById('dev-panel');
+            if (panel) panel.style.display = 'block';
+            var toggleContainer = document.getElementById('dev-toggle-container');
+            if (toggleContainer) toggleContainer.style.display = 'block';
+            if (window.devRefreshIdentity) window.devRefreshIdentity();
+            console.log('Dev mode enabled for', email);
+        }
+    };
+
+    window.toggleDevPanel = function() {
+        var panel = document.getElementById('dev-panel');
+        if (!panel) return;
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    };
+
+    window.devRefreshIdentity = function() {
+        var idEl = document.getElementById('dev-identity');
+        if (!idEl) return;
+        var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
+        var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
+        var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
+        var isTemp = id.indexOf('temp-') === 0;
+        var expireText = 'unknown';
+        if (ts && ts !== '0') {
+            var age = Date.now() - Number(ts);
+            var maxAge = 7 * 24 * 60 * 60 * 1000;
+            var remain = maxAge - age;
+            if (remain <= 0) { expireText = 'EXPIRED'; }
+            else {
+                var hours = Math.floor(remain / (60 * 60 * 1000));
+                var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
+                expireText = hours + 'h ' + mins + 'm';
+            }
+        }
+        idEl.innerHTML = '<div>ID: ' + id + '</div>' +
+            '<div>Email: ' + email + '</div>' +
+            '<div>Type: ' + (isTemp ? 'TEMP' : 'Google') + '</div>' +
+            '<div>Expires in: ' + expireText + '</div>';
+    };
+
+    window.devLogBufferCount = 0;
+    window.devLogSentCount = 0;
+
+    window.devRefreshLogBuffer = function() {
+        var el = document.getElementById('dev-logbuffer');
+        if (!el) return;
+        el.innerHTML = '<div>Buffered: ' + window.devLogBufferCount + ' entries</div>' +
+            '<div>Sent bundles: ' + window.devLogSentCount + '</div>';
+    };
+
+    window.devRefreshRecentLogs = function() {
+        var el = document.getElementById('dev-recent-logs');
+        if (!el) return;
+        var snapshot = window.getLogSnapshot ? window.getLogSnapshot() : [];
+        if (snapshot.length === 0) { el.innerHTML = '(empty)'; return; }
+        el.innerHTML = snapshot.map(function(line) { return '<div>' + line + '</div>'; }).join('');
+    };
+
+    window.devRefreshPerf = function() {
+        var el = document.getElementById('dev-perf');
+        if (!el) return;
+        var lines = [];
+        try {
+            var timing = performance.timing;
+            var loadTime = timing.loadEventEnd - timing.navigationStart;
+            if (loadTime > 0) lines.push('Page load: ' + loadTime + 'ms');
+        } catch (e) {}
+        try {
+            if (performance.memory) {
+                var usedMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                var totalMB = Math.round(performance.memory.totalJSHeapSize / 1024 / 1024);
+                lines.push('JS heap: ' + usedMB + ' / ' + totalMB + ' MB');
+            }
+        } catch (e) {}
+        lines.push('Viewport: ' + window.innerWidth + 'x' + window.innerHeight);
+        el.innerHTML = lines.map(function(l) { return '<div>' + l + '</div>'; }).join('');
+    };
+
+    setInterval(function() {
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
+        if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+        if (window.devRefreshRecentLogs) window.devRefreshRecentLogs();
+        if (window.devRefreshPerf) window.devRefreshPerf();
+    }, 2000);
+
+    setTimeout(function() {
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
+        if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+        if (window.devRefreshRecentLogs) window.devRefreshRecentLogs();
+        if (window.devRefreshPerf) window.devRefreshPerf();
+    }, 500);
+
+    (function() {
+        try {
+            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
+            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+                window.currentUserEmail = cachedEmail;
+                var toggleContainer = document.getElementById('dev-toggle-container');
+                if (toggleContainer) toggleContainer.style.display = 'block';
+                if (window.devRefreshIdentity) window.devRefreshIdentity();
+                console.log('Dev mode auto-enabled on page load for', cachedEmail);
+            }
+        } catch (e) { console.warn('Dev mode check failed:', e); }
+    })();
+</script>
+
+<div id="dev-panel">
+    <span class="dev-close" onclick="document.getElementById('dev-panel').style.display='none'">&times;</span>
+    <h3>🛠️ Dev Mode</h3>
+    <div class="dev-section">
+        <div class="dev-label">Identity</div>
+        <div class="dev-value" id="dev-identity">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Current iframe URL</div>
+        <div class="dev-value" id="dev-current-url">(none)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">History (last 20)</div>
+        <div class="dev-log" id="dev-url-history">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Log Buffer</div>
+        <div class="dev-value" id="dev-logbuffer">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Recent Logs</div>
+        <div class="dev-log" id="dev-recent-logs">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Performance</div>
+        <div class="dev-value" id="dev-perf">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Actions</div>
+        <button onclick="devClearHistory()">Clear History</button>
+        <button onclick="devFlushLog()">Flush Log Now</button>
+        <button class="danger" onclick="devTriggerClearIssues()">Clear GitHub Issues</button>
+        <button class="danger" onclick="devClearStorage()">Clear localStorage</button>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Status</div>
+        <div class="dev-value" id="dev-status">idle</div>
+    </div>
+</div>
+
+</body>
+</html>
