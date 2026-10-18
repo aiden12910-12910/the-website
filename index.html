@@ -233,6 +233,8 @@ window.onload = function() {
       sendLog();
       var container = document.getElementById('google-signin-container');
       if (container) container.style.display = 'none';
+      var manualContainer = document.getElementById('manual-login-container');
+      if (manualContainer) manualContainer.style.display = 'none';
       setTimeout(function() {
         if (window.checkDevMode) window.checkDevMode();
         if (window.devRefreshIdentity) window.devRefreshIdentity();
@@ -240,7 +242,7 @@ window.onload = function() {
     }
   };
 
-  window.manualLogin = function() {
+window.manualLogin = function() {
     var input = document.getElementById('manual-email-input');
     var statusEl = document.getElementById('manual-login-status');
     if (!input || !statusEl) return;
@@ -251,6 +253,59 @@ window.onload = function() {
       statusEl.style.color = '#a1260d';
       return;
     }
+
+    statusEl.textContent = 'checking...';
+    statusEl.style.color = '#718096';
+
+    fetch('/api/check-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.ok) {
+        statusEl.textContent = '✗ ' + (data.error || 'not allowed');
+        statusEl.style.color = '#a1260d';
+        return;
+      }
+
+      var isDev = data.role === 'developer';
+      userID = (isDev ? 'dev-' : 'm-') + 'manual-' + Math.random().toString(36).slice(2, 9);
+      userEmail = email;
+      window.currentUserEmail = email;
+      window.currentUserRole = data.role;
+
+      // 🚀 关键：手动登录不写 localStorage，刷新即掉线
+      // writeStored(STORAGE_KEY_ID, userID);        // ← 删掉
+      // writeStored(STORAGE_KEY_EMAIL, email);      // ← 删掉
+      // writeStored(STORAGE_KEY_TS, String(Date.now())); // ← 删掉
+
+      console.log('Manual login success (session only):', userID, email, 'role:', data.role);
+      addLog('Manual Login', { target: email, tag: data.role });
+      sendLog();
+
+      statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
+      statusEl.style.color = '#2e7d32';
+
+      // 🚀 隐藏手动登录框和 Google 按钮
+      var googleContainer = document.getElementById('google-signin-container');
+      if (googleContainer) googleContainer.style.display = 'none';
+      var manualContainer = document.getElementById('manual-login-container');
+      if (manualContainer) manualContainer.style.display = 'none';
+
+      if (isDev) {
+        setTimeout(function() {
+          if (window.checkDevMode) window.checkDevMode();
+          if (window.devRefreshIdentity) window.devRefreshIdentity();
+        }, 100);
+      }
+    })
+    .catch(function(err) {
+      statusEl.textContent = '✗ ' + err.message;
+      statusEl.style.color = '#a1260d';
+    });
+  };
 
     statusEl.textContent = 'checking...';
     statusEl.style.color = '#718096';
@@ -643,10 +698,17 @@ window.onload = function() {
         var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
         var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
         var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
+
+        // 🚀 优先显示当前会话的身份（手动登录时 localStorage 里没有）
+        if (window.currentUserEmail && !email) {
+            email = window.currentUserEmail + ' (session only)';
+        }
+
         var isTemp = id.indexOf('temp-') === 0;
         var isDev = id.indexOf('dev-') === 0;
         var isManual = id.indexOf('m-') === 0;
-        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'));
+        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : (window.currentUserRole === 'developer' ? 'DEV (session)' : 'Google')));
+        // ... 其余不变
         var expireText = 'unknown';
         if (ts && ts !== '0') {
             var age = Date.now() - Number(ts);
@@ -717,39 +779,31 @@ window.onload = function() {
         if (window.devRefreshPerf) window.devRefreshPerf();
     }, 500);
 
+        // ===== 页面加载时检查 Dev Mode（只认 Google 登录和 DEV_ALLOWED_EMAILS）=====
     (function() {
         try {
             var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
             var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
             if (!cachedEmail || !cachedID) return;
 
-            if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
+            // 🚀 只处理 Google 登录（g-xxx），手动登录（dev-/m-）不持久化，不会出现在这里
+            if (cachedID.indexOf('g-') === 0) {
                 window.currentUserEmail = cachedEmail;
-                window.currentUserRole = cachedID.indexOf('dev-') === 0 ? 'developer' : 'user';
+                window.currentUserRole = 'google';
 
-                var input = document.getElementById('manual-email-input');
-                var statusEl = document.getElementById('manual-login-status');
-                if (input) input.value = cachedEmail;
-                if (statusEl) {
-                    statusEl.textContent = '✓ signed in as ' + cachedEmail + ' (' + window.currentUserRole + ')';
-                    statusEl.style.color = '#2e7d32';
-                }
-
+                // 隐藏 Google 按钮和手动登录框
                 var googleContainer = document.getElementById('google-signin-container');
                 if (googleContainer) googleContainer.style.display = 'none';
+                var manualContainer = document.getElementById('manual-login-container');
+                if (manualContainer) manualContainer.style.display = 'none';
 
-                if (window.currentUserRole === 'developer') {
+                // 如果邮箱在白名单里，开 Dev Mode
+                if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
                     var toggleContainer = document.getElementById('dev-toggle-container');
                     if (toggleContainer) toggleContainer.style.display = 'block';
                     if (window.devRefreshIdentity) window.devRefreshIdentity();
-                    console.log('Dev mode auto-enabled for manual developer:', cachedEmail);
+                    console.log('Dev mode auto-enabled for Google login:', cachedEmail);
                 }
-            } else if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
-                window.currentUserEmail = cachedEmail;
-                var toggleContainer = document.getElementById('dev-toggle-container');
-                if (toggleContainer) toggleContainer.style.display = 'block';
-                if (window.devRefreshIdentity) window.devRefreshIdentity();
-                console.log('Dev mode auto-enabled on page load for', cachedEmail);
             }
         } catch (e) {
             console.warn('Dev mode check failed:', e);
