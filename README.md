@@ -41,6 +41,21 @@ if (logContent.length > 60000) {
 }
 -->
 
+## Manual Login / 手动登录
+
+You can sign in manually by entering any email (no password required).
+输入任意邮箱即可手动登录（不需要密码）。
+
+- If your email is in `api/allowed-emails.json` → `developers`, you get **Dev Mode**.
+- 如果邮箱在 `api/allowed-emails.json` 的 `developers` 里 → 获得 **Dev Mode**。
+- If it's in `users`, you're a normal user.
+- 如果在 `users` 里 → 普通用户。
+- If it's in neither, it will be **automatically added to `users`**.
+- 如果都不在，会**自动加到 `users`**。
+
+⚠️ **Security note:** Manual login has no password. Anyone can enter `aidenliu2026@gmail.com` and see Dev Mode, but sensitive actions (like clearing issues) are still verified on the backend.
+⚠️ **安全说明：** 手动登录没有密码。任何人都能输入 `aidenliu2026@gmail.com` 看到 Dev Mode，但敏感操作（比如清理 Issue）仍然由后端验证。
+
 Other notes / 其他说明
 I removed Dino because it couldn't be opened via hyperlinks.
 移除 Dino，因为无法通过超链接打开。
