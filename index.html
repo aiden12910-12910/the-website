@@ -231,8 +231,8 @@ window.onload = function() {
       console.log('Google login success:', userID, email);
       addLog('Google Login', { target: email });
       sendLog();
-      var container = document.getElementById('google-signin-container');
-      if (container) container.style.display = 'none';
+      var googleContainer = document.getElementById('google-signin-container');
+      if (googleContainer) googleContainer.style.display = 'none';
       var manualContainer = document.getElementById('manual-login-container');
       if (manualContainer) manualContainer.style.display = 'none';
       setTimeout(function() {
@@ -242,7 +242,7 @@ window.onload = function() {
     }
   };
 
-window.manualLogin = function() {
+  window.manualLogin = function() {
     var input = document.getElementById('manual-email-input');
     var statusEl = document.getElementById('manual-login-status');
     if (!input || !statusEl) return;
@@ -276,11 +276,7 @@ window.manualLogin = function() {
       window.currentUserEmail = email;
       window.currentUserRole = data.role;
 
-      // 🚀 关键：手动登录不写 localStorage，刷新即掉线
-      // writeStored(STORAGE_KEY_ID, userID);        // ← 删掉
-      // writeStored(STORAGE_KEY_EMAIL, email);      // ← 删掉
-      // writeStored(STORAGE_KEY_TS, String(Date.now())); // ← 删掉
-
+      // 手动登录不写 localStorage，刷新即掉线
       console.log('Manual login success (session only):', userID, email, 'role:', data.role);
       addLog('Manual Login', { target: email, tag: data.role });
       sendLog();
@@ -288,60 +284,10 @@ window.manualLogin = function() {
       statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
       statusEl.style.color = '#2e7d32';
 
-      // 🚀 隐藏手动登录框和 Google 按钮
       var googleContainer = document.getElementById('google-signin-container');
       if (googleContainer) googleContainer.style.display = 'none';
       var manualContainer = document.getElementById('manual-login-container');
       if (manualContainer) manualContainer.style.display = 'none';
-
-      if (isDev) {
-        setTimeout(function() {
-          if (window.checkDevMode) window.checkDevMode();
-          if (window.devRefreshIdentity) window.devRefreshIdentity();
-        }, 100);
-      }
-    })
-    .catch(function(err) {
-      statusEl.textContent = '✗ ' + err.message;
-      statusEl.style.color = '#a1260d';
-    });
-  };
-
-    statusEl.textContent = 'checking...';
-    statusEl.style.color = '#718096';
-
-    fetch('/api/check-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      if (!data.ok) {
-        statusEl.textContent = '✗ ' + (data.error || 'not allowed');
-        statusEl.style.color = '#a1260d';
-        return;
-      }
-
-      var isDev = data.role === 'developer';
-      userID = (isDev ? 'dev-' : 'm-') + 'manual-' + Math.random().toString(36).slice(2, 9);
-      userEmail = email;
-      window.currentUserEmail = email;
-      window.currentUserRole = data.role;
-
-      writeStored(STORAGE_KEY_ID, userID);
-      writeStored(STORAGE_KEY_EMAIL, email);
-      writeStored(STORAGE_KEY_TS, String(Date.now()));
-
-      console.log('Manual login success:', userID, email, 'role:', data.role);
-      addLog('Manual Login', { target: email, tag: data.role });
-      sendLog();
-
-      statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
-      statusEl.style.color = '#2e7d32';
-
-      var googleContainer = document.getElementById('google-signin-container');
-      if (googleContainer) googleContainer.style.display = 'none';
 
       if (isDev) {
         setTimeout(function() {
@@ -380,9 +326,7 @@ window.manualLogin = function() {
       userID = cachedID;
       userEmail = cachedEmail;
       window.currentUserEmail = cachedEmail;
-      if (cachedID.indexOf('dev-') === 0) window.currentUserRole = 'developer';
-      else if (cachedID.indexOf('m-') === 0) window.currentUserRole = 'user';
-      else if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
+      if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
       isInitialized = true;
       addLog('Page Load (cached)', { page: window.location.href });
       logInterval = setInterval(sendLog, 60000);
