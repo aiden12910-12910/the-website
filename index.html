@@ -231,10 +231,7 @@ window.onload = function() {
       console.log('Google login success:', userID, email);
       addLog('Google Login', { target: email });
       sendLog();
-      var googleContainer = document.getElementById('google-signin-container');
-      if (googleContainer) googleContainer.style.display = 'none';
-      var manualContainer = document.getElementById('manual-login-container');
-      if (manualContainer) manualContainer.style.display = 'none';
+      if (window.hideLoginUI) window.hideLoginUI();
       setTimeout(function() {
         if (window.checkDevMode) window.checkDevMode();
         if (window.devRefreshIdentity) window.devRefreshIdentity();
@@ -284,10 +281,7 @@ window.onload = function() {
       statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
       statusEl.style.color = '#2e7d32';
 
-      var googleContainer = document.getElementById('google-signin-container');
-      if (googleContainer) googleContainer.style.display = 'none';
-      var manualContainer = document.getElementById('manual-login-container');
-      if (manualContainer) manualContainer.style.display = 'none';
+      if (window.hideLoginUI) window.hideLoginUI();
 
       if (isDev) {
         setTimeout(function() {
@@ -330,6 +324,9 @@ window.onload = function() {
       isInitialized = true;
       addLog('Page Load (cached)', { page: window.location.href });
       logInterval = setInterval(sendLog, 60000);
+
+      if (window.hideLoginUI) window.hideLoginUI();
+
       setTimeout(function() {
         if (window.checkDevMode) window.checkDevMode();
         if (window.devRefreshIdentity) window.devRefreshIdentity();
@@ -549,6 +546,14 @@ window.onload = function() {
         }
     });
 
+    // ===== 统一隐藏登录 UI（Google 按钮 + 手动登录框）=====
+    window.hideLoginUI = function() {
+        var googleContainer = document.getElementById('google-signin-container');
+        if (googleContainer) googleContainer.style.display = 'none';
+        var manualContainer = document.getElementById('manual-login-container');
+        if (manualContainer) manualContainer.style.display = 'none';
+    };
+
     // ===== 开发者模式 =====
     var DEV_ALLOWED_EMAILS = ['aidenliu2026@gmail.com'];
     var devUrlHistory = [];
@@ -642,17 +647,10 @@ window.onload = function() {
         var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
         var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
         var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
-
-        // 🚀 优先显示当前会话的身份（手动登录时 localStorage 里没有）
-        if (window.currentUserEmail && !email) {
-            email = window.currentUserEmail + ' (session only)';
-        }
-
         var isTemp = id.indexOf('temp-') === 0;
         var isDev = id.indexOf('dev-') === 0;
         var isManual = id.indexOf('m-') === 0;
-        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : (window.currentUserRole === 'developer' ? 'DEV (session)' : 'Google')));
-        // ... 其余不变
+        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'));
         var expireText = 'unknown';
         if (ts && ts !== '0') {
             var age = Date.now() - Number(ts);
@@ -723,8 +721,7 @@ window.onload = function() {
         if (window.devRefreshPerf) window.devRefreshPerf();
     }, 500);
 
-        // ===== 页面加载时检查 Dev Mode（只认 Google 登录和 DEV_ALLOWED_EMAILS）=====
-        // ===== 页面加载时检查 Dev Mode =====
+    // ===== 页面加载时检查 Dev Mode =====
     (function() {
         try {
             var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
@@ -744,15 +741,8 @@ window.onload = function() {
                 window.currentUserEmail = cachedEmail;
                 window.currentUserRole = 'google';
 
-                // 🚀 隐藏 Google 按钮
-                var googleContainer = document.getElementById('google-signin-container');
-                if (googleContainer) googleContainer.style.display = 'none';
+                if (window.hideLoginUI) window.hideLoginUI();
 
-                // 🚀 隐藏手动登录框 ← 这一行是关键
-                var manualContainer = document.getElementById('manual-login-container');
-                if (manualContainer) manualContainer.style.display = 'none';
-
-                // 如果是开发者邮箱，开 Dev Mode
                 if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
                     var toggleContainer = document.getElementById('dev-toggle-container');
                     if (toggleContainer) toggleContainer.style.display = 'block';
