@@ -725,37 +725,41 @@ window.onload = function() {
 
     // ===== 页面加载时检查 Dev Mode =====
     (function() {
-        try {
-            var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
-            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
+    try {
+        var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
+        var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
 
-            // 清理旧版手动登录残留（dev-/m- 前缀）
-            if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
-                console.log('Cleaning up legacy manual login:', cachedID);
-                localStorage.removeItem('site_user_id_v1');
-                localStorage.removeItem('site_user_email_v1');
-                localStorage.removeItem('site_login_ts_v1');
-                return;
-            }
-
-            // Google 登录（g- 前缀）
-            if (cachedID.indexOf('g-') === 0 && cachedEmail) {
-                window.currentUserEmail = cachedEmail;
-                window.currentUserRole = 'google';
-
-                if (window.hideLoginUI) window.hideLoginUI();
-
-                if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
-                    var toggleContainer = document.getElementById('dev-toggle-container');
-                    if (toggleContainer) toggleContainer.style.display = 'block';
-                    if (window.devRefreshIdentity) window.devRefreshIdentity();
-                    console.log('Dev mode auto-enabled for Google login:', cachedEmail);
-                }
-            }
-        } catch (e) {
-            console.warn('Dev mode check failed:', e);
+        // 清理旧版手动登录残留
+        if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
+            console.log('Cleaning up legacy manual login:', cachedID);
+            localStorage.removeItem('site_user_id_v1');
+            localStorage.removeItem('site_user_email_v1');
+            localStorage.removeItem('site_login_ts_v1');
+            cachedID = '';
+            cachedEmail = '';
         }
-    })();
+
+        // Google 登录（g- 前缀）
+        if (cachedID.indexOf('g-') === 0 && cachedEmail) {
+            window.currentUserEmail = cachedEmail;
+            window.currentUserRole = 'google';
+            if (window.hideLoginUI) window.hideLoginUI();
+            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+                var toggleContainer = document.getElementById('dev-toggle-container');
+                if (toggleContainer) toggleContainer.style.display = 'block';
+                if (window.devRefreshIdentity) window.devRefreshIdentity();
+                console.log('Dev mode auto-enabled for Google login:', cachedEmail);
+            }
+        } else {
+            // 🚀 未登录 → 只显示手动登录框（Google 按钮等解锁后再显示）
+            var manualContainer = document.getElementById('manual-login-container');
+            if (manualContainer) manualContainer.style.display = 'block';
+            console.log('Not logged in, showing manual login box');
+        }
+    } catch (e) {
+        console.warn('Dev mode check failed:', e);
+    }
+})();
 </script>
 
 <div id="dev-panel">
