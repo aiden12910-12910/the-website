@@ -724,24 +724,35 @@ window.onload = function() {
     }, 500);
 
         // ===== 页面加载时检查 Dev Mode（只认 Google 登录和 DEV_ALLOWED_EMAILS）=====
+        // ===== 页面加载时检查 Dev Mode =====
     (function() {
         try {
-            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
             var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
-            if (!cachedEmail || !cachedID) return;
+            var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
 
-            // 🚀 只处理 Google 登录（g-xxx），手动登录（dev-/m-）不持久化，不会出现在这里
-            if (cachedID.indexOf('g-') === 0) {
+            // 清理旧版手动登录残留（dev-/m- 前缀）
+            if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
+                console.log('Cleaning up legacy manual login:', cachedID);
+                localStorage.removeItem('site_user_id_v1');
+                localStorage.removeItem('site_user_email_v1');
+                localStorage.removeItem('site_login_ts_v1');
+                return;
+            }
+
+            // Google 登录（g- 前缀）
+            if (cachedID.indexOf('g-') === 0 && cachedEmail) {
                 window.currentUserEmail = cachedEmail;
                 window.currentUserRole = 'google';
 
-                // 隐藏 Google 按钮和手动登录框
+                // 🚀 隐藏 Google 按钮
                 var googleContainer = document.getElementById('google-signin-container');
                 if (googleContainer) googleContainer.style.display = 'none';
+
+                // 🚀 隐藏手动登录框 ← 这一行是关键
                 var manualContainer = document.getElementById('manual-login-container');
                 if (manualContainer) manualContainer.style.display = 'none';
 
-                // 如果邮箱在白名单里，开 Dev Mode
+                // 如果是开发者邮箱，开 Dev Mode
                 if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
                     var toggleContainer = document.getElementById('dev-toggle-container');
                     if (toggleContainer) toggleContainer.style.display = 'block';
