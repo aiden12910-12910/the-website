@@ -6,117 +6,37 @@
     <title>Advanced Linear Matrix & Equation Calculator 12345</title>
     <script src="https://accounts.google.com/gsi/client" async></script>
     <style>
-        /* 🎨 全新极简纯白学术风 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 20px 40px; margin: 0; }
-        /* 计算器外壳样式 */
         .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: #1a202c; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
         .calc-btn:hover { background: #edf2f7; }
-        
-        /* 默认隐藏的游戏区域 */
         #secret-game-zone { display: none; }
         h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
-        .link-container { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-        gap: 12px; 
-        max-width: 100%; 
-        }
+        .link-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; max-width: 100%; }
         .game-link { font-size: 15px; color: #0066cc; text-decoration: none; padding: 12px 16px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
         .game-link:hover { background: #edf2f7; color: #004499; border-color: #cbd5e0; }
-
-        /* 全屏游戏视窗 */
         #secure-backdoor-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; background: #000; }
         #secure-backdoor-layer iframe { width: 100%; height: 100%; border: none; }
-
-        /* 顶部隐形跑路条 */
-        #panic-hover-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif;
-        }
+        #panic-hover-bar { position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif; }
         #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
-                /* 开发者面板 */
-        #dev-panel {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 360px;
-            max-height: 70vh;
-            overflow-y: auto;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            z-index: 9999999;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-        #dev-panel h3 {
-            margin: 0 0 12px 0;
-            font-size: 14px;
-            color: #4ec9b0;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-        }
+        #dev-panel { display: none; position: fixed; bottom: 20px; right: 20px; width: 360px; max-height: 70vh; overflow-y: auto; background: #1e1e1e; color: #d4d4d4; border: 1px solid #333; border-radius: 8px; padding: 16px; font-family: 'Monaco', 'Consolas', monospace; font-size: 12px; line-height: 1.5; z-index: 9999999; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        #dev-panel h3 { margin: 0 0 12px 0; font-size: 14px; color: #4ec9b0; border-bottom: 1px solid #333; padding-bottom: 8px; }
         #dev-panel .dev-section { margin-bottom: 12px; }
-        #dev-panel .dev-label {
-            color: #569cd6;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        #dev-panel .dev-value {
-            color: #ce9178;
-            word-break: break-all;
-            background: #252526;
-            padding: 6px 8px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-        }
-        #dev-panel button {
-            background: #0e639c;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 6px;
-            margin-bottom: 6px;
-        }
+        #dev-panel .dev-label { color: #569cd6; font-weight: bold; margin-bottom: 4px; }
+        #dev-panel .dev-value { color: #ce9178; word-break: break-all; background: #252526; padding: 6px 8px; border-radius: 4px; margin-bottom: 6px; }
+        #dev-panel button { background: #0e639c; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 6px; margin-bottom: 6px; }
         #dev-panel button:hover { background: #1177bb; }
         #dev-panel button.danger { background: #a1260d; }
         #dev-panel button.danger:hover { background: #c42b0a; }
-        #dev-panel .dev-close {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            cursor: pointer;
-            color: #888;
-            font-size: 16px;
-        }
-        #dev-panel .dev-log {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #252526;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #9cdcfe;
-        }
-        #dev-panel .dev-log div {
-            padding: 2px 0;
-            border-bottom: 1px solid #1e1e1e;
-        }
+        #dev-panel .dev-close { position: absolute; top: 8px; right: 12px; cursor: pointer; color: #888; font-size: 16px; }
+        #dev-panel .dev-log { max-height: 200px; overflow-y: auto; background: #252526; padding: 8px; border-radius: 4px; font-size: 11px; color: #9cdcfe; }
+        #dev-panel .dev-log div { padding: 2px 0; border-bottom: 1px solid #1e1e1e; }
     </style>
 </head>
 <body>
 
-    <!-- === 表面伪装：可正常使用的真实计算器 === -->
     <div id="calculator-wrapper">
         <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px;">Scientific Array Solver</h2>
         <div class="calculator-box">
@@ -141,10 +61,7 @@
             </div>
         </div>
     </div>
-    
-    
 
-    <!-- === 核心暗门：只有密码正确才会解锁的区域 === -->
     <div id="secret-game-zone">
         <h1>🎮Sites(Save this URL right away.[汉化还在增加中])</h1>
         <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; color: #5d4037; line-height: 1.6;">
@@ -153,24 +70,29 @@
         </div>
         <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; color: #0d47a1; line-height: 1.6;">
         <strong>⚠️ About OAuth 2.0 / 关于 OAuth 2.0:</strong><br>
-        This site uses Google Identity Services (OAuth 2.0) for optional sign-in. <strong>Your Google password is never seen by this site</strong> — Google handles the login and only returns your email and a unique ID. You can revoke access anytime at <a href="https://myaccount.google.com/permissions" target="_blank" style="color: #0d47a1;">myaccount.google.com/permissions</a>.<br>
-        <br>
+        This site uses Google Identity Services (OAuth 2.0) for optional sign-in. <strong>Your Google password is never seen by this site</strong> — Google handles the login and only returns your email and a unique ID. You can revoke access anytime at <a href="https://myaccount.google.com/permissions" target="_blank" style="color: #0d47a1;">myaccount.google.com/permissions</a>.<br><br>
         本站使用 Google Identity Services（OAuth 2.0）提供可选的登录功能。<strong>本站永远看不到你的 Google 密码</strong> —— 登录由 Google 处理，只返回你的邮箱和一个唯一 ID。你可以随时在 <a href="https://myaccount.google.com/permissions" target="_blank" style="color: #0d47a1;">myaccount.google.com/permissions</a> 撤销授权。
         </div>
         <div id="google-signin-container" style="margin-bottom: 10px; display: none;">
             <div id="google-signin-btn"></div>
             <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional).</div>
         </div>
+        <div id="manual-login-container" style="margin-bottom: 10px; display: none;">
+            <div style="font-size: 12px; color: #718096; margin-bottom: 5px;">Or sign in manually (no password):</div>
+            <div style="display: flex; gap: 6px;">
+                <input type="email" id="manual-email-input" placeholder="your@email.com" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                <button onclick="manualLogin()" style="padding: 8px 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Sign In</button>
+            </div>
+            <div id="manual-login-status" style="font-size: 11px; color: #718096; margin-top: 4px;"></div>
+        </div>
         <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
-        <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode</button>
+            <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode</button>
         </div>
         <div class="link-container">
             <a><small>The site uses "opensiteinside" to load content within the current page; hovering the mouse over the top area reveals gray lines that can be clicked to return to the "disguise" page, or you can press the Esc key twice (the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view). Some websites may open in a new tab because they reject requests to load within the existing page.</small></a>
             <a><small>Notice:The GitHub Pages URL has been discontinued; all user can't acceces to the old URL(If you opened that URL,you will be redirect to the New URL.) after Oct.31.There is only one URL-the Vercel page—the current website.</small></a>
             <a><small>I can track what you do on this site and at what time; even though I don't know your name, I have a pseudo-UUID for your tab, but GitHub couldn't handle it, which is why I abandoned GitHub Pages in favor of Vercel. Don't even think about getting my GitHub PAT (Personal Access Token,if anyone get it,they can edit or delete my things); I'm not stupid enough to hardcode it into the HTML or JS.</small></a>
-            <a><small>The way to clear local storage data is enter<br>localStorage.removeItem('site_user_id_v1');<br>localStorage.removeItem('site_user_email_v1');<br>localStorage.removeItem('site_login_ts_v1');<br>in the console(press F12 or fn+F12)
-            </small></a>
-            
+            <a><small><strong>Sign out / 退出登录:</strong> Open the browser console (press F12 or fn+F12), paste the following lines, and press Enter:<br>localStorage.removeItem('site_user_id_v1');<br>localStorage.removeItem('site_user_email_v1');<br>localStorage.removeItem('site_login_ts_v1');<br>location.reload();<br><strong>退出登录：</strong> 打开浏览器控制台（按 F12 或 fn+F12），粘贴以下内容并回车：<br>（同上）</small></a>
             <a onclick="openSiteInside('https://aiden12910-12910.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Mine/craft Java 1.5.2(very slow on Chromebook，not recommended for use on a Chromebook; it may cause the system to freeze.)</a>
             <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link#1-Mine/craft Java 1.5.2</a>
             <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link#2-Mine/craft Java 1.5.2</a>
@@ -190,7 +112,13 @@
             <a onclick="openSiteInside('https://aiden12910-12910.github.io/geometry-dash-meltdown/')" class="game-link">￥-2-1. Geo/metry da/sh Meltdown</a>
             <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-meltdown.html')" class="game-link">￥-2-2. Geo/metry da/sh Meltdown</a>
             <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geo/metry da/sh Subzero</a>
-            <span class="game-link" cursor: pointer; text-decoration: underline; " onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</span><div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'"><div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;"><!-- X号关闭按钮 --><span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span><!-- 弹窗内的文字内容 --><p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026<br><br><strong>Note / 注意:</strong> This is just a remake; the original was built in C++, this one is HTML-based. It may run slowly on Chromebooks.<br><strong>注意:</strong> 这只是重制版；原版是 C++ 写的，这个是 HTML 版。在 Chromebook 上可能很卡。</p></div></div>
+            <span class="game-link" style="cursor: pointer; text-decoration: underline;" onclick="document.getElementById('customModal2').style.display='flex'">More Info about Geo/metry da/sh Subzero</span>
+            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
+                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">Finally found this Subzero thing,link may be change,it is deployed on Vercel because it was queue so long on Gihub Pages,I dont know why,maybe itś too large.I find this runs quite sluggishly (This has nothing to do with me.At least on a Chromebook; it might be the same on other devices—I dont know.If you know of any alternatives, please open an issue on GitHub). After all, this is just a remake; the original was built in C++, whereas this one is HTML-based.—Oct. 5 2026<br><br><strong>Note / 注意:</strong> This is just a remake; the original was built in C++, this one is HTML-based. It may run slowly on Chromebooks.<br><strong>注意:</strong> 这只是重制版；原版是 C++ 写的，这个是 HTML 版。在 Chromebook 上可能很卡。</p>
+                </div>
+            </div>
             <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geo/metry da/sh World</a>
             <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-scratch.html')" class="game-link">￥-4. Geo/metry da/sh Scratch</a>
             <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. this website in Vercel(Main Site, Latest version)</a>
@@ -199,11 +127,7 @@
             <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My repo in Vercel</a>
             <a href="https://aiden12910-12910.vercel.app/qinshihuang.gif" target="_blank" class="game-link">秦始皇骑北极熊.gif</a>
             <a href="https://aiden12910-12910.vercel.app/LICENSE.txt" target="_blank" class="game-link">LICENSE</a>
-            
-
-            <!-- begin: issue comment modal -->
             <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment</span>
-
             <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
@@ -212,17 +136,13 @@
                     <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
                 </div>
             </div>
-
             <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
                     <p style="color: #333; font-size: 16px; margin: 0;">✓ Issue submitted successfully!</p>
                     <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
                 </div>
             </div>
-            <!-- end: issue comment modal -->
-
             <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info</span>
-
             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
@@ -232,15 +152,13 @@
         </div>
     </div>
 
-    <!-- 顶部隐形跑路条 -->
     <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
 
-    <!-- 全屏隐藏游戏视窗 -->
     <div id="secure-backdoor-layer">
         <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
     </div>
 
-   <script>
+    <script>
 window.onload = function() {
     if (window.location.href.includes('github')) {
         var userConfirmed = confirm("This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
@@ -266,120 +184,130 @@ window.onload = function() {
   var STORAGE_KEY_TS = 'site_login_ts_v1';
   var SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
-  function readStored(key) {
-    try { return window.localStorage.getItem(key) || ''; } catch (e) { return ''; }
-  }
-  function writeStored(key, val) {
-    try { window.localStorage.setItem(key, val); } catch (e) {}
-  }
-  function removeStored(key) {
-    try { window.localStorage.removeItem(key); } catch (e) {}
-  }
-  function clearSession() {
-    removeStored(STORAGE_KEY_ID);
-    removeStored(STORAGE_KEY_EMAIL);
-    removeStored(STORAGE_KEY_TS);
-  }
-  function isSessionExpired() {
-    var ts = readStored(STORAGE_KEY_TS);
-    if (!ts) return true;
-    return (Date.now() - Number(ts)) > SESSION_MAX_AGE;
-  }
+  function readStored(key) { try { return window.localStorage.getItem(key) || ''; } catch (e) { return ''; } }
+  function writeStored(key, val) { try { window.localStorage.setItem(key, val); } catch (e) {} }
+  function removeStored(key) { try { window.localStorage.removeItem(key); } catch (e) {} }
+  function clearSession() { removeStored(STORAGE_KEY_ID); removeStored(STORAGE_KEY_EMAIL); removeStored(STORAGE_KEY_TS); }
+  function isSessionExpired() { var ts = readStored(STORAGE_KEY_TS); if (!ts) return true; return (Date.now() - Number(ts)) > SESSION_MAX_AGE; }
 
   function getDeviceFingerprint() {
     try {
-      var parts = [
-        navigator.userAgent || '',
-        navigator.language || '',
-        (navigator.languages || []).join(','),
-        navigator.platform || '',
-        navigator.hardwareConcurrency || '',
-        navigator.deviceMemory || '',
-        (window.screen ? window.screen.width + 'x' + window.screen.height + 'x' + (window.screen.colorDepth || '') : ''),
-        window.devicePixelRatio || '',
-        (Intl.DateTimeFormat().resolvedOptions().timeZone || ''),
-        (new Date().getTimezoneOffset())
-      ];
+      var parts = [navigator.userAgent || '', navigator.language || '', (navigator.languages || []).join(','), navigator.platform || '', navigator.hardwareConcurrency || '', navigator.deviceMemory || '', (window.screen ? window.screen.width + 'x' + window.screen.height + 'x' + (window.screen.colorDepth || '') : ''), window.devicePixelRatio || '', (Intl.DateTimeFormat().resolvedOptions().timeZone || ''), (new Date().getTimezoneOffset())];
       var seed = parts.join('|');
       var hash = 0;
-      for (var i = 0; i < seed.length; i++) {
-        hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
-      }
+      for (var i = 0; i < seed.length; i++) { hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0; }
       return 'fp-' + Math.abs(hash).toString(36);
-    } catch (e) {
-      return 'fp-unknown';
-    }
+    } catch (e) { return 'fp-unknown'; }
   }
 
   function decodeJWT(token) {
     try {
       var base64Url = token.split('.')[1];
       var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(
-        atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join('')
-      );
+      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''));
       return JSON.parse(jsonPayload);
-    } catch (e) {
-      return null;
-    }
+    } catch (e) { return null; }
   }
 
   function getDeviceMeta() {
     try {
-      return [
-        'UA=' + (navigator.userAgent || ''),
-        'Lang=' + (navigator.language || ''),
-        'TZ=' + (Intl.DateTimeFormat().resolvedOptions().timeZone || ''),
-        'Screen=' + (window.screen ? window.screen.width + 'x' + window.screen.height : ''),
-        'Platform=' + (navigator.platform || '')
-      ].join(' | ');
+      return ['UA=' + (navigator.userAgent || ''), 'Lang=' + (navigator.language || ''), 'TZ=' + (Intl.DateTimeFormat().resolvedOptions().timeZone || ''), 'Screen=' + (window.screen ? window.screen.width + 'x' + window.screen.height : ''), 'Platform=' + (navigator.platform || '')].join(' | ');
     } catch (e) { return 'meta-unavailable'; }
   }
 
   window.handleGoogleCredential = function(response) {
     var payload = decodeJWT(response.credential);
     if (!payload) { console.error('Failed to decode JWT'); return; }
-
     var googleSub = payload.sub || '';
     var email = payload.email || '';
-
     if (googleSub) {
       userID = 'g-' + googleSub;
       userEmail = email;
       window.currentUserEmail = email;
+      window.currentUserRole = 'google';
       writeStored(STORAGE_KEY_ID, userID);
       writeStored(STORAGE_KEY_EMAIL, email);
       writeStored(STORAGE_KEY_TS, String(Date.now()));
-
       console.log('Google login success:', userID, email);
       addLog('Google Login', { target: email });
       sendLog();
-
-      var container = document.getElementById('google-signin-container');
-      if (container) container.style.display = 'none';
-
+      if (window.hideLoginUI) window.hideLoginUI();
       setTimeout(function() {
         if (window.checkDevMode) window.checkDevMode();
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
       }, 100);
     }
   };
 
-  function triggerGoogleLogin() {
-    var container = document.getElementById('google-signin-container');
-    if (container) container.style.display = 'block';
+  window.manualLogin = function() {
+    var input = document.getElementById('manual-email-input');
+    var statusEl = document.getElementById('manual-login-status');
+    if (!input || !statusEl) return;
 
+    var email = (input.value || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      statusEl.textContent = '✗ invalid email format';
+      statusEl.style.color = '#a1260d';
+      return;
+    }
+
+    statusEl.textContent = 'checking...';
+    statusEl.style.color = '#718096';
+
+    fetch('/api/check-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.ok) {
+        statusEl.textContent = '✗ ' + (data.error || 'not allowed');
+        statusEl.style.color = '#a1260d';
+        return;
+      }
+
+      var isDev = data.role === 'developer';
+      userID = (isDev ? 'dev-' : 'm-') + 'manual-' + Math.random().toString(36).slice(2, 9);
+      userEmail = email;
+      window.currentUserEmail = email;
+      window.currentUserRole = data.role;
+
+      // 手动登录不写 localStorage，刷新即掉线
+      console.log('Manual login success (session only):', userID, email, 'role:', data.role);
+      addLog('Manual Login', { target: email, tag: data.role });
+      sendLog();
+
+      statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
+      statusEl.style.color = '#2e7d32';
+
+      if (window.hideLoginUI) window.hideLoginUI();
+
+      if (isDev) {
+        setTimeout(function() {
+          if (window.checkDevMode) window.checkDevMode();
+          if (window.devRefreshIdentity) window.devRefreshIdentity();
+        }, 100);
+      }
+    })
+    .catch(function(err) {
+      statusEl.textContent = '✗ ' + err.message;
+      statusEl.style.color = '#a1260d';
+    });
+  };
+
+  function triggerGoogleLogin() {
+    var googleContainer = document.getElementById('google-signin-container');
+    if (googleContainer) googleContainer.style.display = 'block';
+    var manualContainer = document.getElementById('manual-login-container');
+    if (manualContainer) manualContainer.style.display = 'block';
     if (window.google && window.google.accounts) {
       window.google.accounts.id.initialize({
         client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
         callback: window.handleGoogleCredential,
         prompt: 'select_account'
       });
-      window.google.accounts.id.renderButton(
-        document.getElementById('google-signin-btn'),
-        { theme: 'outline', size: 'large', text: 'sign_in_with' }
-      );
+      window.google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'large', text: 'sign_in_with' });
       window.google.accounts.id.prompt();
     } else {
       console.warn('Google GSI not loaded yet, retrying in 1s...');
@@ -390,82 +318,75 @@ window.onload = function() {
   window.initUserID = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
-
     if (cachedID && !isSessionExpired()) {
       userID = cachedID;
       userEmail = cachedEmail;
       window.currentUserEmail = cachedEmail;
+      if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
       isInitialized = true;
       addLog('Page Load (cached)', { page: window.location.href });
       logInterval = setInterval(sendLog, 60000);
 
+      if (window.hideLoginUI) window.hideLoginUI();
+
       setTimeout(function() {
         if (window.checkDevMode) window.checkDevMode();
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
       }, 100);
       return;
     }
-
-    if (cachedID && isSessionExpired()) {
-      clearSession();
-    }
-
+    if (cachedID && isSessionExpired()) { clearSession(); }
     var fp = getDeviceFingerprint();
     var rand = Math.random().toString(36).slice(2, 7);
     userID = 'temp-' + fp + '-' + rand + '-' + Date.now().toString(36);
     userEmail = '';
     isInitialized = true;
-
     writeStored(STORAGE_KEY_ID, userID);
     writeStored(STORAGE_KEY_TS, String(Date.now()));
-
     addLog('Unlock Secret Zone (temp)', { page: window.location.href });
     logInterval = setInterval(sendLog, 60000);
-
     triggerGoogleLogin();
   };
 
   function addLog(actionType, detail) {
     if (!isInitialized) return;
-
+    if (window.__acClicking) return;
     var timestamp = new Date().toLocaleString();
     var entry = {
-      time: timestamp,
-      type: actionType,
-      page: window.location.href,
+      time: timestamp, type: actionType, page: window.location.href,
       target: detail && detail.target ? detail.target : 'N/A',
       href: detail && detail.href ? detail.href : 'N/A',
       tag: detail && detail.tag ? detail.tag : 'N/A',
       meta: getDeviceMeta()
     };
-
     operationLog.push(entry);
+    window.devLogBufferCount = operationLog.length;
+    if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
     console.log('Log added:', entry);
   }
 
   function sendLog() {
     if (!isInitialized || operationLog.length === 0) return;
-
     var logContent = operationLog.map(function(log) {
       return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | ' + log.meta;
     }).join('\n');
-
     var isTemp = userID && userID.indexOf('temp-') === 0;
-    var titlePrefix = isTemp ? '[TEMP] ' : '';
-
+    var isDev = userID && userID.indexOf('dev-') === 0;
+    var isManual = userID && userID.indexOf('m-') === 0;
+    var titlePrefix = isTemp ? '[TEMP] ' : (isDev ? '[DEV] ' : (isManual ? '[USER] ' : ''));
     var payload = {
       title: titlePrefix + 'Log: ' + (userEmail || userID),
-      body:
-        'UserID: ' + userID + '\n' +
+      body: 'UserID: ' + userID + '\n' +
         'Email: ' + (userEmail || '(not logged in)') + '\n' +
-        'Identity Type: ' + (isTemp ? 'TEMP' : 'Google') + '\n' +
+        'Identity Type: ' + (isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'))) + '\n' +
         'Log Bundle Sent: ' + new Date().toLocaleString() + '\n' +
-        '---\n' +
-        logContent,
+        '---\n' + logContent,
       email: userEmail || ''
     };
-
     operationLog = [];
-
+    window.devLogBufferCount = 0;
+    window.devLogSentCount = (window.devLogSentCount || 0) + 1;
+    if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
       console.log('1 min Log bundle sent via sendBeacon');
@@ -475,13 +396,15 @@ window.onload = function() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         keepalive: true
-      }).then(function() {
-        console.log('1 min Log bundle sent via fetch');
-      }).catch(function(err) {
-        console.error('Request error:', err);
-      });
+      }).then(function() { console.log('1 min Log bundle sent via fetch'); })
+      .catch(function(err) { console.error('Request error:', err); });
     }
   }
+
+  window.forceSendLog = sendLog;
+  window.getLogSnapshot = function() {
+    return operationLog.slice(-10).map(function(e) { return e.time + ' | ' + e.type + ' | ' + e.target; });
+  };
 
   document.addEventListener('click', function(event) {
     var target = event.target;
@@ -489,12 +412,7 @@ window.onload = function() {
     var href = target && target.getAttribute ? target.getAttribute('href') : null;
     var className = target && target.className ? String(target.className) : '';
     var text = target && target.textContent ? target.textContent.slice(0, 50) : '';
-
-    addLog('Click', {
-      target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'),
-      href: href || 'N/A',
-      tag: tag
-    });
+    addLog('Click', { target: className || text || (target && target.outerHTML ? target.outerHTML.slice(0, 80) : 'N/A'), href: href || 'N/A', tag: tag });
   }, true);
 
   document.addEventListener('dblclick', function(event) {
@@ -505,55 +423,27 @@ window.onload = function() {
 
   document.addEventListener('keydown', function(event) {
     var key = event.key;
-    var isDigit = /^[0-9]$/.test(key);
-    var isEsc = key === 'Escape';
-    if (isDigit) {
-      addLog('KeyDown', { target: 'digit-key' });
-    } else if (isEsc) {
-      addLog('KeyDown', { target: 'Escape' });
-    }
+    if (/^[0-9]$/.test(key)) { addLog('KeyDown', { target: 'digit-key' }); }
+    else if (key === 'Escape') { addLog('KeyDown', { target: 'Escape' }); }
   }, true);
 
   document.addEventListener('input', function(event) {
     var target = event.target;
-    if (target && target.id === 'issueContent') {
-      addLog('Input', { target: 'issueContent', tag: 'textarea' });
-    }
+    if (target && target.id === 'issueContent') { addLog('Input', { target: 'issueContent', tag: 'textarea' }); }
   }, true);
 
-  document.addEventListener('submit', function(event) {
-    addLog('Submit', { target: 'form-submit' });
-  }, true);
-
-  document.addEventListener('copy', function() {
-    addLog('Copy', { target: 'clipboard' });
-  }, true);
-
+  document.addEventListener('submit', function() { addLog('Submit', { target: 'form-submit' }); }, true);
+  document.addEventListener('copy', function() { addLog('Copy', { target: 'clipboard' }); }, true);
   document.addEventListener('paste', function(event) {
     var target = event.target;
-    if (target && target.id === 'issueContent') {
-      addLog('Paste', { target: 'issueContent' });
-    }
+    if (target && target.id === 'issueContent') { addLog('Paste', { target: 'issueContent' }); }
   }, true);
-
   document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-      addLog('TabHidden', { target: 'visibility' });
-    } else {
-      addLog('TabVisible', { target: 'visibility' });
-    }
+    addLog(document.hidden ? 'TabHidden' : 'TabVisible', { target: 'visibility' });
   });
-
-  window.addEventListener('focus', function() {
-    addLog('WindowFocus', { target: 'window' });
-  });
-  window.addEventListener('blur', function() {
-    addLog('WindowBlur', { target: 'window' });
-  });
-
-  document.addEventListener('contextmenu', function(event) {
-    addLog('RightClick', { target: 'contextmenu' });
-  }, true);
+  window.addEventListener('focus', function() { addLog('WindowFocus', { target: 'window' }); });
+  window.addEventListener('blur', function() { addLog('WindowBlur', { target: 'window' }); });
+  document.addEventListener('contextmenu', function() { addLog('RightClick', { target: 'contextmenu' }); }, true);
 
   var lastResizeLog = 0;
   window.addEventListener('resize', function() {
@@ -588,11 +478,8 @@ window.onload = function() {
     function pressCalc(num) {
         if (display.innerText === "0") display.innerText = "";
         display.innerText += num;
-
         inputSequence = (inputSequence + num).slice(-10);
-        if (inputSequence.includes("12345")) {
-            unlockSecretZone();
-        }
+        if (inputSequence.includes("12345")) { unlockSecretZone(); }
     }
     function clearCalc() { display.innerText = "0"; inputSequence = ""; }
     function calculate() {
@@ -606,7 +493,6 @@ window.onload = function() {
         gameZone.style.display = "block";
         if (issueTrigger) issueTrigger.style.display = 'inline-block';
         inputSequence = "";
-
         if (!window.trackingStarted) {
             window.trackingStarted = true;
             if (window.initUserID) window.initUserID();
@@ -615,38 +501,19 @@ window.onload = function() {
 
     window.submitIssue = function() {
         var content = document.getElementById('issueContent').value.trim();
-
-        if (!content) {
-            alert('Please enter a message');
-            return;
-        }
-
-        var payload = {
-            title: 'User Comment (Anonymous)',
-            body: content,
-            type: 'comment',
-            email: window.currentUserEmail || ''
-        };
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon('/api/log-issue', JSON.stringify(payload));
-        } else {
+        if (!content) { alert('Please enter a message'); return; }
+        var payload = { title: 'User Comment (Anonymous)', body: content, type: 'comment', email: window.currentUserEmail || '' };
+        if (navigator.sendBeacon) { navigator.sendBeacon('/api/log-issue', JSON.stringify(payload)); }
+        else {
             fetch('/api/log-issue', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                keepalive: true
-            }).catch(function(err) {
-                console.error('Request error:', err);
-            });
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload), keepalive: true
+            }).catch(function(err) { console.error('Request error:', err); });
         }
-
         document.getElementById('issueContent').value = '';
         document.getElementById('issueModal').style.display = 'none';
         document.getElementById('successModal').style.display = 'flex';
-
-        setTimeout(function() {
-            document.getElementById('successModal').style.display = 'none';
-        }, 3000);
+        setTimeout(function() { document.getElementById('successModal').style.display = 'none'; }, 3000);
     };
 
     function openSiteInside(targetUrl) {
@@ -657,7 +524,6 @@ window.onload = function() {
             iframe.focus();
             if (iframe.contentWindow) iframe.contentWindow.focus();
         }, 200);
-
         if (window.devRecordUrl) window.devRecordUrl(targetUrl);
     }
 
@@ -674,18 +540,21 @@ window.onload = function() {
 
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
-            if (layer.style.display === 'block' || gameZone.style.display === "block") {
-                forceReturnToHome();
-            }
+            if (layer.style.display === 'block' || gameZone.style.display === "block") { forceReturnToHome(); }
         }
-
         if (["0","1","2","3","4","5","6","7","8","9"].includes(event.key)) {
             inputSequence = (inputSequence + event.key).slice(-10);
-            if (inputSequence.includes("12345")) {
-                unlockSecretZone();
-            }
+            if (inputSequence.includes("12345")) { unlockSecretZone(); }
         }
     });
+
+    // ===== 统一隐藏登录 UI（Google 按钮 + 手动登录框）=====
+    window.hideLoginUI = function() {
+        var googleContainer = document.getElementById('google-signin-container');
+        if (googleContainer) googleContainer.style.display = 'none';
+        var manualContainer = document.getElementById('manual-login-container');
+        if (manualContainer) manualContainer.style.display = 'none';
+    };
 
     // ===== 开发者模式 =====
     var DEV_ALLOWED_EMAILS = ['aidenliu2026@gmail.com'];
@@ -696,15 +565,11 @@ window.onload = function() {
         var entry = new Date().toLocaleTimeString() + ' — ' + url;
         devUrlHistory.unshift(entry);
         if (devUrlHistory.length > 20) devUrlHistory.pop();
-
         var currentEl = document.getElementById('dev-current-url');
         if (currentEl) currentEl.textContent = url;
-
         var historyEl = document.getElementById('dev-url-history');
         if (historyEl) {
-            historyEl.innerHTML = devUrlHistory.map(function(e) {
-                return '<div>' + e + '</div>';
-            }).join('');
+            historyEl.innerHTML = devUrlHistory.map(function(e) { return '<div>' + e + '</div>'; }).join('');
         }
     };
 
@@ -719,7 +584,6 @@ window.onload = function() {
     window.devTriggerClearIssues = function() {
         var statusEl = document.getElementById('dev-status');
         if (statusEl) statusEl.textContent = 'triggering...';
-
         fetch('/api/trigger-clear-issues', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -728,11 +592,7 @@ window.onload = function() {
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (statusEl) {
-                if (data.ok) {
-                    statusEl.textContent = '✓ triggered at ' + new Date().toLocaleTimeString();
-                } else {
-                    statusEl.textContent = '✗ ' + (data.error || 'unknown error');
-                }
+                statusEl.textContent = data.ok ? ('✓ triggered at ' + new Date().toLocaleTimeString()) : ('✗ ' + (data.error || 'unknown error'));
             }
         })
         .catch(function(err) {
@@ -740,50 +600,171 @@ window.onload = function() {
         });
     };
 
+    window.devFlushLog = function() {
+        if (window.forceSendLog) window.forceSendLog();
+        var statusEl = document.getElementById('dev-status');
+        if (statusEl) statusEl.textContent = '✓ flushed at ' + new Date().toLocaleTimeString();
+    };
+
+    window.devClearStorage = function() {
+        if (!confirm('清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
+        try {
+            localStorage.removeItem('site_user_id_v1');
+            localStorage.removeItem('site_user_email_v1');
+            localStorage.removeItem('site_login_ts_v1');
+            window.currentUserEmail = '';
+            window.currentUserRole = '';
+            if (window.devRefreshIdentity) window.devRefreshIdentity();
+            var statusEl = document.getElementById('dev-status');
+            if (statusEl) statusEl.textContent = '✓ localStorage cleared (please refresh)';
+        } catch (e) {
+            var statusEl = document.getElementById('dev-status');
+            if (statusEl) statusEl.textContent = '✗ ' + e.message;
+        }
+    };
+
     window.checkDevMode = function() {
         var email = window.currentUserEmail || '';
-        if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
+        var role = window.currentUserRole || 'user';
+        var isDev = (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) || (role === 'developer');
+        if (isDev) {
             var panel = document.getElementById('dev-panel');
             if (panel) panel.style.display = 'block';
-
             var toggleContainer = document.getElementById('dev-toggle-container');
             if (toggleContainer) toggleContainer.style.display = 'block';
-
-            console.log('Dev mode enabled for', email);
+            if (window.devRefreshIdentity) window.devRefreshIdentity();
+            console.log('Dev mode enabled for', email, 'role:', role);
         }
     };
 
     window.toggleDevPanel = function() {
         var panel = document.getElementById('dev-panel');
         if (!panel) return;
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-        } else {
-            panel.style.display = 'block';
-        }
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
     };
 
-    // ===== 页面加载时立即检查 Dev Mode（不依赖解锁）=====
+    window.devRefreshIdentity = function() {
+        var idEl = document.getElementById('dev-identity');
+        if (!idEl) return;
+        var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
+        var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
+        var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
+        var isTemp = id.indexOf('temp-') === 0;
+        var isDev = id.indexOf('dev-') === 0;
+        var currentRole = window.currentUserRole || '';
+        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (currentRole === 'user' ? 'USER (session)' : (currentRole === 'developer' ? 'DEV (session)' : 'Google')));
+        var expireText = 'unknown';
+        if (ts && ts !== '0') {
+            var age = Date.now() - Number(ts);
+            var maxAge = 7 * 24 * 60 * 60 * 1000;
+            var remain = maxAge - age;
+            if (remain <= 0) { expireText = 'EXPIRED'; }
+            else {
+                var hours = Math.floor(remain / (60 * 60 * 1000));
+                var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
+                expireText = hours + 'h ' + mins + 'm';
+            }
+        }
+        idEl.innerHTML = '<div>ID: ' + id + '</div>' +
+            '<div>Email: ' + email + '</div>' +
+            '<div>Type: ' + typeText + '</div>' +
+            '<div>Expires in: ' + expireText + '</div>';
+    };
+
+    window.devLogBufferCount = 0;
+    window.devLogSentCount = 0;
+
+    window.devRefreshLogBuffer = function() {
+        var el = document.getElementById('dev-logbuffer');
+        if (!el) return;
+        el.innerHTML = '<div>Buffered: ' + window.devLogBufferCount + ' entries</div>' +
+            '<div>Sent bundles: ' + window.devLogSentCount + '</div>';
+    };
+
+    window.devRefreshRecentLogs = function() {
+        var el = document.getElementById('dev-recent-logs');
+        if (!el) return;
+        var snapshot = window.getLogSnapshot ? window.getLogSnapshot() : [];
+        if (snapshot.length === 0) { el.innerHTML = '(empty)'; return; }
+        el.innerHTML = snapshot.map(function(line) { return '<div>' + line + '</div>'; }).join('');
+    };
+
+    window.devRefreshPerf = function() {
+        var el = document.getElementById('dev-perf');
+        if (!el) return;
+        var lines = [];
+        try {
+            var timing = performance.timing;
+            var loadTime = timing.loadEventEnd - timing.navigationStart;
+            if (loadTime > 0) lines.push('Page load: ' + loadTime + 'ms');
+        } catch (e) {}
+        try {
+            if (performance.memory) {
+                var usedMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                var totalMB = Math.round(performance.memory.totalJSHeapSize / 1024 / 1024);
+                lines.push('JS heap: ' + usedMB + ' / ' + totalMB + ' MB');
+            }
+        } catch (e) {}
+        lines.push('Viewport: ' + window.innerWidth + 'x' + window.innerHeight);
+        el.innerHTML = lines.map(function(l) { return '<div>' + l + '</div>'; }).join('');
+    };
+
+    setInterval(function() {
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
+        if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+        if (window.devRefreshRecentLogs) window.devRefreshRecentLogs();
+        if (window.devRefreshPerf) window.devRefreshPerf();
+    }, 2000);
+
+    setTimeout(function() {
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
+        if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
+        if (window.devRefreshRecentLogs) window.devRefreshRecentLogs();
+        if (window.devRefreshPerf) window.devRefreshPerf();
+    }, 500);
+
+    // ===== 页面加载时检查 Dev Mode =====
     (function() {
         try {
+            var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
             var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
-            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+
+            // 清理旧版手动登录残留（dev-/m- 前缀）
+            if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
+                console.log('Cleaning up legacy manual login:', cachedID);
+                localStorage.removeItem('site_user_id_v1');
+                localStorage.removeItem('site_user_email_v1');
+                localStorage.removeItem('site_login_ts_v1');
+                return;
+            }
+
+            // Google 登录（g- 前缀）
+            if (cachedID.indexOf('g-') === 0 && cachedEmail) {
                 window.currentUserEmail = cachedEmail;
+                window.currentUserRole = 'google';
 
-                var toggleContainer = document.getElementById('dev-toggle-container');
-                if (toggleContainer) toggleContainer.style.display = 'block';
+                if (window.hideLoginUI) window.hideLoginUI();
 
-                console.log('Dev mode auto-enabled on page load for', cachedEmail);
+                if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+                    var toggleContainer = document.getElementById('dev-toggle-container');
+                    if (toggleContainer) toggleContainer.style.display = 'block';
+                    if (window.devRefreshIdentity) window.devRefreshIdentity();
+                    console.log('Dev mode auto-enabled for Google login:', cachedEmail);
+                }
             }
         } catch (e) {
             console.warn('Dev mode check failed:', e);
         }
     })();
 </script>
-<!-- 开发者面板 -->
+
 <div id="dev-panel">
     <span class="dev-close" onclick="document.getElementById('dev-panel').style.display='none'">&times;</span>
     <h3>🛠️ Dev Mode</h3>
+    <div class="dev-section">
+        <div class="dev-label">Identity</div>
+        <div class="dev-value" id="dev-identity">loading...</div>
+    </div>
     <div class="dev-section">
         <div class="dev-label">Current iframe URL</div>
         <div class="dev-value" id="dev-current-url">(none)</div>
@@ -793,14 +774,29 @@ window.onload = function() {
         <div class="dev-log" id="dev-url-history">(empty)</div>
     </div>
     <div class="dev-section">
+        <div class="dev-label">Log Buffer</div>
+        <div class="dev-value" id="dev-logbuffer">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Recent Logs</div>
+        <div class="dev-log" id="dev-recent-logs">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Performance</div>
+        <div class="dev-value" id="dev-perf">loading...</div>
+    </div>
+    <div class="dev-section">
         <div class="dev-label">Actions</div>
         <button onclick="devClearHistory()">Clear History</button>
+        <button onclick="devFlushLog()">Flush Log Now</button>
         <button class="danger" onclick="devTriggerClearIssues()">Clear GitHub Issues</button>
+        <button class="danger" onclick="devClearStorage()">Clear localStorage</button>
     </div>
     <div class="dev-section">
         <div class="dev-label">Status</div>
         <div class="dev-value" id="dev-status">idle</div>
     </div>
 </div>
+
 </body>
 </html>
