@@ -319,22 +319,40 @@ window.onload = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
     if (cachedID && !isSessionExpired()) {
-      userID = cachedID;
-      userEmail = cachedEmail;
-      window.currentUserEmail = cachedEmail;
-      if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
-      isInitialized = true;
-      addLog('Page Load (cached)', { page: window.location.href });
-      logInterval = setInterval(sendLog, 60000);
+  userID = cachedID;
+  userEmail = cachedEmail;
+  window.currentUserEmail = cachedEmail;
+  if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
+  isInitialized = true;
+  addLog('Page Load (cached)', { page: window.location.href });
+  logInterval = setInterval(sendLog, 60000);
 
-      if (window.hideLoginUI) window.hideLoginUI();
-
-      setTimeout(function() {
-        if (window.checkDevMode) window.checkDevMode();
-        if (window.devRefreshIdentity) window.devRefreshIdentity();
-      }, 100);
-      return;
+  if (cachedID.indexOf('g-') === 0) {
+    // Google 登录 → 隐藏登录 UI
+    if (window.hideLoginUI) window.hideLoginUI();
+  } else {
+    // 临时身份 → 显示登录 UI
+    var googleContainer = document.getElementById('google-signin-container');
+    if (googleContainer) googleContainer.style.display = 'block';
+    var manualContainer = document.getElementById('manual-login-container');
+    if (manualContainer) manualContainer.style.display = 'block';
+    // 如果 Google GSI 已加载，渲染按钮
+    if (window.google && window.google.accounts) {
+      window.google.accounts.id.initialize({
+        client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
+        callback: window.handleGoogleCredential,
+        prompt: 'select_account'
+      });
+      window.google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'large', text: 'sign_in_with' });
     }
+  }
+
+  setTimeout(function() {
+    if (window.checkDevMode) window.checkDevMode();
+    if (window.devRefreshIdentity) window.devRefreshIdentity();
+  }, 100);
+  return;
+}
     if (cachedID && isSessionExpired()) { clearSession(); }
     var fp = getDeviceFingerprint();
     var rand = Math.random().toString(36).slice(2, 7);
