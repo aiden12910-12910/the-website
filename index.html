@@ -77,6 +77,14 @@
             <div id="google-signin-btn"></div>
             <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional).</div>
         </div>
+        <div id="manual-login-container" style="margin-bottom: 10px;">
+            <div style="font-size: 12px; color: #718096; margin-bottom: 5px;">Or sign in manually (no password):</div>
+            <div style="display: flex; gap: 6px;">
+                <input type="email" id="manual-email-input" placeholder="your@email.com" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                <button onclick="manualLogin()" style="padding: 8px 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Sign In</button>
+            </div>
+            <div id="manual-login-status" style="font-size: 11px; color: #718096; margin-top: 4px;"></div>
+        </div>
         <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
             <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode</button>
         </div>
@@ -216,6 +224,7 @@ window.onload = function() {
       userID = 'g-' + googleSub;
       userEmail = email;
       window.currentUserEmail = email;
+      window.currentUserRole = 'google';
       writeStored(STORAGE_KEY_ID, userID);
       writeStored(STORAGE_KEY_EMAIL, email);
       writeStored(STORAGE_KEY_TS, String(Date.now()));
@@ -229,6 +238,67 @@ window.onload = function() {
         if (window.devRefreshIdentity) window.devRefreshIdentity();
       }, 100);
     }
+  };
+
+  window.manualLogin = function() {
+    var input = document.getElementById('manual-email-input');
+    var statusEl = document.getElementById('manual-login-status');
+    if (!input || !statusEl) return;
+
+    var email = (input.value || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      statusEl.textContent = '✗ invalid email format';
+      statusEl.style.color = '#a1260d';
+      return;
+    }
+
+    statusEl.textContent = 'checking...';
+    statusEl.style.color = '#718096';
+
+    fetch('/api/check-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.ok) {
+        statusEl.textContent = '✗ ' + (data.error || 'not allowed');
+        statusEl.style.color = '#a1260d';
+        return;
+      }
+
+      var isDev = data.role === 'developer';
+      userID = (isDev ? 'dev-' : 'm-') + 'manual-' + Math.random().toString(36).slice(2, 9);
+      userEmail = email;
+      window.currentUserEmail = email;
+      window.currentUserRole = data.role;
+
+      writeStored(STORAGE_KEY_ID, userID);
+      writeStored(STORAGE_KEY_EMAIL, email);
+      writeStored(STORAGE_KEY_TS, String(Date.now()));
+
+      console.log('Manual login success:', userID, email, 'role:', data.role);
+      addLog('Manual Login', { target: email, tag: data.role });
+      sendLog();
+
+      statusEl.textContent = '✓ signed in as ' + email + ' (' + data.role + (data.added ? ', added to users' : '') + ')';
+      statusEl.style.color = '#2e7d32';
+
+      var googleContainer = document.getElementById('google-signin-container');
+      if (googleContainer) googleContainer.style.display = 'none';
+
+      if (isDev) {
+        setTimeout(function() {
+          if (window.checkDevMode) window.checkDevMode();
+          if (window.devRefreshIdentity) window.devRefreshIdentity();
+        }, 100);
+      }
+    })
+    .catch(function(err) {
+      statusEl.textContent = '✗ ' + err.message;
+      statusEl.style.color = '#a1260d';
+    });
   };
 
   function triggerGoogleLogin() {
@@ -255,6 +325,9 @@ window.onload = function() {
       userID = cachedID;
       userEmail = cachedEmail;
       window.currentUserEmail = cachedEmail;
+      if (cachedID.indexOf('dev-') === 0) window.currentUserRole = 'developer';
+      else if (cachedID.indexOf('m-') === 0) window.currentUserRole = 'user';
+      else if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
       isInitialized = true;
       addLog('Page Load (cached)', { page: window.location.href });
       logInterval = setInterval(sendLog, 60000);
@@ -279,6 +352,7 @@ window.onload = function() {
 
   function addLog(actionType, detail) {
     if (!isInitialized) return;
+    if (window.__acClicking) return;
     var timestamp = new Date().toLocaleString();
     var entry = {
       time: timestamp, type: actionType, page: window.location.href,
@@ -299,12 +373,14 @@ window.onload = function() {
       return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | ' + log.meta;
     }).join('\n');
     var isTemp = userID && userID.indexOf('temp-') === 0;
-    var titlePrefix = isTemp ? '[TEMP] ' : '';
+    var isDev = userID && userID.indexOf('dev-') === 0;
+    var isManual = userID && userID.indexOf('m-') === 0;
+    var titlePrefix = isTemp ? '[TEMP] ' : (isDev ? '[DEV] ' : (isManual ? '[USER] ' : ''));
     var payload = {
       title: titlePrefix + 'Log: ' + (userEmail || userID),
       body: 'UserID: ' + userID + '\n' +
         'Email: ' + (userEmail || '(not logged in)') + '\n' +
-        'Identity Type: ' + (isTemp ? 'TEMP' : 'Google') + '\n' +
+        'Identity Type: ' + (isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'))) + '\n' +
         'Log Bundle Sent: ' + new Date().toLocaleString() + '\n' +
         '---\n' + logContent,
       email: userEmail || ''
@@ -531,6 +607,7 @@ window.onload = function() {
             localStorage.removeItem('site_user_email_v1');
             localStorage.removeItem('site_login_ts_v1');
             window.currentUserEmail = '';
+            window.currentUserRole = '';
             if (window.devRefreshIdentity) window.devRefreshIdentity();
             var statusEl = document.getElementById('dev-status');
             if (statusEl) statusEl.textContent = '✓ localStorage cleared (please refresh)';
@@ -542,13 +619,15 @@ window.onload = function() {
 
     window.checkDevMode = function() {
         var email = window.currentUserEmail || '';
-        if (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) {
+        var role = window.currentUserRole || 'user';
+        var isDev = (DEV_ALLOWED_EMAILS.indexOf(email) !== -1) || (role === 'developer');
+        if (isDev) {
             var panel = document.getElementById('dev-panel');
             if (panel) panel.style.display = 'block';
             var toggleContainer = document.getElementById('dev-toggle-container');
             if (toggleContainer) toggleContainer.style.display = 'block';
             if (window.devRefreshIdentity) window.devRefreshIdentity();
-            console.log('Dev mode enabled for', email);
+            console.log('Dev mode enabled for', email, 'role:', role);
         }
     };
 
@@ -565,6 +644,9 @@ window.onload = function() {
         var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
         var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
         var isTemp = id.indexOf('temp-') === 0;
+        var isDev = id.indexOf('dev-') === 0;
+        var isManual = id.indexOf('m-') === 0;
+        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'));
         var expireText = 'unknown';
         if (ts && ts !== '0') {
             var age = Date.now() - Number(ts);
@@ -579,7 +661,7 @@ window.onload = function() {
         }
         idEl.innerHTML = '<div>ID: ' + id + '</div>' +
             '<div>Email: ' + email + '</div>' +
-            '<div>Type: ' + (isTemp ? 'TEMP' : 'Google') + '</div>' +
+            '<div>Type: ' + typeText + '</div>' +
             '<div>Expires in: ' + expireText + '</div>';
     };
 
@@ -638,14 +720,40 @@ window.onload = function() {
     (function() {
         try {
             var cachedEmail = window.localStorage.getItem('site_user_email_v1') || '';
-            if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
+            var cachedID = window.localStorage.getItem('site_user_id_v1') || '';
+            if (!cachedEmail || !cachedID) return;
+
+            if (cachedID.indexOf('dev-') === 0 || cachedID.indexOf('m-') === 0) {
+                window.currentUserEmail = cachedEmail;
+                window.currentUserRole = cachedID.indexOf('dev-') === 0 ? 'developer' : 'user';
+
+                var input = document.getElementById('manual-email-input');
+                var statusEl = document.getElementById('manual-login-status');
+                if (input) input.value = cachedEmail;
+                if (statusEl) {
+                    statusEl.textContent = '✓ signed in as ' + cachedEmail + ' (' + window.currentUserRole + ')';
+                    statusEl.style.color = '#2e7d32';
+                }
+
+                var googleContainer = document.getElementById('google-signin-container');
+                if (googleContainer) googleContainer.style.display = 'none';
+
+                if (window.currentUserRole === 'developer') {
+                    var toggleContainer = document.getElementById('dev-toggle-container');
+                    if (toggleContainer) toggleContainer.style.display = 'block';
+                    if (window.devRefreshIdentity) window.devRefreshIdentity();
+                    console.log('Dev mode auto-enabled for manual developer:', cachedEmail);
+                }
+            } else if (DEV_ALLOWED_EMAILS.indexOf(cachedEmail) !== -1) {
                 window.currentUserEmail = cachedEmail;
                 var toggleContainer = document.getElementById('dev-toggle-container');
                 if (toggleContainer) toggleContainer.style.display = 'block';
                 if (window.devRefreshIdentity) window.devRefreshIdentity();
                 console.log('Dev mode auto-enabled on page load for', cachedEmail);
             }
-        } catch (e) { console.warn('Dev mode check failed:', e); }
+        } catch (e) {
+            console.warn('Dev mode check failed:', e);
+        }
     })();
 </script>
 
