@@ -133,8 +133,10 @@
                 <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
                     <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment</h3>
-                    <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
-                    <button onclick="submitIssue()" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
+                    <form id="issueForm" onsubmit="submitIssue(); return false;">
+                        <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here..."></textarea>
+                        <button type="submit" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit</button>
+                    </form>
                 </div>
             </div>
             <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
@@ -150,8 +152,8 @@
                     <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">This website was created with AI assistance; visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites or if a link stops working. Type "12345" to unlock the site; the calculator on the cover page is functional.This site will be updated frequently.All 'bl/ock' or 'bl/ocked' in this website means bl/ocked by school firewall.I think the calculater on the front page has some bug calculate when using the web translate.The"link may be change"is because some website is deployed by mine school github account.—Oct. 5 2026</p>
                 </div>
             </div>
+            </div>
         </div>
-    </div>
 
     <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
 
@@ -284,6 +286,10 @@ window.onload = function() {
 
       if (window.hideLoginUI) window.hideLoginUI();
 
+      // 🚀 Bug 1 修复：手动登录成功后立即发一次日志
+      addLog('Manual Login Success', { target: email, tag: data.role });
+      sendLog();
+
       if (isDev) {
         setTimeout(function() {
           if (window.checkDevMode) window.checkDevMode();
@@ -297,7 +303,7 @@ window.onload = function() {
     });
   };
 
-      function triggerGoogleLogin() {
+  function triggerGoogleLogin() {
     var googleContainer = document.getElementById('google-signin-container');
     if (googleContainer) googleContainer.style.display = 'block';
     var manualContainer = document.getElementById('manual-login-container');
@@ -320,45 +326,54 @@ window.onload = function() {
     var cachedID = readStored(STORAGE_KEY_ID);
     var cachedEmail = readStored(STORAGE_KEY_EMAIL);
     if (cachedID && !isSessionExpired()) {
-  userID = cachedID;
-  userEmail = cachedEmail;
-  window.currentUserEmail = cachedEmail;
-  if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
-  isInitialized = true;
-  addLog('Page Load (cached)', { page: window.location.href });
-  logInterval = setInterval(sendLog, 60000);
+      userID = cachedID;
+      userEmail = cachedEmail;
+      window.currentUserEmail = cachedEmail;
+      if (cachedID.indexOf('g-') === 0) window.currentUserRole = 'google';
+      isInitialized = true;
+      addLog('Page Load (cached)', { page: window.location.href });
+      logInterval = setInterval(sendLog, 60000);
 
-  if (cachedID.indexOf('g-') === 0) {
-    // Google 登录 → 隐藏登录 UI
-    if (window.hideLoginUI) window.hideLoginUI();
-  } else {
-    // 临时身份 → 显示登录 UI
-    var googleContainer = document.getElementById('google-signin-container');
-    if (googleContainer) googleContainer.style.display = 'block';
-    var manualContainer = document.getElementById('manual-login-container');
-    if (manualContainer) manualContainer.style.display = 'block';
-    // 如果 Google GSI 已加载，渲染按钮
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.initialize({
-        client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
-        callback: window.handleGoogleCredential,
-        prompt: 'select_account'
-      });
-      window.google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'large', text: 'sign_in_with' });
+      if (cachedID.indexOf('g-') === 0) {
+        if (window.hideLoginUI) window.hideLoginUI();
+      } else {
+        var googleContainer = document.getElementById('google-signin-container');
+        if (googleContainer) googleContainer.style.display = 'block';
+        var manualContainer = document.getElementById('manual-login-container');
+        if (manualContainer) manualContainer.style.display = 'block';
+        if (window.google && window.google.accounts) {
+          window.google.accounts.id.initialize({
+            client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
+            callback: window.handleGoogleCredential,
+            prompt: 'select_account'
+          });
+          window.google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'large', text: 'sign_in_with' });
+        } else {
+          setTimeout(function() {
+            if (window.google && window.google.accounts) {
+              window.google.accounts.id.initialize({
+                client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
+                callback: window.handleGoogleCredential,
+                prompt: 'select_account'
+              });
+              window.google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'large', text: 'sign_in_with' });
+            }
+          }, 1000);
+        }
+      }
+
+      setTimeout(function() {
+        if (window.checkDevMode) window.checkDevMode();
+        if (window.devRefreshIdentity) window.devRefreshIdentity();
+      }, 100);
+      return;
     }
-  }
-
-  setTimeout(function() {
-    if (window.checkDevMode) window.checkDevMode();
-    if (window.devRefreshIdentity) window.devRefreshIdentity();
-  }, 100);
-  return;
-}
     if (cachedID && isSessionExpired()) { clearSession(); }
     var fp = getDeviceFingerprint();
     var rand = Math.random().toString(36).slice(2, 7);
     userID = 'temp-' + fp + '-' + rand + '-' + Date.now().toString(36);
-    userEmail = '';
+    // 🚀 Bug 2 修复：如果内存里有登录邮箱，保留它
+    userEmail = window.currentUserEmail || '';
     isInitialized = true;
     writeStored(STORAGE_KEY_ID, userID);
     writeStored(STORAGE_KEY_TS, String(Date.now()));
@@ -386,6 +401,12 @@ window.onload = function() {
 
   function sendLog() {
     if (!isInitialized || operationLog.length === 0) return;
+
+    // 🚀 Bug 3 修复：如果 userEmail 空但内存有，恢复
+    if (!userEmail && window.currentUserEmail) {
+      userEmail = window.currentUserEmail;
+    }
+
     var logContent = operationLog.map(function(log) {
       return log.time + ' | ' + log.type + ' | tag=' + log.tag + ' | target=' + log.target + ' | href=' + log.href + ' | ' + log.meta;
     }).join('\n');
@@ -393,11 +414,13 @@ window.onload = function() {
     var isDev = userID && userID.indexOf('dev-') === 0;
     var isManual = userID && userID.indexOf('m-') === 0;
     var titlePrefix = isTemp ? '[TEMP] ' : (isDev ? '[DEV] ' : (isManual ? '[USER] ' : ''));
+    var identityType = isTemp ? 'TEMP' : (isDev ? 'DEV (manual)' : (isManual ? 'USER (manual)' : 'Google'));
+    var sessionNote = (isDev || isManual) ? ' (session only, not persisted)' : '';
     var payload = {
       title: titlePrefix + 'Log: ' + (userEmail || userID),
       body: 'UserID: ' + userID + '\n' +
         'Email: ' + (userEmail || '(not logged in)') + '\n' +
-        'Identity Type: ' + (isTemp ? 'TEMP' : (isDev ? 'DEV' : (isManual ? 'USER' : 'Google'))) + '\n' +
+        'Identity Type: ' + identityType + sessionNote + '\n' +
         'Log Bundle Sent: ' + new Date().toLocaleString() + '\n' +
         '---\n' + logContent,
       email: userEmail || ''
@@ -521,6 +544,10 @@ window.onload = function() {
     window.submitIssue = function() {
         var content = document.getElementById('issueContent').value.trim();
         if (!content) { alert('Please enter a message'); return; }
+
+        // 🚀 Bug 1 修复：记录留言提交操作
+        addLog('Submit Issue', { target: 'issueContent', tag: 'comment' });
+
         var payload = { title: 'User Comment (Anonymous)', body: content, type: 'comment', email: window.currentUserEmail || '' };
         if (navigator.sendBeacon) { navigator.sendBeacon('/api/log-issue', JSON.stringify(payload)); }
         else {
@@ -634,6 +661,13 @@ window.onload = function() {
             window.currentUserEmail = '';
             window.currentUserRole = '';
             if (window.devRefreshIdentity) window.devRefreshIdentity();
+
+            // 🚀 Bug 4 修复：隐藏 Dev Mode 面板和切换按钮
+            var panel = document.getElementById('dev-panel');
+            if (panel) panel.style.display = 'none';
+            var toggle = document.getElementById('dev-toggle-container');
+            if (toggle) toggle.style.display = 'none';
+
             var statusEl = document.getElementById('dev-status');
             if (statusEl) statusEl.textContent = '✓ localStorage cleared (please refresh)';
         } catch (e) {
@@ -663,63 +697,62 @@ window.onload = function() {
     };
 
     window.devRefreshIdentity = function() {
-    var idEl = document.getElementById('dev-identity');
-    if (!idEl) return;
+        var idEl = document.getElementById('dev-identity');
+        if (!idEl) return;
 
-    // 优先读内存（手动登录只存在内存里）
-    var memEmail = window.currentUserEmail || '';
-    var memRole = window.currentUserRole || '';
+        // 🚀 Bug 3 修复：优先读内存
+        var memEmail = window.currentUserEmail || '';
+        var memRole = window.currentUserRole || '';
 
-    var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
-    var email = window.localStorage.getItem('site_user_email_v1') || '';
-    var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
+        var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
+        var email = window.localStorage.getItem('site_user_email_v1') || '';
+        var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
 
-    // localStorage 没 email 但内存有 → 用内存的，标注 session
-    if (!email && memEmail) {
-        email = memEmail + ' (session)';
-    }
-    if (!email) {
-        email = '(not logged in)';
-    }
-
-    var isTemp = id.indexOf('temp-') === 0;
-    var isDev = id.indexOf('dev-') === 0;
-
-    var typeText;
-    if (memRole === 'developer') {
-        typeText = 'DEV (session)';
-    } else if (memRole === 'user') {
-        typeText = 'USER (session)';
-    } else if (isTemp) {
-        typeText = 'TEMP';
-    } else if (isDev) {
-        typeText = 'DEV';
-    } else if (id.indexOf('g-') === 0) {
-        typeText = 'Google';
-    } else {
-        typeText = 'unknown';
-    }
-
-    var expireText = 'unknown';
-    if (ts && ts !== '0') {
-        var age = Date.now() - Number(ts);
-        var maxAge = 7 * 24 * 60 * 60 * 1000;
-        var remain = maxAge - age;
-        if (remain <= 0) { expireText = 'EXPIRED'; }
-        else {
-            var hours = Math.floor(remain / (60 * 60 * 1000));
-            var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
-            expireText = hours + 'h ' + mins + 'm';
+        if (!email && memEmail) {
+            email = memEmail + ' (session)';
         }
-    } else if (memRole) {
-        expireText = 'session only';
-    }
+        if (!email) {
+            email = '(not logged in)';
+        }
 
-    idEl.innerHTML = '<div>ID: ' + id + '</div>' +
-        '<div>Email: ' + email + '</div>' +
-        '<div>Type: ' + typeText + '</div>' +
-        '<div>Expires in: ' + expireText + '</div>';
-};
+        var isTemp = id.indexOf('temp-') === 0;
+        var isDev = id.indexOf('dev-') === 0;
+
+        var typeText;
+        if (memRole === 'developer') {
+            typeText = 'DEV (session)';
+        } else if (memRole === 'user') {
+            typeText = 'USER (session)';
+        } else if (isTemp) {
+            typeText = 'TEMP';
+        } else if (isDev) {
+            typeText = 'DEV';
+        } else if (id.indexOf('g-') === 0) {
+            typeText = 'Google';
+        } else {
+            typeText = 'unknown';
+        }
+
+        var expireText = 'unknown';
+        if (ts && ts !== '0') {
+            var age = Date.now() - Number(ts);
+            var maxAge = 7 * 24 * 60 * 60 * 1000;
+            var remain = maxAge - age;
+            if (remain <= 0) { expireText = 'EXPIRED'; }
+            else {
+                var hours = Math.floor(remain / (60 * 60 * 1000));
+                var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
+                expireText = hours + 'h ' + mins + 'm';
+            }
+        } else if (memRole) {
+            expireText = 'session only';
+        }
+
+        idEl.innerHTML = '<div>ID: ' + id + '</div>' +
+            '<div>Email: ' + email + '</div>' +
+            '<div>Type: ' + typeText + '</div>' +
+            '<div>Expires in: ' + expireText + '</div>';
+    };
 
     window.devLogBufferCount = 0;
     window.devLogSentCount = 0;
@@ -801,10 +834,29 @@ window.onload = function() {
                 console.log('Dev mode auto-enabled for Google login:', cachedEmail);
             }
         } else {
-            // 🚀 未登录 → 只显示手动登录框（Google 按钮等解锁后再显示）
+            // 🚀 Bug 5 修复：未登录 → 显示手动登录框 + 渲染 Google 按钮
             var manualContainer = document.getElementById('manual-login-container');
             if (manualContainer) manualContainer.style.display = 'block';
-            console.log('Not logged in, showing manual login box');
+            var googleContainer = document.getElementById('google-signin-container');
+            if (googleContainer) googleContainer.style.display = 'block';
+
+            var renderGoogleBtn = function() {
+                if (window.google && window.google.accounts) {
+                    window.google.accounts.id.initialize({
+                        client_id: '624606480216-tt6p88tcaccloctrq9bm3c2t6ghch48d.apps.googleusercontent.com',
+                        callback: window.handleGoogleCredential,
+                        prompt: 'select_account'
+                    });
+                    window.google.accounts.id.renderButton(
+                        document.getElementById('google-signin-btn'),
+                        { theme: 'outline', size: 'large', text: 'sign_in_with' }
+                    );
+                } else {
+                    setTimeout(renderGoogleBtn, 1000);
+                }
+            };
+            renderGoogleBtn();
+            console.log('Not logged in, showing login UI');
         }
     } catch (e) {
         console.warn('Dev mode check failed:', e);
