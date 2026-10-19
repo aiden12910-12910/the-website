@@ -279,3 +279,170 @@ h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--border
     flex: 1;
     min-width: 60px;
 }
+/* ===== Windows 11 Calculator ===== */
+.win-calc {
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.win-titlebar {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+}
+.win-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin-bottom: 8px;
+}
+.win-modes {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.win-mode {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.win-mode:hover { background: var(--surface-hover); }
+.win-mode.active {
+    background: var(--link);
+    color: white;
+}
+.win-display {
+    background: var(--screen-bg);
+    padding: 14px 16px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+}
+.win-indicator {
+    position: absolute;
+    top: 8px;
+    left: 14px;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--link);
+    font-family: monospace;
+}
+.win-expr {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: right;
+    font-family: monospace;
+    min-height: 16px;
+    word-break: break-all;
+}
+.win-result {
+    font-size: 32px;
+    color: var(--screen-text);
+    text-align: right;
+    font-family: monospace;
+    font-weight: 500;
+    word-break: break-all;
+    line-height: 1.1;
+    margin-top: 4px;
+}
+.win-panel {
+    padding: 12px;
+}
+.win-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+.win-fn-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.win-fn-row .win-btn {
+    flex: 1;
+    min-width: 50px;
+}
+.win-btn {
+    background: var(--screen-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 0;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: monospace;
+    transition: background 0.1s, transform 0.05s;
+    user-select: none;
+}
+.win-btn:hover { background: var(--surface-hover); }
+.win-btn:active { transform: scale(0.96); }
+.win-btn.win-fn { color: var(--link); font-size: 13px; }
+.win-btn.win-op { color: var(--link); font-weight: bold; }
+.win-btn.win-eq {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+    font-weight: bold;
+}
+.win-btn.win-eq:hover { background: #004499; }
+.win-text-input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    background: var(--screen-bg);
+    color: var(--screen-text);
+    font-family: monospace;
+    min-width: 60px;
+    box-sizing: border-box;
+}
+.win-section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+.win-result-small {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--screen-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--screen-text);
+    min-height: 38px;
+    word-break: break-all;
+}
+.win-prog-display {
+    flex: 1;
+    text-align: right;
+    font-family: monospace;
+    font-size: 20px;
+    color: var(--screen-text);
+    padding: 6px 10px;
+    background: var(--screen-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    word-break: break-all;
+    min-width: 0;
+}
