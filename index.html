@@ -16,183 +16,256 @@
     <span id="theme-icon">🌓</span>
 </button>
 
-    <div id="calculator-wrapper">
-    <div class="sci-calc">
-        <!-- 模式切换 -->
-        <div class="sci-modes">
-            <button class="sci-mode active" data-mode="calc" onclick="sciSetMode('calc')">Calc</button>
-            <button class="sci-mode" data-mode="stat" onclick="sciSetMode('stat')">Stat</button>
-            <button class="sci-mode" data-mode="eq" onclick="sciSetMode('eq')">Eq</button>
-            <button class="sci-mode" data-mode="complex" onclick="sciSetMode('complex')">Cplx</button>
-            <button class="sci-mode" data-mode="base" onclick="sciSetMode('base')">Base</button>
+<div id="calculator-wrapper">
+    <div class="win-calc">
+        <!-- 顶部模式切换 -->
+        <div class="win-titlebar">
+            <span class="win-title">Calculator</span>
+            <div class="win-modes">
+                <button class="win-mode active" data-mode="standard" onclick="winSetMode('standard')">Standard</button>
+                <button class="win-mode" data-mode="scientific" onclick="winSetMode('scientific')">Scientific</button>
+                <button class="win-mode" data-mode="graphing" onclick="winSetMode('graphing')">Graphing</button>
+                <button class="win-mode" data-mode="programmer" onclick="winSetMode('programmer')">Programmer</button>
+                <button class="win-mode" data-mode="date" onclick="winSetMode('date')">Date</button>
+                <button class="win-mode" data-mode="currency" onclick="winSetMode('currency')">Currency</button>
+                <button class="win-mode" data-mode="volume" onclick="winSetMode('volume')">Volume</button>
+                <button class="win-mode" data-mode="length" onclick="winSetMode('length')">Length</button>
+            </div>
         </div>
 
         <!-- 显示区 -->
-        <div class="sci-display">
-            <div class="sci-indicator" id="sci-indicator">DEG</div>
-            <div class="sci-expr" id="sci-expr"></div>
-            <div class="sci-result" id="sci-result">0</div>
+        <div class="win-display">
+            <div class="win-indicator" id="win-indicator">DEG</div>
+            <div class="win-expr" id="win-expr"></div>
+            <div class="win-result" id="win-result">0</div>
         </div>
 
-        <!-- Calc 模式键盘 -->
-        <div id="sci-panel-calc">
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="sciFn('sin')">sin</button>
-                <button class="sci-fn" onclick="sciFn('cos')">cos</button>
-                <button class="sci-fn" onclick="sciFn('tan')">tan</button>
-                <button class="sci-fn" onclick="sciFn('asin')">sin⁻¹</button>
-                <button class="sci-fn" onclick="sciFn('acos')">cos⁻¹</button>
-                <button class="sci-fn" onclick="sciFn('atan')">tan⁻¹</button>
-            </div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="sciFn('log')">log</button>
-                <button class="sci-fn" onclick="sciFn('ln')">ln</button>
-                <button class="sci-fn" onclick="sciFn('sqrt')">√</button>
-                <button class="sci-fn" onclick="sciFn('cbrt')">∛</button>
-                <button class="sci-fn" onclick="sciFn('pow')">xʸ</button>
-                <button class="sci-fn" onclick="sciFn('fact')">x!</button>
-            </div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="sciFn('frac')">a/b</button>
-                <button class="sci-fn" onclick="sciFn('mixed')">a b/c</button>
-                <button class="sci-fn" onclick="sciFn('abs')">|x|</button>
-                <button class="sci-fn" onclick="sciFn('percent')">%</button>
-                <button class="sci-fn" onclick="sciFn('ans')">Ans</button>
-                <button class="sci-fn" onclick="sciToggleAngle()" id="sci-angle-btn">DEG</button>
-            </div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="sciFn('pi')">π</button>
-                <button class="sci-fn" onclick="sciFn('e')">e</button>
-                <button class="sci-fn" onclick="sciFn('ncr')">nCr</button>
-                <button class="sci-fn" onclick="sciFn('npr')">nPr</button>
-                <button class="sci-fn" onclick="sciFn('gcd')">GCD</button>
-                <button class="sci-fn" onclick="sciFn('lcm')">LCM</button>
-            </div>
-
-            <div class="sci-grid">
-                <button class="sci-btn sci-clear" onclick="sciClear()">AC</button>
-                <button class="sci-btn sci-del" onclick="sciBackspace()">DEL</button>
-                <button class="sci-btn" onclick="sciInput('(')">(</button>
-                <button class="sci-btn" onclick="sciInput(')')">)</button>
-                <button class="sci-btn" onclick="sciInput('7')">7</button>
-                <button class="sci-btn" onclick="sciInput('8')">8</button>
-                <button class="sci-btn" onclick="sciInput('9')">9</button>
-                <button class="sci-btn sci-op" onclick="sciInput('/')">÷</button>
-                <button class="sci-btn" onclick="sciInput('4')">4</button>
-                <button class="sci-btn" onclick="sciInput('5')">5</button>
-                <button class="sci-btn" onclick="sciInput('6')">6</button>
-                <button class="sci-btn sci-op" onclick="sciInput('*')">×</button>
-                <button class="sci-btn" onclick="sciInput('1')">1</button>
-                <button class="sci-btn" onclick="sciInput('2')">2</button>
-                <button class="sci-btn" onclick="sciInput('3')">3</button>
-                <button class="sci-btn sci-op" onclick="sciInput('-')">−</button>
-                <button class="sci-btn" onclick="sciInput('0')">0</button>
-                <button class="sci-btn" onclick="sciInput('.')">.</button>
-                <button class="sci-btn sci-op" onclick="sciInput('+')">+</button>
-                <button class="sci-btn sci-eq" onclick="sciEquals()">=</button>
+        <!-- Standard -->
+        <div id="win-panel-standard" class="win-panel">
+            <div class="win-grid">
+                <button class="win-btn win-fn" onclick="winClear()">CE</button>
+                <button class="win-btn win-fn" onclick="winClearAll()">C</button>
+                <button class="win-btn win-fn" onclick="winBackspace()">⌫</button>
+                <button class="win-btn win-op" onclick="winInput('/')">÷</button>
+                <button class="win-btn" onclick="winInput('7')">7</button>
+                <button class="win-btn" onclick="winInput('8')">8</button>
+                <button class="win-btn" onclick="winInput('9')">9</button>
+                <button class="win-btn win-op" onclick="winInput('*')">×</button>
+                <button class="win-btn" onclick="winInput('4')">4</button>
+                <button class="win-btn" onclick="winInput('5')">5</button>
+                <button class="win-btn" onclick="winInput('6')">6</button>
+                <button class="win-btn win-op" onclick="winInput('-')">−</button>
+                <button class="win-btn" onclick="winInput('1')">1</button>
+                <button class="win-btn" onclick="winInput('2')">2</button>
+                <button class="win-btn" onclick="winInput('3')">3</button>
+                <button class="win-btn win-op" onclick="winInput('+')">+</button>
+                <button class="win-btn" onclick="winInput('(')">(</button>
+                <button class="win-btn" onclick="winInput('0')">0</button>
+                <button class="win-btn" onclick="winInput('.')">.</button>
+                <button class="win-btn win-eq" onclick="winEquals()">=</button>
             </div>
         </div>
 
-        <!-- Stat 模式 -->
-        <div id="sci-panel-stat" style="display:none;">
-            <div class="sci-panel-title">Statistics / 统计</div>
-            <div class="sci-stat-input">
-                <input type="text" id="stat-data" placeholder="1,2,3,4,5" class="sci-text-input">
+        <!-- Scientific -->
+        <div id="win-panel-scientific" class="win-panel" style="display:none;">
+            <div class="win-fn-row">
+                <button class="win-btn win-fn" onclick="winFn('sin')">sin</button>
+                <button class="win-btn win-fn" onclick="winFn('cos')">cos</button>
+                <button class="win-btn win-fn" onclick="winFn('tan')">tan</button>
+                <button class="win-btn win-fn" onclick="winFn('log')">log</button>
+                <button class="win-btn win-fn" onclick="winFn('ln')">ln</button>
+                <button class="win-btn win-fn" onclick="winFn('sqrt')">√</button>
+                <button class="win-btn win-fn" onclick="winFn('pow')">xʸ</button>
+                <button class="win-btn win-fn" onclick="winFn('fact')">x!</button>
+                <button class="win-btn win-fn" onclick="winFn('pi')">π</button>
+                <button class="win-btn win-fn" onclick="winFn('e')">e</button>
+                <button class="win-btn win-fn" onclick="winToggleAngle()" id="win-angle-btn">DEG</button>
             </div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="statCalc('mean')">Mean</button>
-                <button class="sci-fn" onclick="statCalc('median')">Median</button>
-                <button class="sci-fn" onclick="statCalc('mode')">Mode</button>
-                <button class="sci-fn" onclick="statCalc('sum')">Sum</button>
-                <button class="sci-fn" onclick="statCalc('sumsq')">Σx²</button>
-                <button class="sci-fn" onclick="statCalc('count')">n</button>
+            <div class="win-grid">
+                <button class="win-btn win-fn" onclick="winClear()">CE</button>
+                <button class="win-btn win-fn" onclick="winClearAll()">C</button>
+                <button class="win-btn win-fn" onclick="winBackspace()">⌫</button>
+                <button class="win-btn win-op" onclick="winInput('/')">÷</button>
+                <button class="win-btn" onclick="winInput('7')">7</button>
+                <button class="win-btn" onclick="winInput('8')">8</button>
+                <button class="win-btn" onclick="winInput('9')">9</button>
+                <button class="win-btn win-op" onclick="winInput('*')">×</button>
+                <button class="win-btn" onclick="winInput('4')">4</button>
+                <button class="win-btn" onclick="winInput('5')">5</button>
+                <button class="win-btn" onclick="winInput('6')">6</button>
+                <button class="win-btn win-op" onclick="winInput('-')">−</button>
+                <button class="win-btn" onclick="winInput('1')">1</button>
+                <button class="win-btn" onclick="winInput('2')">2</button>
+                <button class="win-btn" onclick="winInput('3')">3</button>
+                <button class="win-btn win-op" onclick="winInput('+')">+</button>
+                <button class="win-btn" onclick="winInput('(')">(</button>
+                <button class="win-btn" onclick="winInput('0')">0</button>
+                <button class="win-btn" onclick="winInput('.')">.</button>
+                <button class="win-btn win-eq" onclick="winEquals()">=</button>
             </div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="statCalc('sd')">σ (SD)</button>
-                <button class="sci-fn" onclick="statCalc('var')">σ² (Var)</button>
-                <button class="sci-fn" onclick="statCalc('ssd')">s (Sample SD)</button>
-                <button class="sci-fn" onclick="statCalc('min')">Min</button>
-                <button class="sci-fn" onclick="statCalc('max')">Max</button>
-                <button class="sci-fn" onclick="statCalc('range')">Range</button>
-            </div>
-            <div class="sci-result-small" id="stat-result">Result: —</div>
         </div>
 
-        <!-- Eq 模式 -->
-        <div id="sci-panel-eq" style="display:none;">
-            <div class="sci-panel-title">Equation Solver / 方程求解</div>
-            <div class="sci-eq-type">
-                <button class="sci-mode active" onclick="eqSetType('linear')">Linear ax+b=0</button>
-                <button class="sci-mode" onclick="eqSetType('quad')">Quadratic ax²+bx+c=0</button>
-                <button class="sci-mode" onclick="eqSetType('system')">System 2x2</button>
+        <!-- Graphing -->
+        <div id="win-panel-graphing" class="win-panel" style="display:none;">
+            <div class="win-fn-row">
+                <input type="text" id="graph-fn" class="win-text-input" placeholder="y = x^2" value="x^2">
+                <button class="win-btn win-eq" onclick="winDrawGraph()">Plot</button>
             </div>
-            <div id="eq-linear" class="eq-inputs">
-                <input type="number" id="eq-a" placeholder="a" class="sci-text-input">
-                <input type="number" id="eq-b" placeholder="b" class="sci-text-input">
-                <button class="sci-btn sci-eq" onclick="eqSolveLinear()">Solve</button>
-            </div>
-            <div id="eq-quad" class="eq-inputs" style="display:none;">
-                <input type="number" id="eq-qa" placeholder="a" class="sci-text-input">
-                <input type="number" id="eq-qb" placeholder="b" class="sci-text-input">
-                <input type="number" id="eq-qc" placeholder="c" class="sci-text-input">
-                <button class="sci-btn sci-eq" onclick="eqSolveQuad()">Solve</button>
-            </div>
-            <div id="eq-system" class="eq-inputs" style="display:none;">
-                <input type="number" id="eq-a1" placeholder="a1" class="sci-text-input">
-                <input type="number" id="eq-b1" placeholder="b1" class="sci-text-input">
-                <input type="number" id="eq-c1" placeholder="c1" class="sci-text-input">
-                <input type="number" id="eq-a2" placeholder="a2" class="sci-text-input">
-                <input type="number" id="eq-b2" placeholder="b2" class="sci-text-input">
-                <input type="number" id="eq-c2" placeholder="c2" class="sci-text-input">
-                <button class="sci-btn sci-eq" onclick="eqSolveSystem()">Solve</button>
-            </div>
-            <div class="sci-result-small" id="eq-result">Result: —</div>
+            <canvas id="graph-canvas" width="600" height="400" style="width:100%; max-width:600px; border:1px solid var(--border); border-radius:8px; background:var(--screen-bg);"></canvas>
         </div>
 
-        <!-- Cplx 模式 -->
-        <div id="sci-panel-complex" style="display:none;">
-            <div class="sci-panel-title">Complex Numbers / 复数</div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="cplxCalc('add')">(a+bi)+(c+di)</button>
-                <button class="sci-fn" onclick="cplxCalc('sub')">(a+bi)-(c+di)</button>
-                <button class="sci-fn" onclick="cplxCalc('mul')">(a+bi)×(c+di)</button>
-                <button class="sci-fn" onclick="cplxCalc('div')">(a+bi)÷(c+di)</button>
-                <button class="sci-fn" onclick="cplxCalc('abs')">|a+bi|</button>
-                <button class="sci-fn" onclick="cplxCalc('conj')">Conj</button>
-            </div>
-            <div class="eq-inputs">
-                <input type="number" id="cplx-a" placeholder="a" class="sci-text-input">
-                <input type="number" id="cplx-b" placeholder="b" class="sci-text-input">
-                <input type="number" id="cplx-c" placeholder="c" class="sci-text-input">
-                <input type="number" id="cplx-d" placeholder="d" class="sci-text-input">
-            </div>
-            <div class="sci-result-small" id="cplx-result">Result: —</div>
-        </div>
-
-        <!-- Base 模式 -->
-        <div id="sci-panel-base" style="display:none;">
-            <div class="sci-panel-title">Base Conversion / 进制转换</div>
-            <div class="eq-inputs">
-                <input type="text" id="base-input" placeholder="1010" class="sci-text-input" style="flex:2;">
-                <select id="base-from" class="sci-text-input" style="flex:1;">
-                    <option value="2">BIN</option>
-                    <option value="8">OCT</option>
-                    <option value="10" selected>DEC</option>
+        <!-- Programmer -->
+        <div id="win-panel-programmer" class="win-panel" style="display:none;">
+            <div class="win-fn-row">
+                <select id="prog-base" class="win-text-input" onchange="winProgUpdate()">
                     <option value="16">HEX</option>
+                    <option value="10" selected>DEC</option>
+                    <option value="8">OCT</option>
+                    <option value="2">BIN</option>
                 </select>
-                <button class="sci-btn sci-eq" onclick="baseConvert()">Convert</button>
+                <span id="prog-display" class="win-prog-display">0</span>
             </div>
-            <div class="sci-result-small" id="base-result">Result: —</div>
-            <div class="sci-fn-row">
-                <button class="sci-fn" onclick="baseQuick('2')">BIN</button>
-                <button class="sci-fn" onclick="baseQuick('8')">OCT</button>
-                <button class="sci-fn" onclick="baseQuick('10')">DEC</button>
-                <button class="sci-fn" onclick="baseQuick('16')">HEX</button>
-                <button class="sci-fn" onclick="baseQuick('and')">AND</button>
-                <button class="sci-fn" onclick="baseQuick('or')">OR</button>
-                <button class="sci-fn" onclick="baseQuick('xor')">XOR</button>
-                <button class="sci-fn" onclick="baseQuick('not')">NOT</button>
+            <div class="win-fn-row">
+                <button class="win-btn win-fn" onclick="winProgBit('and')">AND</button>
+                <button class="win-btn win-fn" onclick="winProgBit('or')">OR</button>
+                <button class="win-btn win-fn" onclick="winProgBit('xor')">XOR</button>
+                <button class="win-btn win-fn" onclick="winProgBit('not')">NOT</button>
+                <button class="win-btn win-fn" onclick="winProgBit('shl')"><<</button>
+                <button class="win-btn win-fn" onclick="winProgBit('shr')">>></button>
+                <button class="win-btn win-fn" onclick="winProgClear()">C</button>
             </div>
+            <div class="win-grid">
+                <button class="win-btn" onclick="winProgInput('7')">7</button>
+                <button class="win-btn" onclick="winProgInput('8')">8</button>
+                <button class="win-btn" onclick="winProgInput('9')">9</button>
+                <button class="win-btn win-op" onclick="winProgOp('/')">÷</button>
+                <button class="win-btn" onclick="winProgInput('4')">4</button>
+                <button class="win-btn" onclick="winProgInput('5')">5</button>
+                <button class="win-btn" onclick="winProgInput('6')">6</button>
+                <button class="win-btn win-op" onclick="winProgOp('*')">×</button>
+                <button class="win-btn" onclick="winProgInput('1')">1</button>
+                <button class="win-btn" onclick="winProgInput('2')">2</button>
+                <button class="win-btn" onclick="winProgInput('3')">3</button>
+                <button class="win-btn win-op" onclick="winProgOp('-')">−</button>
+                <button class="win-btn" onclick="winProgInput('A')">A</button>
+                <button class="win-btn" onclick="winProgInput('0')">0</button>
+                <button class="win-btn" onclick="winProgInput('.')">.</button>
+                <button class="win-btn win-op" onclick="winProgOp('+')">+</button>
+                <button class="win-btn" onclick="winProgInput('B')">B</button>
+                <button class="win-btn" onclick="winProgInput('C')">C</button>
+                <button class="win-btn" onclick="winProgInput('D')">D</button>
+                <button class="win-btn win-eq" onclick="winProgEquals()">=</button>
+                <button class="win-btn" onclick="winProgInput('E')">E</button>
+                <button class="win-btn" onclick="winProgInput('F')">F</button>
+                <button class="win-btn" onclick="winProgBackspace()">⌫</button>
+                <button class="win-btn win-fn" onclick="winProgInput('(')">(</button>
+            </div>
+        </div>
+
+        <!-- Date -->
+        <div id="win-panel-date" class="win-panel" style="display:none;">
+            <div class="win-section-title">Date Difference / 日期差</div>
+            <div class="win-fn-row">
+                <input type="date" id="date1" class="win-text-input">
+                <input type="date" id="date2" class="win-text-input">
+                <button class="win-btn win-eq" onclick="winDateDiff()">Calculate</button>
+            </div>
+            <div id="date-result" class="win-result-small">—</div>
+            <div class="win-section-title" style="margin-top:16px;">Add / Subtract Days / 加减天数</div>
+            <div class="win-fn-row">
+                <input type="date" id="date-base" class="win-text-input">
+                <input type="number" id="date-days" class="win-text-input" placeholder="±days" value="0">
+                <button class="win-btn win-eq" onclick="winDateAdd()">Apply</button>
+            </div>
+            <div id="date-add-result" class="win-result-small">—</div>
+        </div>
+
+        <!-- Currency -->
+        <div id="win-panel-currency" class="win-panel" style="display:none;">
+            <div class="win-section-title">Currency Converter / 货币换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="curr-amount" class="win-text-input" placeholder="100" value="100">
+                <select id="curr-from" class="win-text-input">
+                    <option value="USD">USD</option>
+                    <option value="CNY">CNY</option>
+                    <option value="EUR">EUR</option>
+                    <option value="JPY">JPY</option>
+                    <option value="GBP">GBP</option>
+                </select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="curr-to" class="win-text-input">
+                    <option value="CNY">CNY</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="JPY">JPY</option>
+                    <option value="GBP">GBP</option>
+                </select>
+                <button class="win-btn win-eq" onclick="winCurrency()">Convert</button>
+            </div>
+            <div id="curr-result" class="win-result-small">—</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:8px;">Rates are approximate. / 汇率为近似值。</div>
+        </div>
+
+        <!-- Volume -->
+        <div id="win-panel-volume" class="win-panel" style="display:none;">
+            <div class="win-section-title">Volume Converter / 体积换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="vol-amount" class="win-text-input" placeholder="1" value="1">
+                <select id="vol-from" class="win-text-input">
+                    <option value="L">Liter</option>
+                    <option value="mL">Milliliter</option>
+                    <option value="m3">Cubic meter</option>
+                    <option value="gal">Gallon (US)</option>
+                    <option value="qt">Quart (US)</option>
+                    <option value="pt">Pint (US)</option>
+                    <option value="cup">Cup (US)</option>
+                    <option value="floz">Fluid ounce (US)</option>
+                </select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="vol-to" class="win-text-input">
+                    <option value="mL">Milliliter</option>
+                    <option value="L">Liter</option>
+                    <option value="m3">Cubic meter</option>
+                    <option value="gal">Gallon (US)</option>
+                    <option value="qt">Quart (US)</option>
+                    <option value="pt">Pint (US)</option>
+                    <option value="cup">Cup (US)</option>
+                    <option value="floz">Fluid ounce (US)</option>
+                </select>
+                <button class="win-btn win-eq" onclick="winVolume()">Convert</button>
+            </div>
+            <div id="vol-result" class="win-result-small">—</div>
+        </div>
+
+        <!-- Length -->
+        <div id="win-panel-length" class="win-panel" style="display:none;">
+            <div class="win-section-title">Length Converter / 长度换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="len-amount" class="win-text-input" placeholder="1" value="1">
+                <select id="len-from" class="win-text-input">
+                    <option value="m">Meter</option>
+                    <option value="km">Kilometer</option>
+                    <option value="cm">Centimeter</option>
+                    <option value="mm">Millimeter</option>
+                    <option value="mi">Mile</option>
+                    <option value="yd">Yard</option>
+                    <option value="ft">Foot</option>
+                    <option value="in">Inch</option>
+                </select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="len-to" class="win-text-input">
+                    <option value="ft">Foot</option>
+                    <option value="m">Meter</option>
+                    <option value="km">Kilometer</option>
+                    <option value="cm">Centimeter</option>
+                    <option value="mm">Millimeter</option>
+                    <option value="mi">Mile</option>
+                    <option value="yd">Yard</option>
+                    <option value="in">Inch</option>
+                </select>
+                <button class="win-btn win-eq" onclick="winLength()">Convert</button>
+            </div>
+            <div id="len-result" class="win-result-small">—</div>
         </div>
     </div>
 </div>
