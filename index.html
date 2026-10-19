@@ -6,21 +6,68 @@
     <title>Advanced Linear Matrix & Equation Calculator 12345</title>
     <script src="https://accounts.google.com/gsi/client" async></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #ffffff; color: #333333; padding: 20px 40px; margin: 0; }
-        .calculator-box { max-width: 320px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .calc-screen { width: 100%; height: 50px; background: #ffffff; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: #1a202c; }
+        /* ===== 主题变量 ===== */
+        :root {
+            --bg: #ffffff;
+            --text: #333333;
+            --text-muted: #718096;
+            --text-light: #a0aec0;
+            --border: #e2e8f0;
+            --border-light: #eaeaea;
+            --surface: #f8f9fa;
+            --surface-hover: #edf2f7;
+            --screen-bg: #ffffff;
+            --screen-text: #1a202c;
+            --link: #0066cc;
+            --link-hover: #004499;
+            --heading: #111111;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1a1a;
+                --text: #e0e0e0;
+                --text-muted: #a0a0a0;
+                --text-light: #808080;
+                --border: #333333;
+                --border-light: #2a2a2a;
+                --surface: #252526;
+                --surface-hover: #2f2f30;
+                --screen-bg: #1e1e1e;
+                --screen-text: #e0e0e0;
+                --link: #4ea8de;
+                --link-hover: #7ec8e3;
+                --heading: #f0f0f0;
+            }
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff; --text: #333333; --text-muted: #718096; --text-light: #a0aec0;
+            --border: #e2e8f0; --border-light: #eaeaea; --surface: #f8f9fa; --surface-hover: #edf2f7;
+            --screen-bg: #ffffff; --screen-text: #1a202c; --link: #0066cc; --link-hover: #004499; --heading: #111111;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a; --text: #e0e0e0; --text-muted: #a0a0a0; --text-light: #808080;
+            --border: #333333; --border-light: #2a2a2a; --surface: #252526; --surface-hover: #2f2f30;
+            --screen-bg: #1e1e1e; --screen-text: #e0e0e0; --link: #4ea8de; --link-hover: #7ec8e3; --heading: #f0f0f0;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); padding: 20px 40px; margin: 0; transition: background-color 0.2s, color 0.2s; }
+        .calculator-box { max-width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .calc-screen { width: 100%; height: 50px; background: var(--screen-bg); border: 1px solid var(--border); border-radius: 6px; font-size: 20px; text-align: right; padding: 10px; box-sizing: border-box; margin-bottom: 15px; font-family: monospace; color: var(--screen-text); }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; }
-        .calc-btn:hover { background: #edf2f7; }
+        .calc-btn { background: var(--screen-bg); border: 1px solid var(--border); padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; text-align: center; color: var(--text); }
+        .calc-btn:hover { background: var(--surface-hover); }
         #secret-game-zone { display: none; }
-        h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; color: #111111; }
+        h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--border-light); padding-bottom: 10px; color: var(--heading); }
         .link-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; max-width: 100%; }
-        .game-link { font-size: 15px; color: #0066cc; text-decoration: none; padding: 12px 16px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
-        .game-link:hover { background: #edf2f7; color: #004499; border-color: #cbd5e0; }
+        .game-link { font-size: 15px; color: var(--link); text-decoration: none; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+        .game-link:hover { background: var(--surface-hover); color: var(--link-hover); border-color: var(--border); }
         #secure-backdoor-layer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; background: #000; }
         #secure-backdoor-layer iframe { width: 100%; height: 100%; border: none; }
         #panic-hover-bar { position: fixed; top: 0; left: 0; width: 100%; height: 12px; background-color: rgba(0, 0, 0, 0.02); z-index: 1000000; cursor: pointer; transition: background-color 0.2s; display: none; text-align: center; font-size: 10px; color: transparent; line-height: 12px; font-family: sans-serif; }
-        #panic-hover-bar:hover { background-color: #e2e8f0; color: #4a5568; }
+        #panic-hover-bar:hover { background-color: var(--surface-hover); color: var(--text-muted); }
         #dev-panel { display: none; position: fixed; bottom: 20px; right: 20px; width: 360px; max-height: 70vh; overflow-y: auto; background: #1e1e1e; color: #d4d4d4; border: 1px solid #333; border-radius: 8px; padding: 16px; font-family: 'Monaco', 'Consolas', monospace; font-size: 12px; line-height: 1.5; z-index: 9999999; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
         #dev-panel h3 { margin: 0 0 12px 0; font-size: 14px; color: #4ec9b0; border-bottom: 1px solid #333; padding-bottom: 8px; }
         #dev-panel .dev-section { margin-bottom: 12px; }
@@ -37,8 +84,16 @@
 </head>
 <body>
 
+<!-- 主题切换按钮（固定右上角，封面和游戏区都显示） -->
+<button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme / 切换主题"
+    style="position: fixed; top: 16px; right: 16px; z-index: 999998; width: 42px; height: 42px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: background 0.2s, transform 0.2s; color: var(--text);"
+    onmouseover="this.style.transform='scale(1.1)'"
+    onmouseout="this.style.transform='scale(1)'">
+    <span id="theme-icon">🌓</span>
+</button>
+
     <div id="calculator-wrapper">
-        <h2 style="font-size: 16px; color: #718096; margin-bottom: 10px;">Scientific Array Solver</h2>
+        <h2 style="font-size: 16px; color: var(--text-muted); margin-bottom: 10px;">Scientific Array Solver</h2>
         <div class="calculator-box">
             <div class="calc-screen" id="display">0</div>
             <div class="calc-grid">
@@ -80,17 +135,17 @@
 
         <div id="google-signin-container" style="margin-bottom: 10px; display: none;">
             <div id="google-signin-btn"></div>
-            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Sign in with Google to help us track visits (optional). / 用 Google 登录帮助我们统计访问（可选）。</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Sign in with Google to help us track visits (optional). / 用 Google 登录帮助我们统计访问（可选）。</div>
         </div>
 
         <div id="manual-login-container" style="margin-bottom: 10px; display: none;">
-            <div style="font-size: 12px; color: #718096; margin-bottom: 5px;">Or sign in manually (no password): / 或手动登录（无需密码）：</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Or sign in manually (no password): / 或手动登录（无需密码）：</div>
             <div style="display: flex; gap: 6px;">
-                <input type="email" id="manual-email-input" placeholder="your@email.com" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                <input type="email" id="manual-email-input" placeholder="your@email.com" style="flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box; background: var(--screen-bg); color: var(--screen-text);">
                 <button onclick="manualLogin()" style="padding: 8px 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Sign In / 登录</button>
             </div>
-            <div id="manual-login-status" style="font-size: 11px; color: #718096; margin-top: 4px;"></div>
-            <div style="font-size: 10px; color: #999; margin-top: 2px;">Manual login is session-only; refresh will sign you out. / 手动登录仅当前会话有效，刷新会掉线。</div>
+            <div id="manual-login-status" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;"></div>
+            <div style="font-size: 10px; color: var(--text-light); margin-top: 2px;">Manual login is session-only; refresh will sign you out. / 手动登录仅当前会话有效，刷新会掉线。</div>
         </div>
 
         <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
@@ -106,66 +161,66 @@
 
 <!-- 说明弹窗 -->
 <div id="infoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-    <div style="background: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); width: 92%; max-width: 900px; height: 90vh; display: flex; flex-direction: column; position: relative; box-sizing: border-box;">
+    <div style="background: var(--bg); color: var(--text); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); width: 92%; max-width: 900px; height: 90vh; display: flex; flex-direction: column; position: relative; box-sizing: border-box;">
 
         <!-- 标题栏 -->
-        <div style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
-            <h2 style="margin: 0; font-size: 20px; color: #111111;">📖 How to use / 使用说明</h2>
-            <span style="cursor: pointer; color: #999; font-size: 28px; line-height: 1; user-select: none; padding: 0 8px;"
+        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+            <h2 style="margin: 0; font-size: 20px; color: var(--heading);">📖 How to use / 使用说明</h2>
+            <span style="cursor: pointer; color: var(--text-muted); font-size: 28px; line-height: 1; user-select: none; padding: 0 8px;"
                   onclick="document.getElementById('infoModal').style.display='none'">&times;</span>
         </div>
 
         <!-- 可滚动内容区 -->
-        <div style="flex: 1; overflow-y: auto; padding: 24px; font-size: 14px; line-height: 1.7; color: #333;">
+        <div style="flex: 1; overflow-y: auto; padding: 24px; font-size: 14px; line-height: 1.7; color: var(--text);">
 
             <!-- 1. How open site inside works -->
             <section style="margin-bottom: 32px;">
-                <h3 style="font-size: 17px; color: #0066cc; margin: 0 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
                     How "open site inside" works / “页面内打开”的使用说明
                 </h3>
                 <p style="margin: 0 0 10px 0;">
                     This site uses "openSiteInside" to load content within the current page. Hover the mouse over the top area to reveal a gray bar; click it to return to the "disguise" page. Alternatively, press the Esc key twice — the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view. Some websites may open in a new tab because they reject being loaded inside another page.
                 </p>
-                <p style="margin: 0; color: #555;">
+                <p style="margin: 0; color: var(--text-muted);">
                     本站使用 “openSiteInside” 在当前页面内加载内容。把鼠标移到页面顶部会显示一条灰色横条，点击它即可回到“伪装”页面。也可以按两次 Esc 键 —— 第一次把鼠标/键盘从游戏上下文中释放，第二次返回上一个视图。部分网站因为拒绝被嵌入其他页面，会在新标签页中打开。
                 </p>
             </section>
 
             <!-- 2. Notice -->
             <section style="margin-bottom: 32px;">
-                <h3 style="font-size: 17px; color: #0066cc; margin: 0 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
                     Notice / 公告
                 </h3>
                 <p style="margin: 0 0 10px 0;">
                     The GitHub Pages URL has been discontinued. All users can no longer access the old URL; anyone opening it will be redirected to the new URL after Oct. 31. There is now only one official URL — the Vercel page (this site).
                 </p>
-                <p style="margin: 0; color: #555;">
+                <p style="margin: 0; color: var(--text-muted);">
                     GitHub Pages 网址已停用。所有用户都无法再访问旧网址；10 月 31 日之后，打开旧网址的用户会被重定向到新网址。现在只有一个官方网址 —— Vercel 页面（即本网站）。
                 </p>
             </section>
 
             <!-- 3. Tracking -->
             <section style="margin-bottom: 32px;">
-                <h3 style="font-size: 17px; color: #0066cc; margin: 0 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
                     Tracking / 追踪说明
                 </h3>
                 <p style="margin: 0 0 10px 0;">
                     I can see what you do on this site and at what time. Even though I don't know your name, I assign a pseudo-UUID to your tab. GitHub couldn't handle this, which is why I abandoned GitHub Pages in favor of Vercel. And don't even think about getting my GitHub PAT (Personal Access Token) — if anyone got it, they could edit or delete my things. I'm not stupid enough to hardcode it into the HTML or JS.
                 </p>
-                <p style="margin: 0; color: #555;">
+                <p style="margin: 0; color: var(--text-muted);">
                     我能看到你在本站做了什么、以及在什么时间做的。虽然我不知道你的名字，但我会给你的标签页分配一个伪 UUID。GitHub 处理不了这个，所以我把 GitHub Pages 换成了 Vercel。也别想拿到我的 GitHub PAT（个人访问令牌）—— 谁拿到它就能编辑或删除我的东西。我还不至于蠢到把它硬编码进 HTML 或 JS 里。
                 </p>
             </section>
 
             <!-- 4. Sign out -->
             <section>
-                <h3 style="font-size: 17px; color: #0066cc; margin: 0 0 12px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
                     Sign out / 退出登录
                 </h3>
                 <p style="margin: 0 0 10px 0;">
                     Open the browser console (press F12 or fn+F12), paste the following lines, and press Enter:
                 </p>
-                <p style="margin: 0 0 10px 0; color: #555;">
+                <p style="margin: 0 0 10px 0; color: var(--text-muted);">
                     打开浏览器控制台（按 F12 或 fn+F12），粘贴以下内容并回车：
                 </p>
                 <pre style="background: #1e1e1e; color: #d4d4d4; padding: 14px 16px; border-radius: 8px; font-family: 'Monaco', 'Consolas', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; margin: 0;">localStorage.removeItem('site_user_id_v1');
@@ -177,7 +232,7 @@ location.reload();</pre>
         </div>
 
         <!-- 底部按钮 -->
-        <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; flex-shrink: 0;">
+        <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0;">
             <button onclick="document.getElementById('infoModal').style.display='none'"
                     style="padding: 10px 24px; background: #0066cc; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
                 Close / 关闭
@@ -210,9 +265,9 @@ location.reload();</pre>
 
             <span class="game-link" style="cursor: pointer; text-decoration: underline;" onclick="document.getElementById('customModal2').style.display='flex'">More info about Geometry Dash Subzero / 关于 Geometry Dash Subzero 的更多信息</span>
             <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
+                    <p style="color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;">
                     Finally found this Subzero thing. The link may change — it's deployed on Vercel because it queued so long on GitHub Pages (I don't know why; maybe it's too large). It runs quite sluggishly — this has nothing to do with me, at least on a Chromebook; it might be the same on other devices, I don't know. If you know of any alternatives, please open an issue on GitHub. After all, this is just a remake; the original was built in C++, whereas this one is HTML-based. — Oct. 5, 2026<br><br>
                     终于找到这个 Subzero 了。链接可能会变 —— 它部署在 Vercel 上，因为在 GitHub Pages 上排队排了很久（不知道为什么，也许是文件太大）。它运行起来相当卡 —— 这与我无关，至少在 Chromebook 上是这样；其他设备上可能也一样，我不确定。如果你知道任何替代方案，请在 GitHub 上开 Issue。毕竟这只是重制版；原版是用 C++ 写的，而这个是基于 HTML 的。 —— 2026 年 10 月 5 日
                     </p>
@@ -230,27 +285,27 @@ location.reload();</pre>
 
             <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment / 留言或反馈</span>
             <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
-                    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment / 留言或反馈</h3>
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
+                    <h3 style="color: var(--heading); margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment / 留言或反馈</h3>
                     <form id="issueForm" onsubmit="submitIssue(); return false;">
-                        <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical;" placeholder="Type your message here... / 在这里输入你的留言……"></textarea>
+                        <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical; background: var(--screen-bg); color: var(--screen-text);" placeholder="Type your message here... / 在这里输入你的留言……"></textarea>
                         <button type="submit" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit / 提交</button>
                     </form>
                 </div>
             </div>
             <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
-                    <p style="color: #333; font-size: 16px; margin: 0;">✓ Issue submitted successfully! / Issue 提交成功！</p>
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
+                    <p style="color: var(--text); font-size: 16px; margin: 0;">✓ Issue submitted successfully! / Issue 提交成功！</p>
                     <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close / 关闭</button>
                 </div>
             </div>
 
-            <span style="color: #333; cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info / 更多信息</span>
+            <span style="color: var(--text); cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info / 更多信息</span>
             <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
-                <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
-                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: #999; user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
-                    <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0;">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
+                    <p style="color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;">
                     This website was created with AI assistance. Visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites, or if a link stops working. Type "12345" to unlock the site — the calculator on the cover page is fully functional. This site will be updated frequently. All "block" or "blocked" in this website means "blocked by the school firewall". I think the calculator on the front page has some bugs when using web translation. The "link may change" note is because some websites are deployed under my school's GitHub account. — Oct. 5, 2026<br><br>
                     本网站是在 AI 协助下创建的。想了解更多，请访问我的 GitHub 项目页面：https://github.com/aiden12910-12910/the-website/。如果你有推荐的无屏蔽网站，或者发现某个链接失效了，欢迎留言。输入 “12345” 即可解锁本站 —— 封面上的计算器是完全可用的。本站会经常更新。本网站中所有 “block” 或 “blocked” 都指“被学校防火墙屏蔽”。我认为首页计算器在使用网页翻译时会有一些 bug。“链接可能变化”的提示是因为部分网站部署在我学校的 GitHub 账号下。 —— 2026 年 10 月 19 日
                     </p>
@@ -264,11 +319,63 @@ location.reload();</pre>
     <div id="secure-backdoor-layer">
         <iframe id="secure-iframe-target" src="" allowfullscreen></iframe>
     </div>
-    
-<script src="/js/onload.js"></script>
+
 <script src="/js/tracking.js"></script>
 <script src="/js/ui.js"></script>
-    
+
+<script>
+// ===== 主题切换（不持久化，刷新后回到跟随系统）=====
+(function() {
+    var currentTheme = 'auto';
+
+    function applyTheme(theme) {
+        var html = document.documentElement;
+        if (theme === 'auto') {
+            html.removeAttribute('data-theme');
+        } else {
+            html.setAttribute('data-theme', theme);
+        }
+        updateIcon(theme);
+    }
+
+    function updateIcon(theme) {
+        var icon = document.getElementById('theme-icon');
+        if (!icon) return;
+        if (theme === 'auto') icon.textContent = '🌓';
+        else if (theme === 'light') icon.textContent = '☀️';
+        else icon.textContent = '🌙';
+    }
+
+    window.toggleTheme = function() {
+        if (currentTheme === 'auto') currentTheme = 'light';
+        else if (currentTheme === 'light') currentTheme = 'dark';
+        else currentTheme = 'auto';
+        applyTheme(currentTheme);
+        console.log('Theme changed to:', currentTheme);
+    };
+
+    applyTheme('auto');
+
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            if (currentTheme === 'auto') applyTheme('auto');
+        });
+    }
+})();
+
+// ===== GitHub 跳转 =====
+window.addEventListener('load', function() {
+    if (window.location.href.includes('github')) {
+        var userConfirmed = confirm("This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
+        if (userConfirmed) {
+            window.location.replace('https://aiden12910-12910.vercel.app/index.html');
+        } else {
+            alert('您取消了跳转，将留在当前页面。');
+        }
+    }
+});
+</script>
+
 <div id="dev-panel">
     <span class="dev-close" onclick="document.getElementById('dev-panel').style.display='none'">&times;</span>
     <h3>🛠️ Dev Mode</h3>
