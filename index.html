@@ -625,7 +625,7 @@ window.onload = function() {
     };
 
     window.devClearStorage = function() {
-        if (!confirm('清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
+        if (!confirm('Clear localStorage? This will log you out, and a new temporary ID will be generated the next time you visit.清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
         try {
             localStorage.removeItem('site_user_id_v1');
             localStorage.removeItem('site_user_email_v1');
