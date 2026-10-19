@@ -1,0 +1,34 @@
+/* ===== 主题变量 ===== */
+:root {
+    --bg: #ffffff;
+    --text: #333333;
+    /* ... 全部变量 ... */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root { /* ... */ }
+}
+
+[data-theme="light"] { /* ... */ }
+[data-theme="dark"] { /* ... */ }
+
+body { /* ... */ }
+.calculator-box { /* ... */ }
+/* ... 所有规则 ... */
+
+/* Privacy / OAuth 提示框 */
+.privacy-box { /* ... */ }
+.oauth-box { /* ... */ }
+@media (prefers-color-scheme: dark) {
+    .privacy-box { /* ... */ }
+    .oauth-box { /* ... */ }
+}
+[data-theme="dark"] .privacy-box { /* ... */ }
+[data-theme="dark"] .oauth-box { /* ... */ }
+[data-theme="light"] .privacy-box { /* ... */ }
+[data-theme="light"] .oauth-box { /* ... */ }
+
+/* Scientific Calculator */
+.sci-calc { /* ... */ }
+.sci-modes { /* ... */ }
+/* ... 所有 .sci-* 规则 ... */
