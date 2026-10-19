@@ -1,33 +1,329 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page Not Found</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px 16px; border-radius: 3px; }
-      #message h3 { color: #888; font-weight: normal; font-size: 16px; margin: 16px 0 12px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        /* ===== 导航菜单 ===== */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111111;
+            text-decoration: none;
+            font-family: 'Monaco', 'Consolas', monospace;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand span {
+            color: #0066cc;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            font-size: 14px;
+            color: #4a5568;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .navbar-links a:hover {
+            background: #f8f9fa;
+            color: #0066cc;
+        }
+
+        .navbar-links a.primary {
+            background: #0066cc;
+            color: #ffffff;
+        }
+
+        .navbar-links a.primary:hover {
+            background: #004499;
+            color: #ffffff;
+        }
+
+        /* ===== 404 内容 ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1;
+            letter-spacing: -4px;
+            margin-bottom: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            user-select: none;
+        }
+
+        .error-code span {
+            color: #0066cc;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111111;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .calc-box {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 280px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .calc-screen {
+            width: 100%;
+            height: 50px;
+            background: #ffffff;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 20px;
+            text-align: right;
+            padding: 10px 14px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #1a202c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .calc-btn {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 6px;
+            text-align: center;
+            color: #a0aec0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            user-select: none;
+        }
+
+        .calc-btn.active {
+            background: #0066cc;
+            color: #ffffff;
+            border-color: #0066cc;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #0066cc;
+            color: #ffffff;
+            border-color: #0066cc;
+        }
+
+        .btn-primary:hover {
+            background: #004499;
+            border-color: #004499;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,102,204,0.25);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #0066cc;
+            border-color: #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            border-color: #cbd5e0;
+        }
+
+        .hint {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #a0aec0;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 18px;
+            background: #0066cc;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .navbar { padding: 0 20px; }
+            .navbar-links a { padding: 8px 10px; font-size: 13px; }
+            .error-code { font-size: 80px; }
+            .main-content { padding: 20px; }
+        }
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>404</h2>
-      <h1>Page Not Found</h1>
-      <p>The specified file was not found on this website. Please check the URL for mistakes and try again.</p>
-      <h3>Why am I seeing this?</h3>
-      <p>This page was generated by the Firebase Command-Line Interface. To modify it, edit the <code>404.html</code> file in your project's configured <code>public</code> directory.</p>
+</head>
+<body>
+
+    <!-- ===== 导航菜单 ===== -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">aiden<span>12910</span></a>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="https://github.com/aiden12910-12910/the-website/" target="_blank">GitHub</a>
+            <a href="https://github.com/aiden12910-12910/the-website/issues" target="_blank">Issues</a>
+            <a href="/" class="primary">← Back</a>
+        </div>
+    </nav>
+
+    <!-- ===== 404 内容 ===== -->
+    <div class="main-content">
+        <div class="container">
+            <div class="error-code">4<span>0</span>4</div>
+            <h1>Page Not Found</h1>
+            <p>The page you're looking for doesn't exist.</p>
+            <p>你访问的页面不存在。</p>
+
+            <div class="calc-box">
+                <div class="calc-screen">
+                    <span id="screenText">404</span><span class="cursor"></span>
+                </div>
+                <div class="calc-grid">
+                    <div class="calc-btn">C</div>
+                    <div class="calc-btn">/</div>
+                    <div class="calc-btn">*</div>
+                    <div class="calc-btn">-</div>
+                    <div class="calc-btn">7</div>
+                    <div class="calc-btn">8</div>
+                    <div class="calc-btn">9</div>
+                    <div class="calc-btn active">+</div>
+                    <div class="calc-btn">4</div>
+                    <div class="calc-btn active">5</div>
+                    <div class="calc-btn">6</div>
+                    <div class="calc-btn active">=</div>
+                    <div class="calc-btn">1</div>
+                    <div class="calc-btn">2</div>
+                    <div class="calc-btn active">3</div>
+                    <div class="calc-btn">0</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="/" class="btn btn-primary">← Go Home / 返回首页</a>
+                <a href="https://github.com/aiden12910-12910/the-website/issues" class="btn btn-secondary" target="_blank">Report Issue</a>
+            </div>
+
+            <div class="hint">// 404 — Nothing to see here</div>
+        </div>
     </div>
-  </body>
+
+    <script>
+        // 屏幕数字随机跳动
+        (function() {
+            var screenText = document.getElementById('screenText');
+            var nums = ['404', '0', '1', '2', '3', '5', '7', '9', '?', 'NaN', 'undefined'];
+            var idx = 0;
+            setInterval(function() {
+                idx = (idx + 1) % nums.length;
+                screenText.textContent = nums[idx];
+            }, 8000);
+        })();
+
+        // 彩蛋：输入 12345 跳回首页
+        (function() {
+            var sequence = '';
+            document.addEventListener('keydown', function(e) {
+                if (/^[0-9]$/.test(e.key)) {
+                    sequence = (sequence + e.key).slice(-10);
+                    if (sequence.includes('12345')) {
+                        window.location.href = '/';
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
 </html>

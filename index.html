@@ -625,7 +625,7 @@ window.onload = function() {
     };
 
     window.devClearStorage = function() {
-        if (!confirm('清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
+        if (!confirm('Clear localStorage? This will log you out, and a new temporary ID will be generated the next time you visit.清空 localStorage？这会让你退出登录，下次访问会重新生成临时 ID。')) return;
         try {
             localStorage.removeItem('site_user_id_v1');
             localStorage.removeItem('site_user_email_v1');
@@ -662,32 +662,63 @@ window.onload = function() {
     };
 
     window.devRefreshIdentity = function() {
-        var idEl = document.getElementById('dev-identity');
-        if (!idEl) return;
-        var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
-        var email = window.localStorage.getItem('site_user_email_v1') || '(not logged in)';
-        var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
-        var isTemp = id.indexOf('temp-') === 0;
-        var isDev = id.indexOf('dev-') === 0;
-        var currentRole = window.currentUserRole || '';
-        var typeText = isTemp ? 'TEMP' : (isDev ? 'DEV' : (currentRole === 'user' ? 'USER (session)' : (currentRole === 'developer' ? 'DEV (session)' : 'Google')));
-        var expireText = 'unknown';
-        if (ts && ts !== '0') {
-            var age = Date.now() - Number(ts);
-            var maxAge = 7 * 24 * 60 * 60 * 1000;
-            var remain = maxAge - age;
-            if (remain <= 0) { expireText = 'EXPIRED'; }
-            else {
-                var hours = Math.floor(remain / (60 * 60 * 1000));
-                var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
-                expireText = hours + 'h ' + mins + 'm';
-            }
+    var idEl = document.getElementById('dev-identity');
+    if (!idEl) return;
+
+    // 优先读内存（手动登录只存在内存里）
+    var memEmail = window.currentUserEmail || '';
+    var memRole = window.currentUserRole || '';
+
+    var id = window.localStorage.getItem('site_user_id_v1') || '(none)';
+    var email = window.localStorage.getItem('site_user_email_v1') || '';
+    var ts = window.localStorage.getItem('site_login_ts_v1') || '0';
+
+    // localStorage 没 email 但内存有 → 用内存的，标注 session
+    if (!email && memEmail) {
+        email = memEmail + ' (session)';
+    }
+    if (!email) {
+        email = '(not logged in)';
+    }
+
+    var isTemp = id.indexOf('temp-') === 0;
+    var isDev = id.indexOf('dev-') === 0;
+
+    var typeText;
+    if (memRole === 'developer') {
+        typeText = 'DEV (session)';
+    } else if (memRole === 'user') {
+        typeText = 'USER (session)';
+    } else if (isTemp) {
+        typeText = 'TEMP';
+    } else if (isDev) {
+        typeText = 'DEV';
+    } else if (id.indexOf('g-') === 0) {
+        typeText = 'Google';
+    } else {
+        typeText = 'unknown';
+    }
+
+    var expireText = 'unknown';
+    if (ts && ts !== '0') {
+        var age = Date.now() - Number(ts);
+        var maxAge = 7 * 24 * 60 * 60 * 1000;
+        var remain = maxAge - age;
+        if (remain <= 0) { expireText = 'EXPIRED'; }
+        else {
+            var hours = Math.floor(remain / (60 * 60 * 1000));
+            var mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
+            expireText = hours + 'h ' + mins + 'm';
         }
-        idEl.innerHTML = '<div>ID: ' + id + '</div>' +
-            '<div>Email: ' + email + '</div>' +
-            '<div>Type: ' + typeText + '</div>' +
-            '<div>Expires in: ' + expireText + '</div>';
-    };
+    } else if (memRole) {
+        expireText = 'session only';
+    }
+
+    idEl.innerHTML = '<div>ID: ' + id + '</div>' +
+        '<div>Email: ' + email + '</div>' +
+        '<div>Type: ' + typeText + '</div>' +
+        '<div>Expires in: ' + expireText + '</div>';
+};
 
     window.devLogBufferCount = 0;
     window.devLogSentCount = 0;
