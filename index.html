@@ -18,7 +18,6 @@
 
 <div id="calculator-wrapper">
     <div class="win-calc">
-        <!-- 顶部模式切换 -->
         <div class="win-titlebar">
             <span class="win-title">Calculator</span>
             <div class="win-modes">
@@ -33,7 +32,6 @@
             </div>
         </div>
 
-        <!-- 显示区 -->
         <div class="win-display">
             <div class="win-indicator" id="win-indicator">DEG</div>
             <div class="win-expr" id="win-expr"></div>
@@ -486,6 +484,12 @@ location.reload();</pre>
         else if (currentTheme === 'light') currentTheme = 'dark';
         else currentTheme = 'auto';
         applyTheme(currentTheme);
+
+        // 如果当前在绘图模式，重绘
+        if (typeof winCurrentMode !== 'undefined' && winCurrentMode === 'graphing' && typeof winDrawGraph === 'function') {
+            setTimeout(winDrawGraph, 100);
+        }
+
         console.log('Theme changed to:', currentTheme);
     };
 
@@ -497,15 +501,6 @@ location.reload();</pre>
         });
     }
 })();
-
-    window.toggleTheme = function() {
-    // ... 原有逻辑 ...
-    applyTheme(currentTheme);
-    // 如果当前在绘图模式，重绘
-    if (typeof winCurrentMode !== 'undefined' && winCurrentMode === 'graphing' && typeof winDrawGraph === 'function') {
-        setTimeout(winDrawGraph, 100);
-    }
-};
 
 // ===== GitHub 跳转 =====
 window.addEventListener('load', function() {
