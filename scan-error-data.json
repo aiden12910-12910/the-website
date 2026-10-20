@@ -1,16 +1,26 @@
 {
   "summary": {
-    "total": 0,
-    "errors": 0,
+    "total": 1,
+    "errors": 1,
     "warnings": 0,
     "bySource": {
       "eslint": 0,
       "htmlhint": 0,
       "stylelint": 0,
-      "playwright": 0,
+      "playwright": 1,
       "lychee": 0
     }
   },
-  "errors": [],
+  "errors": [
+    {
+      "file": "smoke.spec.js",
+      "line": 0,
+      "column": 0,
+      "severity": "error",
+      "rule": "playwright",
+      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"(intermediate value)(...) is not a function\",\u001b[39m\n\u001b[31m+   \"Unexpected end of input\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+      "source": "playwright"
+    }
+  ],
   "warnings": []
 }
