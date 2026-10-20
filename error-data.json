@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-10-19T12:34:56.789Z",
+  "commit": "abc1234def5678...",
+  "summary": {
+    "total": 12,
+    "errors": 3,
+    "warnings": 9,
+    "bySource": {
+      "eslint": 5,
+      "htmlhint": 2,
+      "stylelint": 1,
+      "playwright": 1,
+      "lychee": 3
+    }
+  },
+  "errors": [
+    {
+      "file": "js/ui.js",
+      "line": 42,
+      "column": 10,
+      "severity": "error",
+      "rule": "no-undef",
+      "message": "'winCurrentMode' is not defined",
+      "source": "eslint"
+    },
+    {
+      "file": "index.html",
+      "line": 0,
+      "column": 0,
+      "severity": "error",
+      "rule": "dead-link",
+      "message": "Dead link: https://example.com/game (404)",
+      "source": "lychee"
+    }
+  ],
+  "warnings": [
+    {
+      "file": "css/style.css",
+      "line": 15,
+      "column": 3,
+      "severity": "warning",
+      "rule": "color-hex-length",
+      "message": "Expected short hex format (#fff instead of #ffffff)",
+      "source": "stylelint"
+    }
+  ]
+}
