@@ -1,55 +1,19 @@
 {
-  "generatedAt": "2026-10-20T19:43:47.004Z",
-  "commit": "8c647bd963358b888fbe1a0981ce24ce68c3b915",
+  "generatedAt": "2026-10-20T19:46:51.789Z",
+  "commit": "875e35153d9e34941b51e4645455b9d1c5a8d8cf",
   "summary": {
-    "total": 5,
-    "errors": 5,
+    "total": 1,
+    "errors": 1,
     "warnings": 0,
     "bySource": {
       "eslint": 0,
-      "htmlhint": 4,
+      "htmlhint": 0,
       "stylelint": 0,
       "playwright": 1,
       "lychee": 0
     }
   },
   "errors": [
-    {
-      "file": "/home/runner/work/the-website/the-website/index.html",
-      "line": 25,
-      "column": 745,
-      "severity": "error",
-      "rule": "spec-char-escape",
-      "message": "Special characters must be escaped : [ < ].",
-      "source": "htmlhint"
-    },
-    {
-      "file": "/home/runner/work/the-website/the-website/index.html",
-      "line": 25,
-      "column": 746,
-      "severity": "error",
-      "rule": "spec-char-escape",
-      "message": "Special characters must be escaped : [ < ].",
-      "source": "htmlhint"
-    },
-    {
-      "file": "/home/runner/work/the-website/the-website/index.html",
-      "line": 25,
-      "column": 815,
-      "severity": "error",
-      "rule": "spec-char-escape",
-      "message": "Special characters must be escaped : [ > ].",
-      "source": "htmlhint"
-    },
-    {
-      "file": "/home/runner/work/the-website/the-website/index.html",
-      "line": 25,
-      "column": 816,
-      "severity": "error",
-      "rule": "spec-char-escape",
-      "message": "Special characters must be escaped : [ > ].",
-      "source": "htmlhint"
-    },
     {
       "file": "smoke.spec.js",
       "line": 0,
