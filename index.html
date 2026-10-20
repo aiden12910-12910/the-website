@@ -470,20 +470,13 @@ location.reload();</pre>
         else icon.textContent = '🌙';
     }
 
-    window.toggleTheme = function() {
-        if (currentTheme === 'auto') currentTheme = 'light';
-        else if (currentTheme === 'light') currentTheme = 'dark';
-        else currentTheme = 'auto';
-        applyTheme(currentTheme);
-
-        // 如果当前在绘图模式，重绘
-        if (typeof winCurrentMode !== 'undefined' && winCurrentMode === 'graphing' && typeof winDrawGraph === 'function') {
-            setTimeout(winDrawGraph, 100);
-        }
-
-        console.log('Theme changed to:', currentTheme);
-    };
-
+window.toggleTheme = function() {
+    if (currentTheme === 'auto') currentTheme = 'light';
+    else if (currentTheme === 'light') currentTheme = 'dark';
+    else currentTheme = 'auto';
+    applyTheme(currentTheme);
+    console.log('Theme changed to:', currentTheme);
+};
     applyTheme('auto');
 
     if (window.matchMedia) {
