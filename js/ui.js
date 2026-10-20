@@ -47,8 +47,48 @@ window.submitIssue = function() {
 // ============================================================
 // Open site inside iframe
 // ============================================================
+var iframeLoadTimeout = null;
+var iframeCurrentUrl = '';
+
 function openSiteInside(targetUrl) {
     if (typeof winReset === 'function') winReset();
+
+    iframeCurrentUrl = targetUrl;
+
+    // 隐藏错误层
+    var errorOverlay = document.getElementById('iframe-error-overlay');
+    if (errorOverlay) errorOverlay.style.display = 'none';
+
+    // 清除之前的超时
+    if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+
+    // 设置 30 秒超时：如果 iframe 没触发 onload，就认为加载失败
+    iframeLoadTimeout = setTimeout(function() {
+        // 检查 iframe 是否真的加载了
+        // 跨域时无法读 contentDocument，只能靠 onload 是否触发
+        if (!window.__iframeLoaded) {
+            showIframeError(targetUrl);
+        }
+    }, 30000);
+
+    window.__iframeLoaded = false;
+
+    // 监听 iframe 加载成功
+    iframe.onload = function() {
+        // 跨域 iframe 的 onload 会在页面加载时触发（即使内容是错误页）
+        // 但如果是 X-Frame-Options 拒绝，onload 可能不触发或立即触发
+        window.__iframeLoaded = true;
+        if (iframeLoadTimeout) {
+            clearTimeout(iframeLoadTimeout);
+            iframeLoadTimeout = null;
+        }
+        console.log('iframe loaded:', targetUrl);
+    };
+
+    iframe.onerror = function() {
+        showIframeError(targetUrl);
+    };
+
     iframe.src = targetUrl;
     layer.style.display = 'block';
     panicBar.style.display = 'block';
@@ -59,6 +99,22 @@ function openSiteInside(targetUrl) {
     if (window.devRecordUrl) window.devRecordUrl(targetUrl);
 }
 
+function showIframeError(url) {
+    var errorOverlay = document.getElementById('iframe-error-overlay');
+    if (!errorOverlay) return;
+    var urlEl = document.getElementById('iframe-error-url');
+    if (urlEl) urlEl.textContent = url || '';
+    var openEl = document.getElementById('iframe-error-open');
+    if (openEl && url) openEl.href = url;
+    errorOverlay.style.display = 'flex';
+    console.warn('iframe load failed or timeout:', url);
+}
+
+function retryIframe() {
+    if (iframeCurrentUrl) {
+        openSiteInside(iframeCurrentUrl);
+    }
+}
 // ============================================================
 // Force return to home
 // ============================================================
@@ -68,6 +124,12 @@ function forceReturnToHome() {
     gameZone.style.display = "none";
     calcWrapper.style.display = "block";
     iframe.src = '';
+    if (iframeLoadTimeout) {
+        clearTimeout(iframeLoadTimeout);
+        iframeLoadTimeout = null;
+    }
+    var errorOverlay = document.getElementById('iframe-error-overlay');
+    if (errorOverlay) errorOverlay.style.display = 'none';
 
     if (typeof winReset === 'function') {
         winReset();
@@ -76,7 +138,6 @@ function forceReturnToHome() {
     } else if (typeof winClear === 'function') {
         winClear();
     }
-
     var exprEl = document.getElementById('win-expr');
     if (exprEl) exprEl.textContent = '';
     var resultEl = document.getElementById('win-result');
