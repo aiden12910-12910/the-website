@@ -48,9 +48,7 @@ window.submitIssue = function() {
 // Open site inside iframe
 // ============================================================
 function openSiteInside(targetUrl) {
-    // 打开游戏前先归零计算器
     if (typeof winReset === 'function') winReset();
-
     iframe.src = targetUrl;
     layer.style.display = 'block';
     panicBar.style.display = 'block';
@@ -71,7 +69,6 @@ function forceReturnToHome() {
     calcWrapper.style.display = "block";
     iframe.src = '';
 
-    // 计算器完全归零
     if (typeof winReset === 'function') {
         winReset();
     } else if (typeof winClearAll === 'function') {
@@ -80,7 +77,6 @@ function forceReturnToHome() {
         winClear();
     }
 
-    // 强制清空显示区（防止 #win-expr 残留 "3+2 =" 之类的文本）
     var exprEl = document.getElementById('win-expr');
     if (exprEl) exprEl.textContent = '';
     var resultEl = document.getElementById('win-result');
@@ -373,20 +369,20 @@ setTimeout(function() {
 // Windows 11 Calculator - Full Implementation
 // ============================================================
 
-// 状态
-var winTokens = [];          // 当前表达式的 token 数组
-var winLastAns = 0;          // Ans
-var winAngleMode = 'DEG';    // DEG / RAD
+var winTokens = [];
+var winLastAns = 0;
+var winAngleMode = 'DEG';
 var winCurrentMode = 'scientific';
 var winJustEvaluated = false;
-var winPendingParen = 0;     // 未闭合的左括号数
-var winLastResult = null;    // 上次 = 的结果
+var winPendingParen = 0;
+var winLastResult = null;
 
-// 程序员模式状态
 var winProgBase = 10;
-var winProgValue = '0';
-var winProgPending = null;
 var winProgDisplayValue = '0';
+var winProgPending = null;
+
+// 全局解锁序列：任何输入都会追加到这个字符串，包含 12345 即解锁
+var winInputSequence = '';
 
 // ---------- 显示 ----------
 function winUpdateDisplay() {
@@ -406,7 +402,6 @@ function winUpdateDisplay() {
         } else if (winTokens.length === 0) {
             resultEl.textContent = '0';
         } else {
-            // 尝试实时预览
             try {
                 var preview = winEvaluateTokens(winTokens);
                 if (preview !== null && isFinite(preview)) {
@@ -443,6 +438,16 @@ function winTokensToDisplay() {
     return s;
 }
 
+// ---------- 解锁检查（每个输入函数都调用） ----------
+function winCheckUnlock() {
+    if (winInputSequence.indexOf('12345') !== -1) {
+        if (typeof unlockSecretZone === 'function') {
+            console.log('UNLOCK TRIGGERED by 12345');
+            unlockSecretZone();
+        }
+    }
+}
+
 // ---------- 模式切换 ----------
 function winSetMode(mode) {
     winCurrentMode = mode;
@@ -462,20 +467,22 @@ function winSetMode(mode) {
 
 // ---------- 输入 ----------
 function winDigit(d) {
+    // 解锁序列
+    winInputSequence = (winInputSequence + String(d)).slice(-20);
+    winCheckUnlock();
+
     if (winJustEvaluated) {
         winTokens = [];
         winJustEvaluated = false;
     }
 
     if (d === 'π' || d === 'e' || d === 'Ans') {
-        // 如果最后一个 token 是数字或常量或右括号，先插入隐式乘法
         if (needsImplicitMultiply()) winTokens.push({ type: 'op', value: '*' });
         winTokens.push({ type: 'const', value: d });
         winUpdateDisplay();
         return;
     }
 
-    // 数字：如果最后一个 token 是数字，合并
     var last = winTokens[winTokens.length - 1];
     if (last && last.type === 'num' && !last.isParen) {
         last.value += d;
@@ -487,6 +494,9 @@ function winDigit(d) {
 }
 
 function winDecimal() {
+    winInputSequence = (winInputSequence + '.').slice(-20);
+    winCheckUnlock();
+
     if (winJustEvaluated) {
         winTokens = [];
         winJustEvaluated = false;
@@ -503,18 +513,15 @@ function winDecimal() {
 
 function winOperator(op) {
     if (winJustEvaluated) {
-        // = 后按运算符：用结果继续算
         winTokens = [{ type: 'num', value: formatNumber(winLastResult) }];
         winJustEvaluated = false;
     }
     var last = winTokens[winTokens.length - 1];
     if (!last) {
-        // 开头按运算符：负数
         if (op === '-') winTokens.push({ type: 'num', value: '-' });
         return;
     }
     if (last.type === 'op') {
-        // 替换上一个运算符
         last.value = op;
     } else {
         winTokens.push({ type: 'op', value: op });
@@ -555,7 +562,6 @@ function winPercent() {
     if (winTokens.length === 0) return;
     var last = winTokens[winTokens.length - 1];
     if (last.type === 'num') {
-        // 数字后加 %：除以 100
         last.value = String(parseFloat(last.value) / 100);
         winUpdateDisplay();
     }
@@ -581,7 +587,6 @@ function needsImplicitMultiply() {
 
 // ---------- 清空 ----------
 function winClearEntry() {
-    // CE：清空当前输入的数字（最后一个 token 如果是 num）
     var last = winTokens[winTokens.length - 1];
     if (last && last.type === 'num') winTokens.pop();
     winJustEvaluated = false;
@@ -594,6 +599,7 @@ function winClearAll() {
     winJustEvaluated = false;
     winPendingParen = 0;
     winLastResult = null;
+    winInputSequence = '';
     winUpdateDisplay();
 }
 
@@ -621,7 +627,6 @@ function winBackspace() {
 // ---------- 求值 ----------
 function winEquals() {
     if (winTokens.length === 0) return;
-    // 自动补全右括号
     while (winPendingParen > 0) {
         winTokens.push({ type: 'paren', value: ')' });
         winPendingParen--;
@@ -643,7 +648,6 @@ function winEquals() {
 }
 
 function winEvaluateTokens(tokens) {
-    // 转成 JS 表达式字符串
     var s = '';
     for (var i = 0; i < tokens.length; i++) {
         var t = tokens[i];
@@ -657,7 +661,6 @@ function winEvaluateTokens(tokens) {
             else if (t.value === 'e') s += '(' + Math.E + ')';
             else if (t.value === 'Ans') s += '(' + winLastAns + ')';
         } else if (t.type === 'func') {
-            // 函数：sin, cos, tan, log, ln, sqrt, fact
             var fnMap = {
                 'sin': winAngleMode === 'DEG' ? 'Math.sin((Math.PI/180)*' : 'Math.sin(',
                 'cos': winAngleMode === 'DEG' ? 'Math.cos((Math.PI/180)*' : 'Math.cos(',
@@ -666,11 +669,8 @@ function winEvaluateTokens(tokens) {
                 'ln': 'Math.log(',
                 'sqrt': 'Math.sqrt('
             };
-            if (t.value === 'fact') {
-                s += 'factorial(';
-            } else {
-                s += fnMap[t.value] || 'Math.' + t.value + '(';
-            }
+            if (t.value === 'fact') s += 'factorial(';
+            else s += fnMap[t.value] || 'Math.' + t.value + '(';
         }
     }
     var factorial = function(n) {
@@ -707,10 +707,10 @@ function winReset() {
     winLastResult = null;
     winJustEvaluated = false;
     winPendingParen = 0;
+    winInputSequence = '';
     winAngleMode = 'DEG';
-    winProgValue = '0';
-    winProgPending = null;
     winProgDisplayValue = '0';
+    winProgPending = null;
 
     var exprEl = document.getElementById('win-expr');
     if (exprEl) exprEl.textContent = '';
@@ -733,13 +733,11 @@ function winReset() {
 function winProgSetBase(base) {
     var oldBase = winProgBase;
     winProgBase = parseInt(base);
-    // 进制转换：先转十进制，再转新进制
     var dec = parseInt(winProgDisplayValue, oldBase) || 0;
     winProgDisplayValue = dec.toString(winProgBase).toUpperCase();
     var display = document.getElementById('prog-display');
     if (display) display.textContent = winProgDisplayValue;
 
-    // 更新可用按钮
     var grid = document.getElementById('prog-grid');
     if (grid) {
         grid.querySelectorAll('.prog-hex').forEach(function(btn) {
@@ -797,34 +795,27 @@ function winProgEquals() {
 function winProgBit(op) {
     var a = parseInt(winProgDisplayValue, winProgBase) || 0;
     var r;
-    if (op === 'not') r = ~a;
-    else if (op === 'shl') r = a << 1;
-    else if (op === 'shr') r = a >> 1;
-    else {
+    if (op === 'not') {
+        r = ~a;
+        winProgDisplayValue = (r >>> 0).toString(winProgBase).toUpperCase();
+        var display = document.getElementById('prog-display');
+        if (display) display.textContent = winProgDisplayValue;
+    } else if (op === 'shl') {
+        r = a << 1;
+        winProgDisplayValue = (r >>> 0).toString(winProgBase).toUpperCase();
+        var display2 = document.getElementById('prog-display');
+        if (display2) display2.textContent = winProgDisplayValue;
+    } else if (op === 'shr') {
+        r = a >> 1;
+        winProgDisplayValue = (r >>> 0).toString(winProgBase).toUpperCase();
+        var display3 = document.getElementById('prog-display');
+        if (display3) display3.textContent = winProgDisplayValue;
+    } else {
         winProgPending = { op: op, value: a };
         winProgDisplayValue = '0';
-        var display = document.getElementById('prog-display');
-        if (display) display.textContent = '0';
-        return;
+        var display4 = document.getElementById('prog-display');
+        if (display4) display4.textContent = '0';
     }
-    winProgDisplayValue = (r >>> 0).toString(winProgBase).toUpperCase();
-    var display = document.getElementById('prog-display');
-    if (display) display.textContent = winProgDisplayValue;
-}
-
-// 程序员模式的位运算 =（AND/OR/XOR）
-function winProgBitEquals() {
-    if (!winProgPending) return;
-    var a = winProgPending.value;
-    var b = parseInt(winProgDisplayValue, winProgBase) || 0;
-    var r;
-    if (winProgPending.op === 'and') r = a & b;
-    else if (winProgPending.op === 'or') r = a | b;
-    else if (winProgPending.op === 'xor') r = a ^ b;
-    winProgDisplayValue = (r >>> 0).toString(winProgBase).toUpperCase();
-    winProgPending = null;
-    var display = document.getElementById('prog-display');
-    if (display) display.textContent = winProgDisplayValue;
 }
 
 // ---------- 日期 ----------
