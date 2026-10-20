@@ -9,10 +9,9 @@ window.onload = function() {
     }
 };
 
-
 // ===== 主题切换（不持久化，刷新后回到跟随系统）=====
 (function() {
-    var currentTheme = 'auto'; // 只在内存里，不写 localStorage
+    var currentTheme = 'auto';
 
     function applyTheme(theme) {
         var html = document.documentElement;
@@ -36,15 +35,12 @@ window.onload = function() {
         if (currentTheme === 'auto') currentTheme = 'light';
         else if (currentTheme === 'light') currentTheme = 'dark';
         else currentTheme = 'auto';
-
         applyTheme(currentTheme);
         console.log('Theme changed to:', currentTheme);
     };
 
-    // 页面加载时应用默认（跟随系统）
     applyTheme('auto');
 
-    // 系统主题变化时，如果当前是 auto，自动跟随
     if (window.matchMedia) {
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
             if (currentTheme === 'auto') applyTheme('auto');
