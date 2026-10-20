@@ -21,8 +21,8 @@
         <div class="win-titlebar">
             <span class="win-title">Calculator</span>
             <div class="win-modes">
-                <button class="win-mode active" data-mode="standard" onclick="winSetMode('standard')">Standard</button>
-                <button class="win-mode" data-mode="scientific" onclick="winSetMode('scientific')">Scientific</button>
+                <button class="win-mode" data-mode="standard" onclick="winSetMode('standard')">Standard</button>
+                <button class="win-mode active" data-mode="scientific" onclick="winSetMode('scientific')">Scientific</button>
                 <button class="win-mode" data-mode="programmer" onclick="winSetMode('programmer')">Programmer</button>
                 <button class="win-mode" data-mode="date" onclick="winSetMode('date')">Date</button>
                 <button class="win-mode" data-mode="currency" onclick="winSetMode('currency')">Currency</button>
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Standard -->
-        <div id="win-panel-standard" class="win-panel">
+        <div id="win-panel-standard" class="win-panel" style="display:none;">
             <div class="win-grid">
                 <button class="win-btn win-fn" onclick="winClear()">CE</button>
                 <button class="win-btn win-fn" onclick="winClearAll()">C</button>
@@ -64,7 +64,7 @@
         </div>
 
         <!-- Scientific -->
-        <div id="win-panel-scientific" class="win-panel" style="display:none;">
+        <div id="win-panel-scientific" class="win-panel">
             <div class="win-fn-row">
                 <button class="win-btn win-fn" onclick="winFn('sin')">sin</button>
                 <button class="win-btn win-fn" onclick="winFn('cos')">cos</button>
