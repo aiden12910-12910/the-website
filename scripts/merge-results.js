@@ -127,8 +127,6 @@ const errors = all.filter(x => x.severity === 'error');
 const warnings = all.filter(x => x.severity === 'warning');
 
 const output = {
-  generatedAt: new Date().toISOString(),
-  commit: process.env.GITHUB_SHA || 'local',
   summary: {
     total: all.length,
     errors: errors.length,
