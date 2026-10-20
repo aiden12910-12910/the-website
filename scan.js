@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Unified scanner: ESLint + HTMLHint + Stylelint + Playwright + lychee
- * Outputs: scan-error-data.json
- *
- * Usage: node scan.js
- * Requires: eslint, htmlhint, stylelint, @playwright/test, http-server
+ * Unified scanner.
+ * Usage:
+ *   node scan.js                 -> run eslint/htmlhint/stylelint/playwright, write scan-error-data.json
+ *   node scan.js --merge-lychee  -> merge lychee.json into scan-error-data.json
  */
 
 const { execSync, spawn } = require('child_process');
@@ -14,27 +13,39 @@ const path = require('path');
 const ROOT = __dirname;
 const OUT_JSON = path.join(ROOT, 'scan-error-data.json');
 const TMP_DIR = path.join(ROOT, '.scan-tmp');
+const LYCHEE_JSON = path.join(ROOT, 'lychee.json');
 
 // ---------- helpers ----------
 function ensureTmp() {
   if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
 }
 
-function run(cmd, opts) {
+function run(cmd, label) {
   try {
-    return execSync(cmd, Object.assign({ cwd: ROOT, encoding: 'utf8', stdio: 'pipe' }, opts || {}));
+    const out = execSync(cmd, { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' });
+    return out;
   } catch (e) {
-    return (e.stdout || '') + (e.stderr || '');
+    const msg = (e.stdout || '') + (e.stderr || '');
+    console.error(`[${label}] command failed: ${cmd}`);
+    console.error(`[${label}] output:`, msg.slice(0, 500));
+    return msg;
+  }
+}
+
+function parseJsonFromOutput(text) {
+  if (!text) return null;
+  const start = text.search(/[\[{]/);
+  if (start === -1) return null;
+  try {
+    return JSON.parse(text.slice(start));
+  } catch (e) {
+    return null;
   }
 }
 
 function readJsonSafe(file) {
   try {
-    const raw = fs.readFileSync(file, 'utf8');
-    // some tools prefix output with logs; find first { or [
-    const start = raw.search(/[\[{]/);
-    if (start === -1) return null;
-    return JSON.parse(raw.slice(start));
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
     return null;
   }
@@ -42,11 +53,14 @@ function readJsonSafe(file) {
 
 // ---------- ESLint ----------
 function scanEslint() {
-  const out = path.join(TMP_DIR, 'eslint.json');
-  // 用内联配置，不依赖 .eslintrc.json
-  run(`npx eslint js/ api/ --ext .js --no-eslintrc --env browser,node,es2021 --parser-options ecmaVersion:2021 --rule '{"no-unused-vars":"warn","no-undef":"error"}' -f json -o "${out}"`);
-  const data = readJsonSafe(out);
-  if (!Array.isArray(data)) return [];
+  console.log('Running ESLint...');
+  const cmd = `npx eslint js/ api/ --ext .js --no-eslintrc --env browser,node,es2021 --parser-options ecmaVersion:2021 --rule "{\\"no-unused-vars\\":\\"warn\\",\\"no-undef\\":\\"error\\"}" -f json`;
+  const out = run(cmd, 'eslint');
+  const data = parseJsonFromOutput(out);
+  if (!Array.isArray(data)) {
+    console.log('ESLint: no JSON output (tool may have failed)');
+    return [];
+  }
   const res = [];
   data.forEach(file => {
     (file.messages || []).forEach(m => {
@@ -61,13 +75,15 @@ function scanEslint() {
       });
     });
   });
+  console.log(`ESLint: ${res.length} issues`);
   return res;
 }
 
 // ---------- HTMLHint ----------
 function scanHtmlhint() {
-  const out = path.join(TMP_DIR, 'htmlhint.json');
-  const rules = JSON.stringify({
+  console.log('Running HTMLHint...');
+  const rulesFile = path.join(TMP_DIR, 'htmlhintrc.json');
+  fs.writeFileSync(rulesFile, JSON.stringify({
     'tagname-lowercase': true,
     'attr-lowercase': true,
     'attr-value-double-quotes': true,
@@ -76,12 +92,18 @@ function scanHtmlhint() {
     'spec-char-escape': true,
     'id-unique': true,
     'src-not-empty': true
-  });
-  const rulesFile = path.join(TMP_DIR, 'htmlhintrc.json');
-  fs.writeFileSync(rulesFile, rules, 'utf8');
-  run(`npx htmlhint index.html 404.html --config "${rulesFile}" --format json > "${out}"`);
-  const data = readJsonSafe(out);
-  if (!Array.isArray(data)) return [];
+  }, null, 2));
+
+  const files = ['index.html'];
+  if (fs.existsSync(path.join(ROOT, '404.html'))) files.push('404.html');
+
+  const cmd = `npx htmlhint ${files.join(' ')} --config "${rulesFile}" --format json`;
+  const out = run(cmd, 'htmlhint');
+  const data = parseJsonFromOutput(out);
+  if (!Array.isArray(data)) {
+    console.log('HTMLHint: no JSON output (tool may have failed)');
+    return [];
+  }
   const res = [];
   data.forEach(file => {
     (file.messages || []).forEach(m => {
@@ -96,26 +118,36 @@ function scanHtmlhint() {
       });
     });
   });
+  console.log(`HTMLHint: ${res.length} issues`);
   return res;
 }
 
 // ---------- Stylelint ----------
 function scanStylelint() {
-  const out = path.join(TMP_DIR, 'stylelint.json');
-  // 内联配置
-  const config = JSON.stringify({
+  console.log('Running Stylelint...');
+  const configFile = path.join(TMP_DIR, 'stylelintrc.json');
+  fs.writeFileSync(configFile, JSON.stringify({
     extends: 'stylelint-config-standard',
     rules: {
       'selector-class-pattern': null,
       'custom-property-pattern': null,
       'no-descending-specificity': null
     }
-  });
-  const configFile = path.join(TMP_DIR, 'stylelintrc.json');
-  fs.writeFileSync(configFile, config, 'utf8');
-  run(`npx stylelint "css/*.css" --config "${configFile}" --formatter json > "${out}"`);
-  const data = readJsonSafe(out);
-  if (!Array.isArray(data)) return [];
+  }, null, 2));
+
+  const cssDir = path.join(ROOT, 'css');
+  if (!fs.existsSync(cssDir)) {
+    console.log('Stylelint: no css/ directory, skipping');
+    return [];
+  }
+
+  const cmd = `npx stylelint "css/*.css" --config "${configFile}" --formatter json`;
+  const out = run(cmd, 'stylelint');
+  const data = parseJsonFromOutput(out);
+  if (!Array.isArray(data)) {
+    console.log('Stylelint: no JSON output (tool may have failed)');
+    return [];
+  }
   const res = [];
   data.forEach(file => {
     (file.warnings || []).forEach(w => {
@@ -130,13 +162,14 @@ function scanStylelint() {
       });
     });
   });
+  console.log(`Stylelint: ${res.length} issues`);
   return res;
 }
 
 // ---------- Playwright (smoke test) ----------
 function scanPlaywright() {
-  const out = path.join(TMP_DIR, 'playwright.json');
-  // 生成内联测试文件
+  console.log('Running Playwright smoke test...');
+
   const testFile = path.join(TMP_DIR, 'smoke.spec.js');
   fs.writeFileSync(testFile, `
 const { test, expect } = require('@playwright/test');
@@ -169,17 +202,28 @@ module.exports = defineConfig({
 `, 'utf8');
 
   // 启动 http-server
-  const server = spawn('npx', ['http-server', '.', '-p', '3000', '-s'], { cwd: ROOT, stdio: 'ignore' });
-  // 等 2 秒
+  let server;
+  try {
+    server = spawn('npx', ['http-server', '.', '-p', '3000', '-s'], { cwd: ROOT, stdio: 'ignore' });
+  } catch (e) {
+    console.log('Playwright: failed to start http-server:', e.message);
+    return [];
+  }
+
+  // 等 3 秒（简单 sleep）
   const start = Date.now();
-  while (Date.now() - start < 2000) {}
+  while (Date.now() - start < 3000) {}
 
-  run(`npx playwright test --config "${configFile}" --reporter=json > "${out}"`);
+  const cmd = `npx playwright test --config "${configFile}" --reporter=json`;
+  const out = run(cmd, 'playwright');
 
-  try { server.kill(); } catch (e) {}
+  try { if (server) server.kill(); } catch (e) {}
 
-  const data = readJsonSafe(out);
-  if (!data || !data.suites) return [];
+  const data = parseJsonFromOutput(out);
+  if (!data || !data.suites) {
+    console.log('Playwright: no JSON output (tool may have failed)');
+    return [];
+  }
   const res = [];
   function walk(suite) {
     (suite.specs || []).forEach(spec => {
@@ -202,15 +246,22 @@ module.exports = defineConfig({
     (suite.suites || []).forEach(walk);
   }
   (data.suites || []).forEach(walk);
+  console.log(`Playwright: ${res.length} issues`);
   return res;
 }
 
-// ---------- lychee (dead links) ----------
-function scanLychee() {
-  const out = path.join(TMP_DIR, 'links.json');
-  run(`npx lychee --verbose --no-progress --format json --output "${out}" index.html`);
-  const data = readJsonSafe(out);
-  if (!data || !data.fail_map) return [];
+// ---------- lychee merge ----------
+function mergeLychee() {
+  console.log('Merging lychee results...');
+  if (!fs.existsSync(LYCHEE_JSON)) {
+    console.log('lychee.json not found, skipping');
+    return [];
+  }
+  const data = readJsonSafe(LYCHEE_JSON);
+  if (!data || !data.fail_map) {
+    console.log('lychee.json has no fail_map');
+    return [];
+  }
   const res = [];
   Object.keys(data.fail_map).forEach(url => {
     (data.fail_map[url] || []).forEach(item => {
@@ -225,29 +276,16 @@ function scanLychee() {
       });
     });
   });
+  console.log(`Lychee: ${res.length} issues`);
   return res;
 }
 
 // ---------- main ----------
-function main() {
-  ensureTmp();
-
-  console.log('Scanning ESLint...');
-  const eslint = scanEslint();
-  console.log('Scanning HTMLHint...');
-  const htmlhint = scanHtmlhint();
-  console.log('Scanning Stylelint...');
-  const stylelint = scanStylelint();
-  console.log('Scanning Playwright...');
-  const playwright = scanPlaywright();
-  console.log('Scanning lychee...');
-  const links = scanLychee();
-
-  const all = [].concat(eslint, htmlhint, stylelint, playwright, links);
+function buildOutput(eslint, htmlhint, stylelint, playwright, lychee) {
+  const all = [].concat(eslint, htmlhint, stylelint, playwright, lychee);
   const errors = all.filter(x => x.severity === 'error');
   const warnings = all.filter(x => x.severity === 'warning');
-
-  const output = {
+  return {
     summary: {
       total: all.length,
       errors: errors.length,
@@ -257,17 +295,48 @@ function main() {
         htmlhint: htmlhint.length,
         stylelint: stylelint.length,
         playwright: playwright.length,
-        lychee: links.length
+        lychee: lychee.length
       }
     },
     errors: errors,
     warnings: warnings
   };
+}
 
+function main() {
+  const args = process.argv.slice(2);
+
+  if (args.includes('--merge-lychee')) {
+    // 读现有的 scan-error-data.json（如果有），合并 lychee
+    const existing = readJsonSafe(OUT_JSON) || { summary: { bySource: {} }, errors: [], warnings: [] };
+    const lychee = mergeLychee();
+
+    // 从现有里去掉旧的 lychee
+    const keepErrors = (existing.errors || []).filter(e => e.source !== 'lychee');
+    const keepWarnings = (existing.warnings || []).filter(w => w.source !== 'lychee');
+
+    const eslint = keepErrors.filter(e => e.source === 'eslint').concat(keepWarnings.filter(w => w.source === 'eslint'));
+    const htmlhint = keepErrors.filter(e => e.source === 'htmlhint').concat(keepWarnings.filter(w => w.source === 'htmlhint'));
+    const stylelint = keepErrors.filter(e => e.source === 'stylelint').concat(keepWarnings.filter(w => w.source === 'stylelint'));
+    const playwright = keepErrors.filter(e => e.source === 'playwright').concat(keepWarnings.filter(w => w.source === 'playwright'));
+
+    const output = buildOutput(eslint, htmlhint, stylelint, playwright, lychee);
+    fs.writeFileSync(OUT_JSON, JSON.stringify(output, null, 2), 'utf8');
+    console.log('Merged lychee into ' + OUT_JSON + '. Total: ' + output.summary.total);
+    return;
+  }
+
+  ensureTmp();
+
+  const eslint = scanEslint();
+  const htmlhint = scanHtmlhint();
+  const stylelint = scanStylelint();
+  const playwright = scanPlaywright();
+
+  const output = buildOutput(eslint, htmlhint, stylelint, playwright, []);
   fs.writeFileSync(OUT_JSON, JSON.stringify(output, null, 2), 'utf8');
-  console.log('Wrote ' + OUT_JSON + ' with ' + all.length + ' issues.');
+  console.log('Wrote ' + OUT_JSON + '. Total: ' + output.summary.total);
 
-  // 清理临时目录
   try { fs.rmSync(TMP_DIR, { recursive: true, force: true }); } catch (e) {}
 }
 
