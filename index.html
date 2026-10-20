@@ -436,6 +436,23 @@ location.reload();</pre>
         else if (theme === 'light') icon.textContent = '☀️';
         else icon.textContent = '🌙';
     }
+
+    window.toggleTheme = function() {
+        if (currentTheme === 'auto') currentTheme = 'light';
+        else if (currentTheme === 'light') currentTheme = 'dark';
+        else currentTheme = 'auto';
+        applyTheme(currentTheme);
+        console.log('Theme changed to:', currentTheme);
+    };
+
+    applyTheme('auto');
+
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            if (currentTheme === 'auto') applyTheme('auto');
+        });
+    }
+})();
 </script>
 
 <div id="dev-panel">
