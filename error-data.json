@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-20T19:52:59.498Z",
-  "commit": "61e5453497424c399508db2828ef6ed1428e18b6",
+  "generatedAt": "2026-10-20T19:56:27.097Z",
+  "commit": "b4351496cd45e6fc31ffbf1cd4e0608ab26eaba4",
   "summary": {
     "total": 1,
     "errors": 1,
@@ -20,7 +20,7 @@
       "column": 0,
       "severity": "error",
       "rule": "playwright",
-      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: The given origin is not allowed for the given client ID.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"(intermediate value)(...) is not a function\",\u001b[39m\n\u001b[31m+   \"Unexpected end of input\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: The given origin is not allowed for the given client ID.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
       "source": "playwright"
     }
   ],
