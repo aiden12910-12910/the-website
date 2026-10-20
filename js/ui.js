@@ -1,4 +1,4 @@
-   // ============================================================
+// ============================================================
 // Page element references
 // ============================================================
 var layer = document.getElementById('secure-backdoor-layer');
@@ -48,6 +48,9 @@ window.submitIssue = function() {
 // Open site inside iframe
 // ============================================================
 function openSiteInside(targetUrl) {
+    // 打开游戏前先归零计算器
+    if (typeof winReset === 'function') winReset();
+
     iframe.src = targetUrl;
     layer.style.display = 'block';
     panicBar.style.display = 'block';
@@ -67,8 +70,22 @@ function forceReturnToHome() {
     gameZone.style.display = "none";
     calcWrapper.style.display = "block";
     iframe.src = '';
-    if (typeof sciClear === 'function') sciClear();
-    if (typeof winSetMode === 'function') winSetMode('scientific');
+
+    // 计算器完全归零
+    if (typeof winReset === 'function') {
+        winReset();
+    } else if (typeof winClearAll === 'function') {
+        winClearAll();
+    } else if (typeof winClear === 'function') {
+        winClear();
+    }
+
+    // 强制清空显示区（防止 #win-expr 残留 "3+2 =" 之类的文本）
+    var exprEl = document.getElementById('win-expr');
+    if (exprEl) exprEl.textContent = '';
+    var resultEl = document.getElementById('win-result');
+    if (resultEl) resultEl.textContent = '0';
+
     if (issueTrigger) issueTrigger.style.display = 'none';
     window.focus();
 }
@@ -362,6 +379,7 @@ var winCurrentMode = 'scientific';
 var winProgBase = 10;
 var winProgValue = '0';
 var winProgPending = null;
+var winJustEvaluated = false;
 
 // ---------- 通用 ----------
 function winUpdateDisplay() {
@@ -398,6 +416,10 @@ function winSetMode(mode) {
 
 // ---------- 标准/科学 输入 ----------
 function winInput(ch) {
+    if (winJustEvaluated) {
+        winExpr = '';
+        winJustEvaluated = false;
+    }
     winExpr += ch;
     if (winExpr.includes('12345')) {
         if (typeof unlockSecretZone === 'function') unlockSecretZone();
@@ -405,6 +427,10 @@ function winInput(ch) {
     winUpdateDisplay();
 }
 function winFn(fn) {
+    if (winJustEvaluated) {
+        winExpr = '';
+        winJustEvaluated = false;
+    }
     var map = {
         'sin': 'sin(', 'cos': 'cos(', 'tan': 'tan(',
         'log': 'log(', 'ln': 'ln(',
@@ -420,9 +446,17 @@ function winToggleAngle() {
     if (btn) btn.textContent = winAngleMode;
     winUpdateDisplay();
 }
-function winClear() { winExpr = ''; winUpdateDisplay(); }
-function winClearAll() { winExpr = ''; winLastAns = 0; winUpdateDisplay(); }
-function winBackspace() { winExpr = winExpr.slice(0, -1); winUpdateDisplay(); }
+function winClear() { winExpr = ''; winJustEvaluated = false; winUpdateDisplay(); }
+function winClearAll() { winExpr = ''; winLastAns = 0; winJustEvaluated = false; winUpdateDisplay(); }
+function winBackspace() {
+    if (winJustEvaluated) {
+        // 刚算完，按 ⌫ 保持结果不变
+        winJustEvaluated = false;
+        return;
+    }
+    winExpr = winExpr.slice(0, -1);
+    winUpdateDisplay();
+}
 function winEquals() {
     if (!winExpr) return;
     try {
@@ -432,6 +466,7 @@ function winEquals() {
         document.getElementById('win-expr').textContent = winExpr + ' =';
         document.getElementById('win-result').textContent = winFormat(r);
         winExpr = '';
+        winJustEvaluated = true;
     } catch (e) { document.getElementById('win-result').textContent = 'Error'; }
 }
 
@@ -460,7 +495,33 @@ function winFormat(n) {
     return parseFloat(n.toPrecision(10)).toString();
 }
 
+// ---------- 完全重置 ----------
+function winReset() {
+    winExpr = '';
+    winLastAns = 0;
+    winJustEvaluated = false;
+    winAngleMode = 'DEG';
 
+    var exprEl = document.getElementById('win-expr');
+    if (exprEl) exprEl.textContent = '';
+    var resultEl = document.getElementById('win-result');
+    if (resultEl) resultEl.textContent = '0';
+    var indEl = document.getElementById('win-indicator');
+    if (indEl) indEl.textContent = 'DEG';
+    var angleBtn = document.getElementById('win-angle-btn');
+    if (angleBtn) angleBtn.textContent = 'DEG';
+
+    winProgValue = '0';
+    winProgPending = null;
+    var progDisplay = document.getElementById('prog-display');
+    if (progDisplay) progDisplay.textContent = '0';
+
+    var resultIds = ['date-result', 'date-add-result', 'curr-result', 'vol-result', 'len-result'];
+    resultIds.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = '—';
+    });
+}
 
 // ---------- 程序员 ----------
 function winProgUpdate() {
@@ -471,6 +532,9 @@ function winProgUpdate() {
     winProgBase = base;
 }
 function winProgInput(ch) {
+    var base = parseInt(document.getElementById('prog-base').value);
+    var valid = '0123456789ABCDEF'.slice(0, base === 16 ? 16 : (base === 8 ? 8 : (base === 2 ? 2 : 10)));
+    if (!valid.includes(ch)) return;
     if (winProgValue === '0') winProgValue = '';
     winProgValue += ch;
     winProgUpdate();
@@ -535,7 +599,7 @@ function winDateAdd() {
 }
 
 // ---------- 货币 ----------
-var winRates = { USD: 1, CNY: 7.24, EUR: 0.92, JPY: 149.5, GBP: 0.79 };
+var winRates = { USD: 1, CNY: 6.72, EUR: 0.89, JPY: 158.5, GBP: 0.75 };
 function winCurrency() {
     var amt = parseFloat(document.getElementById('curr-amount').value) || 0;
     var from = document.getElementById('curr-from').value;
@@ -567,32 +631,15 @@ function winLength() {
     document.getElementById('len-result').textContent = winFormat(result) + ' ' + to;
 }
 
-// ---------- 初始化 ----------
-winUpdateDisplay();
-
-// ============================================================
-// Keyboard support
-// ============================================================
+// ---------- 键盘支持 ----------
 document.addEventListener('keydown', function(e) {
-    // 计算器不可见时忽略
     var wrapper = document.getElementById('calculator-wrapper');
     if (!wrapper || wrapper.offsetParent === null) return;
-
-    // 只在 standard / scientific 模式下响应
     if (winCurrentMode !== 'standard' && winCurrentMode !== 'scientific') return;
-
-    // 输入框聚焦时忽略（避免干扰手动登录、留言框）
     var target = e.target;
     if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
 
-    // 数字和小数点
-    if (/^[0-9.]$/.test(e.key)) {
-        winInput(e.key);
-        e.preventDefault();
-        return;
-    }
-
-    // 运算符
+    if (/^[0-9.]$/.test(e.key)) { winInput(e.key); e.preventDefault(); return; }
     if (e.key === '+') { winInput('+'); e.preventDefault(); return; }
     if (e.key === '-') { winInput('-'); e.preventDefault(); return; }
     if (e.key === '*') { winInput('*'); e.preventDefault(); return; }
@@ -600,25 +647,10 @@ document.addEventListener('keydown', function(e) {
     if (e.key === '(') { winInput('('); e.preventDefault(); return; }
     if (e.key === ')') { winInput(')'); e.preventDefault(); return; }
     if (e.key === '^') { winInput('^'); e.preventDefault(); return; }
-
-    // 等号 / 回车
-    if (e.key === 'Enter' || e.key === '=') {
-        winEquals();
-        e.preventDefault();
-        return;
-    }
-
-    // 退格
-    if (e.key === 'Backspace') {
-        winBackspace();
-        e.preventDefault();
-        return;
-    }
-
-    // Esc 清空（注意：Esc 也是返回首页的快捷键，这里优先清空计算器）
-    if (e.key === 'Escape') {
-        winClear();
-        e.preventDefault();
-        return;
-    }
+    if (e.key === 'Enter' || e.key === '=') { winEquals(); e.preventDefault(); return; }
+    if (e.key === 'Backspace') { winBackspace(); e.preventDefault(); return; }
+    if (e.key === 'Escape') { winClear(); e.preventDefault(); return; }
 });
+
+// ---------- 初始化 ----------
+winUpdateDisplay();
