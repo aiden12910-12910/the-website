@@ -446,3 +446,6 @@ h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--border
     word-break: break-all;
     min-width: 0;
 }
+.win-btn.prog-hex[style*="opacity: 0.3"] {
+    opacity: 0.3 !important;
+}
