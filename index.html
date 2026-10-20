@@ -401,6 +401,7 @@ location.reload();</pre>
 
 <script src="/js/tracking.js"></script>
 <script src="/js/ui.js"></script>
+<script src="/js/onload.js"></script>
 
 <script>
 // ===== 主题切换（不持久化，刷新后回到跟随系统）=====
@@ -424,34 +425,6 @@ location.reload();</pre>
         else if (theme === 'light') icon.textContent = '☀️';
         else icon.textContent = '🌙';
     }
-
-window.toggleTheme = function() {
-    if (currentTheme === 'auto') currentTheme = 'light';
-    else if (currentTheme === 'light') currentTheme = 'dark';
-    else currentTheme = 'auto';
-    applyTheme(currentTheme);
-    console.log('Theme changed to:', currentTheme);
-};
-    applyTheme('auto');
-
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-            if (currentTheme === 'auto') applyTheme('auto');
-        });
-    }
-})();
-
-// ===== GitHub 跳转 =====
-window.addEventListener('load', function() {
-    if (window.location.href.includes('github')) {
-        var userConfirmed = confirm("This URL (aiden12910-12910.github.io/the-website/) is shutting down on October 10th, and the site is moving to aiden12910-12910.vercel.app/index.html. I won't be responsible if you can't access the site after the old URL closes, so be sure to bookmark the new one; you will be redirected after closing this pop-up.    该网址 (aiden12910-12910.github.io/the-website/) 将于 10 月 10 日停用，网站将迁移至 aiden12910-12910.vercel.app/index.html请务必收藏新网址；关闭此弹窗后，您将被自动重定向。");
-        if (userConfirmed) {
-            window.location.replace('https://aiden12910-12910.vercel.app/index.html');
-        } else {
-            alert('您取消了跳转，将留在当前页面。');
-        }
-    }
-});
 </script>
 
 <div id="dev-panel">
