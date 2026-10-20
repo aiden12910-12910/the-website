@@ -498,6 +498,15 @@ location.reload();</pre>
     }
 })();
 
+    window.toggleTheme = function() {
+    // ... 原有逻辑 ...
+    applyTheme(currentTheme);
+    // 如果当前在绘图模式，重绘
+    if (typeof winCurrentMode !== 'undefined' && winCurrentMode === 'graphing' && typeof winDrawGraph === 'function') {
+        setTimeout(winDrawGraph, 100);
+    }
+};
+
 // ===== GitHub 跳转 =====
 window.addEventListener('load', function() {
     if (window.location.href.includes('github')) {
