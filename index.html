@@ -395,9 +395,20 @@ location.reload();</pre>
 
     <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
 
-    <div id="secure-backdoor-layer">
-        <iframe id="secure-iframe-target" allowfullscreen></iframe>
+<div id="secure-backdoor-layer">
+    <iframe id="secure-iframe-target" allowfullscreen></iframe>
+    <div id="iframe-error-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: #fff; z-index: 1000001; display: none; flex-direction: column; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; box-sizing: border-box; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+        <h2 style="margin: 0 0 16px 0; font-size: 22px;">Failed to load / 加载失败</h2>
+        <p style="margin: 0 0 12px 0; font-size: 15px; opacity: 0.8; max-width: 600px;">The site may have blocked embedding, or the network is slow.<br>该网站可能禁止被嵌入，或者网络较慢。</p>
+        <p id="iframe-error-url" style="margin: 0 0 24px 0; font-size: 13px; opacity: 0.6; word-break: break-all; max-width: 600px;"></p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="retryIframe()" style="padding: 12px 24px; background: #0066cc; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">Retry / 重试</button>
+            <button onclick="forceReturnToHome()" style="padding: 12px 24px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">Back / 返回</button>
+            <a id="iframe-error-open" href="#" target="_blank" style="padding: 12px 24px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; text-decoration: none;">Open in new tab / 新标签打开</a>
+        </div>
     </div>
+</div>
 
 <script src="/js/tracking.js"></script>
 <script src="/js/ui.js"></script>
