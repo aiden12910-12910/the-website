@@ -7,7 +7,7 @@ window.onload = function() {
             alert('You canceled redirect,will stay on this tab.您取消了跳转，将留在当前页面。');
         }
     }
-}
+};
 
 
 // ===== 主题切换（不持久化，刷新后回到跟随系统）=====
