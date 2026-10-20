@@ -23,7 +23,6 @@
             <div class="win-modes">
                 <button class="win-mode active" data-mode="standard" onclick="winSetMode('standard')">Standard</button>
                 <button class="win-mode" data-mode="scientific" onclick="winSetMode('scientific')">Scientific</button>
-                <button class="win-mode" data-mode="graphing" onclick="winSetMode('graphing')">Graphing</button>
                 <button class="win-mode" data-mode="programmer" onclick="winSetMode('programmer')">Programmer</button>
                 <button class="win-mode" data-mode="date" onclick="winSetMode('date')">Date</button>
                 <button class="win-mode" data-mode="currency" onclick="winSetMode('currency')">Currency</button>
@@ -103,15 +102,7 @@
             </div>
         </div>
 
-        <!-- Graphing -->
-        <div id="win-panel-graphing" class="win-panel" style="display:none;">
-            <div class="win-fn-row">
-                <input type="text" id="graph-fn" class="win-text-input" placeholder="y = x^2" value="x^2">
-                <button class="win-btn win-eq" onclick="winDrawGraph()">Plot</button>
-            </div>
-            <canvas id="graph-canvas" width="600" height="400" style="width:100%; max-width:600px; border:1px solid var(--border); border-radius:8px; background:var(--screen-bg);"></canvas>
-        </div>
-
+        
         <!-- Programmer -->
         <div id="win-panel-programmer" class="win-panel" style="display:none;">
             <div class="win-fn-row">
