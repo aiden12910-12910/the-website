@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-20T00:30:26.041Z",
-  "commit": "9c18b8cd8c9b81808f8706e0be4443ef14501582",
+  "generatedAt": "2026-10-20T19:35:35.871Z",
+  "commit": "5fd1665f19ae9dad8b90d6961d1f6a59af58f18d",
   "summary": {
-    "total": 6,
-    "errors": 6,
+    "total": 5,
+    "errors": 5,
     "warnings": 0,
     "bySource": {
       "eslint": 0,
-      "htmlhint": 5,
+      "htmlhint": 4,
       "stylelint": 0,
       "playwright": 1,
       "lychee": 0
@@ -48,15 +48,6 @@
       "severity": "error",
       "rule": "spec-char-escape",
       "message": "Special characters must be escaped : [ > ].",
-      "source": "htmlhint"
-    },
-    {
-      "file": "/home/runner/work/the-website/the-website/index.html",
-      "line": 215,
-      "column": 42,
-      "severity": "error",
-      "rule": "src-not-empty",
-      "message": "The attribute [ src ] of the tag [ iframe ] must have a value.",
       "source": "htmlhint"
     },
     {
