@@ -68,6 +68,7 @@ function forceReturnToHome() {
     calcWrapper.style.display = "block";
     iframe.src = '';
     if (typeof sciClear === 'function') sciClear();
+    if (typeof winSetMode === 'function') winSetMode('scientific');
     if (issueTrigger) issueTrigger.style.display = 'none';
     window.focus();
 }
