@@ -59,7 +59,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "chore: update scan-error-data.json [skip ci]"
+            git commit -m "chore: update scan-error-data.json [skip ci] [vercel skip]"
             git push
           fi
 
