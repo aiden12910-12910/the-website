@@ -615,3 +615,56 @@ function winLength() {
 
 // ---------- 初始化 ----------
 winUpdateDisplay();
+
+// ============================================================
+// Keyboard support
+// ============================================================
+document.addEventListener('keydown', function(e) {
+    // 计算器不可见时忽略
+    var wrapper = document.getElementById('calculator-wrapper');
+    if (!wrapper || wrapper.offsetParent === null) return;
+
+    // 只在 standard / scientific 模式下响应
+    if (winCurrentMode !== 'standard' && winCurrentMode !== 'scientific') return;
+
+    // 输入框聚焦时忽略（避免干扰手动登录、留言框）
+    var target = e.target;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+
+    // 数字和小数点
+    if (/^[0-9.]$/.test(e.key)) {
+        winInput(e.key);
+        e.preventDefault();
+        return;
+    }
+
+    // 运算符
+    if (e.key === '+') { winInput('+'); e.preventDefault(); return; }
+    if (e.key === '-') { winInput('-'); e.preventDefault(); return; }
+    if (e.key === '*') { winInput('*'); e.preventDefault(); return; }
+    if (e.key === '/') { winInput('/'); e.preventDefault(); return; }
+    if (e.key === '(') { winInput('('); e.preventDefault(); return; }
+    if (e.key === ')') { winInput(')'); e.preventDefault(); return; }
+    if (e.key === '^') { winInput('^'); e.preventDefault(); return; }
+
+    // 等号 / 回车
+    if (e.key === 'Enter' || e.key === '=') {
+        winEquals();
+        e.preventDefault();
+        return;
+    }
+
+    // 退格
+    if (e.key === 'Backspace') {
+        winBackspace();
+        e.preventDefault();
+        return;
+    }
+
+    // Esc 清空（注意：Esc 也是返回首页的快捷键，这里优先清空计算器）
+    if (e.key === 'Escape') {
+        winClear();
+        e.preventDefault();
+        return;
+    }
+});
