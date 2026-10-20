@@ -357,7 +357,7 @@ setTimeout(function() {
 var winExpr = '';
 var winLastAns = 0;
 var winAngleMode = 'DEG';
-var winCurrentMode = 'standard';
+var winCurrentMode = 'scientific';
 var winProgBase = 10;
 var winProgValue = '0';
 var winProgPending = null;
