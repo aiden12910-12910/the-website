@@ -26,11 +26,29 @@ jobs:
         run: |
           npm install --no-save eslint htmlhint stylelint stylelint-config-standard
           npm install --no-save @playwright/test http-server
-          npm install --no-save lychee
           npx playwright install --with-deps chromium
 
-      - name: Run scanner
+      - name: Verify tools
+        run: |
+          npx eslint --version
+          npx htmlhint --version
+          npx stylelint --version
+          npx playwright --version
+
+      - name: Run scanner (ESLint + HTMLHint + Stylelint + Playwright)
         run: node scan.js
+
+      - name: Check dead links (lychee)
+        id: lychee
+        continue-on-error: true
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --verbose --no-progress --format json --output lychee.json index.html
+          fail: false
+
+      - name: Merge lychee results
+        if: always()
+        run: node scan.js --merge-lychee
 
       - name: Commit results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -46,7 +64,10 @@ jobs:
           fi
 
       - name: Upload artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: scan-results
-          path: scan-error-data.json
+          path: |
+            scan-error-data.json
+            lychee.json
