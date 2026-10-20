@@ -383,7 +383,7 @@ function winUpdateDisplay() {
 
 function winSetMode(mode) {
     winCurrentMode = mode;
-    var panels = ['standard', 'scientific', 'graphing', 'programmer', 'date', 'currency', 'volume', 'length'];
+    var panels = ['standard', 'scientific', 'programmer', 'date', 'currency', 'volume', 'length'];
     panels.forEach(function(p) {
         var el = document.getElementById('win-panel-' + p);
         if (el) el.style.display = (p === mode) ? 'block' : 'none';
@@ -391,7 +391,6 @@ function winSetMode(mode) {
     document.querySelectorAll('.win-mode').forEach(function(btn) {
         btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
     });
-    if (mode === 'graphing') setTimeout(winDrawGraph, 50);
     if (mode === 'programmer') winProgUpdate();
     winUpdateDisplay();
 }
@@ -460,53 +459,7 @@ function winFormat(n) {
     return parseFloat(n.toPrecision(10)).toString();
 }
 
-// ---------- 绘图 ----------
-function winDrawGraph() {
-    var canvas = document.getElementById('graph-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var w = canvas.width, h = canvas.height;
-    var expr = document.getElementById('graph-fn').value || 'x^2';
 
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--screen-bg') || '#fff';
-    ctx.fillRect(0, 0, w, h);
-
-    // 坐标轴
-    var cx = w / 2, cy = h / 2;
-    var scale = 40; // 每单位 40px
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || '#ccc';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, cy); ctx.lineTo(w, cy);
-    ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
-    ctx.stroke();
-
-    // 网格
-    ctx.strokeStyle = 'rgba(128,128,128,0.15)';
-    for (var x = cx; x < w; x += scale) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-    for (var x = cx; x > 0; x -= scale) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-    for (var y = cy; y < h; y += scale) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-    for (var y = cy; y > 0; y -= scale) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-
-    // 函数
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--link') || '#0066cc';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    var started = false;
-    for (var px = 0; px < w; px++) {
-        var xVal = (px - cx) / scale;
-        try {
-            var exprJs = expr.replace(/\^/g, '**');
-            var yVal = new Function('x', 'return ' + exprJs + ';')(xVal);
-            if (!isFinite(yVal)) { started = false; continue; }
-            var py = cy - yVal * scale;
-            if (!started) { ctx.moveTo(px, py); started = true; }
-            else ctx.lineTo(px, py);
-        } catch (e) { started = false; }
-    }
-    ctx.stroke();
-}
 
 // ---------- 程序员 ----------
 function winProgUpdate() {
