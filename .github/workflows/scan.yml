@@ -9,6 +9,7 @@ on:
       - 'index.html'
       - '404.html'
       - 'api/**'
+      - 'scan/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -30,22 +31,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install tools
+      - name: Install tools (from scan/package.json)
         run: |
-          npm install --no-save eslint@8 htmlhint stylelint
-          npm install --no-save @playwright/test
+          cd scan
+          npm ci
           npx playwright install --with-deps chromium
 
       - name: Verify tools
         run: |
+          cd scan
           npx eslint --version
           npx htmlhint --version
           npx stylelint --version
           npx playwright --version
           ls node_modules/.bin/ | grep -E "eslint|htmlhint|stylelint" || echo "MISSING TOOLS"
 
-      - name: Run scanner (ESLint + HTMLHint + Stylelint + Playwright)
-        run: node scan.js
+      - name: Run scanner
+        run: node scan/scan.js
 
       - name: Check dead links (lychee)
         id: lychee
@@ -57,7 +59,7 @@ jobs:
 
       - name: Merge lychee results
         if: always()
-        run: node scan.js --merge-lychee
+        run: node scan/scan.js --merge-lychee
 
       - name: Commit results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
