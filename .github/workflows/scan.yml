@@ -32,8 +32,8 @@ jobs:
 
       - name: Install tools
         run: |
-          npm install --no-save eslint htmlhint stylelint stylelint-config-standard
-          npm install --no-save @playwright/test http-server
+          npm install --no-save eslint htmlhint stylelint
+          npm install --no-save @playwright/test
           npx playwright install --with-deps chromium
 
       - name: Verify tools
@@ -42,6 +42,7 @@ jobs:
           npx htmlhint --version
           npx stylelint --version
           npx playwright --version
+          ls node_modules/.bin/ | grep -E "eslint|htmlhint|stylelint" || echo "MISSING TOOLS"
 
       - name: Run scanner (ESLint + HTMLHint + Stylelint + Playwright)
         run: node scan.js
