@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-10-21T00:29:19.962Z",
+  "summary": {
+    "total": 0,
+    "errors": 0,
+    "warnings": 0,
+    "bySource": {
+      "eslint": 0,
+      "htmlhint": 0,
+      "stylelint": 0,
+      "playwright": 0,
+      "lychee": 0
+    }
+  },
+  "errors": [],
+  "warnings": []
+}
