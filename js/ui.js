@@ -957,5 +957,92 @@ document.addEventListener('keydown', function(e) {
 // ---------- 初始化 ----------
 winUpdateDisplay();
 winSetMode('scientific');
+// ============================================================
+// Dev Mode: Console Capture
+// ============================================================
+(function() {
+    var consoleEl = document.getElementById('dev-console');
+    if (!consoleEl) return;
 
+    var MAX_LINES = 100;
+    var lines = [];
 
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function(c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function formatArg(arg) {
+        if (typeof arg === 'string') return arg;
+        if (arg === null) return 'null';
+        if (arg === undefined) return 'undefined';
+        if (typeof arg === 'object') {
+            try { return JSON.stringify(arg); } catch (e) { return String(arg); }
+        }
+        return String(arg);
+    }
+
+    function addLine(type, args) {
+        // 只在 Dev Mode 打开时捕获
+        var panel = document.getElementById('dev-panel');
+        if (!panel || panel.style.display !== 'block') return;
+
+        var time = new Date().toLocaleTimeString();
+        var text = Array.prototype.map.call(args, formatArg).join(' ');
+        var color = type === 'error' ? '#f48771' : (type === 'warn' ? '#dcdcaa' : '#9cdcfe');
+
+        lines.push({ time: time, type: type, text: text, color: color });
+
+        // 超过 100 条，全清空
+        if (lines.length > MAX_LINES) {
+            lines = [];
+        }
+
+        consoleEl.innerHTML = lines.map(function(l) {
+            return '<div style="color:' + l.color + '; padding:2px 0; border-bottom:1px solid #1e1e1e; word-break:break-all;">' +
+                '[' + l.time + '] ' + escapeHtml(l.text) +
+                '</div>';
+        }).join('');
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    // 拦截 console.*
+    var origLog = console.log;
+    var origWarn = console.warn;
+    var origError = console.error;
+    var origInfo = console.info;
+
+    console.log = function() {
+        origLog.apply(console, arguments);
+        addLine('log', arguments);
+    };
+    console.warn = function() {
+        origWarn.apply(console, arguments);
+        addLine('warn', arguments);
+    };
+    console.error = function() {
+        origError.apply(console, arguments);
+        addLine('error', arguments);
+    };
+    console.info = function() {
+        origInfo.apply(console, arguments);
+        addLine('info', arguments);
+    };
+
+    // 清空函数
+    window.devClearConsole = function() {
+        lines = [];
+        consoleEl.innerHTML = '(empty)';
+    };
+
+    // 拦截未捕获错误
+    window.addEventListener('error', function(e) {
+        addLine('error', ['Uncaught: ' + (e.message || 'unknown') + ' at ' + (e.filename || '?') + ':' + (e.lineno || '?')]);
+    });
+
+    // 拦截未处理的 Promise 拒绝
+    window.addEventListener('unhandledrejection', function(e) {
+        addLine('error', ['UnhandledRejection: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason))]);
+    });
+})();
