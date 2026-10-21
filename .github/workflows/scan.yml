@@ -32,7 +32,7 @@ jobs:
 
       - name: Install tools
         run: |
-          npm install --no-save eslint htmlhint stylelint
+          npm install --no-save eslint@8 htmlhint stylelint
           npm install --no-save @playwright/test
           npx playwright install --with-deps chromium
 
