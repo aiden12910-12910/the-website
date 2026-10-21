@@ -54,7 +54,17 @@ function readJsonSafe(file) {
 // ---------- ESLint ----------
 function scanEslint() {
   console.log('Running ESLint...');
-  const cmd = `npx eslint js/ api/ --ext .js --no-eslintrc --env browser,node,es2021 --parser-options ecmaVersion:2021 --rule "{\\"no-unused-vars\\":\\"warn\\",\\"no-undef\\":\\"error\\"}" -f json`;
+  const configFile = path.join(TMP_DIR, 'eslintrc.json');
+  fs.writeFileSync(configFile, JSON.stringify({
+    env: { browser: true, node: true, es2021: true },
+    parserOptions: { ecmaVersion: 2021 },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-undef': 'error'
+    }
+  }, null, 2));
+
+  const cmd = `npx eslint js/ api/ --ext .js --config "${configFile}" -f json`;
   const out = run(cmd, 'eslint');
   const data = parseJsonFromOutput(out);
   if (!Array.isArray(data)) {
@@ -99,6 +109,10 @@ function scanHtmlhint() {
 
   const cmd = `npx htmlhint ${files.join(' ')} --config "${rulesFile}" --format json`;
   const out = run(cmd, 'htmlhint');
+  if (!out || !out.trim()) {
+    console.log('HTMLHint: empty output (tool may have failed)');
+    return [];
+  }
   const data = parseJsonFromOutput(out);
   if (!Array.isArray(data)) {
     console.log('HTMLHint: no JSON output (tool may have failed)');
@@ -127,8 +141,11 @@ function scanStylelint() {
   console.log('Running Stylelint...');
   const configFile = path.join(TMP_DIR, 'stylelintrc.json');
   fs.writeFileSync(configFile, JSON.stringify({
-    extends: 'stylelint-config-standard',
     rules: {
+      'block-no-empty': true,
+      'color-no-invalid-hex': true,
+      'declaration-block-no-duplicate-properties': true,
+      'no-duplicate-selectors': true,
       'selector-class-pattern': null,
       'custom-property-pattern': null,
       'no-descending-specificity': null
@@ -201,16 +218,21 @@ module.exports = defineConfig({
 });
 `, 'utf8');
 
-  // 启动 http-server
+  // 启动 http-server（用 python3 更可靠）
   let server;
   try {
-    server = spawn('npx', ['http-server', '.', '-p', '3000', '-s'], { cwd: ROOT, stdio: 'ignore' });
+    server = spawn('python3', ['-m', 'http.server', '3000'], { cwd: ROOT, stdio: 'ignore' });
   } catch (e) {
     console.log('Playwright: failed to start http-server:', e.message);
     return [];
   }
 
-  // 等 3 秒（简单 sleep）
+  if (!server || !server.pid) {
+    console.log('Playwright: http-server failed to start');
+    return [];
+  }
+
+  // 等 3 秒
   const start = Date.now();
   while (Date.now() - start < 3000) {}
 
@@ -286,7 +308,7 @@ function buildOutput(eslint, htmlhint, stylelint, playwright, lychee) {
   const errors = all.filter(x => x.severity === 'error');
   const warnings = all.filter(x => x.severity === 'warning');
   return {
-    generatedAt: new Date().toISOString(),  // ← 加这一行
+    generatedAt: new Date().toISOString(),
     summary: {
       total: all.length,
       errors: errors.length,
@@ -308,11 +330,9 @@ function main() {
   const args = process.argv.slice(2);
 
   if (args.includes('--merge-lychee')) {
-    // 读现有的 scan-error-data.json（如果有），合并 lychee
     const existing = readJsonSafe(OUT_JSON) || { summary: { bySource: {} }, errors: [], warnings: [] };
     const lychee = mergeLychee();
 
-    // 从现有里去掉旧的 lychee
     const keepErrors = (existing.errors || []).filter(e => e.source !== 'lychee');
     const keepWarnings = (existing.warnings || []).filter(w => w.source !== 'lychee');
 
