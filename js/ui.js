@@ -426,87 +426,6 @@ setTimeout(function() {
     }
 })();
 // ============================================================
-// Dev Mode: Trigger Scan + View Result
-// ============================================================
-window.devTriggerScan = function() {
-    var statusEl = document.getElementById('dev-scan-status');
-    if (statusEl) statusEl.textContent = 'triggering...';
-
-    fetch('/api/trigger-scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: window.currentUserEmail || '' })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-        if (statusEl) {
-            statusEl.textContent = data.ok
-                ? '✓ scan triggered at ' + new Date().toLocaleTimeString()
-                : '✗ ' + (data.error || 'unknown error');
-        }
-        // 10 秒后自动刷新结果
-        if (data.ok) {
-            setTimeout(function() {
-                if (window.devRefreshScanResult) window.devRefreshScanResult();
-            }, 10000);
-        }
-    })
-    .catch(function(err) {
-        if (statusEl) statusEl.textContent = '✗ ' + err.message;
-    });
-};
-
-window.devRefreshScanResult = function() {
-    var timeEl = document.getElementById('dev-scan-time');
-    var resultEl = document.getElementById('dev-scan-result');
-    if (!resultEl) return;
-
-    fetch('/scan-error-data.json?t=' + Date.now())
-        .then(function(res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            return res.json();
-        })
-        .then(function(data) {
-            // 显示时间
-            if (timeEl) {
-                var time = data.generatedAt || data.lastScanAt || 'unknown';
-                timeEl.textContent = 'Last scan: ' + time;
-            }
-
-            // 显示 summary + errors
-            var lines = [];
-            if (data.summary) {
-                lines.push('Total: ' + data.summary.total + ' | Errors: ' + data.summary.errors + ' | Warnings: ' + data.summary.warnings);
-                if (data.summary.bySource) {
-                    lines.push('By source: ' + Object.keys(data.summary.bySource).map(function(k) {
-                        return k + '=' + data.summary.bySource[k];
-                    }).join(', '));
-                }
-            }
-            if (data.errors && data.errors.length > 0) {
-                lines.push('--- Errors ---');
-                data.errors.forEach(function(e) {
-                    lines.push('[' + e.source + '] ' + e.file + ':' + e.line + ' — ' + e.message);
-                });
-            }
-            if (data.warnings && data.warnings.length > 0) {
-                lines.push('--- Warnings ---');
-                data.warnings.slice(0, 10).forEach(function(w) {
-                    lines.push('[' + w.source + '] ' + w.file + ':' + w.line + ' — ' + w.message);
-                });
-            }
-            if (lines.length === 0) lines.push('(no issues)');
-
-            resultEl.innerHTML = lines.map(function(line) {
-                return '<div>' + line + '</div>';
-            }).join('');
-        })
-        .catch(function(err) {
-            if (timeEl) timeEl.textContent = 'Last scan: error';
-            resultEl.innerHTML = '<div style="color:#f48771;">Failed to load: ' + err.message + '</div>';
-        });
-};
-// ============================================================
 // Windows 11 Calculator - Full Implementation
 // ============================================================
 
@@ -1039,7 +958,4 @@ document.addEventListener('keydown', function(e) {
 winUpdateDisplay();
 winSetMode('scientific');
 
-// 初始化时加载 scan-error-data.json
-setTimeout(function() {
-    if (window.devRefreshScanResult) window.devRefreshScanResult();
-}, 1000);
+
