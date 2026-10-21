@@ -3,9 +3,17 @@ name: Scan
 on:
   push:
     branches: [main]
+    paths:
+      - 'js/**'
+      - 'css/**'
+      - 'index.html'
+      - '404.html'
+      - 'api/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [run-scan]
 
 jobs:
   scan:
