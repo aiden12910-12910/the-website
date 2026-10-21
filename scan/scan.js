@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 /**
  * Unified scanner.
- * Usage:
- *   node scan.js                 -> run eslint/htmlhint/stylelint/playwright, write scan-error-data.json
- *   node scan.js --merge-lychee  -> merge lychee.json into scan-error-data.json
+ * Usage (from repo root):
+ *   node scan/scan.js                 -> run eslint/htmlhint/stylelint/playwright, write scan-error-data.json
+ *   node scan/scan.js --merge-lychee  -> merge lychee.json into scan-error-data.json
  */
 
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = __dirname;
+// 仓库根目录（scan.js 在 scan/ 里，向上两级）
+const ROOT = path.resolve(__dirname, '..');
+const SCAN_DIR = __dirname;
 const OUT_JSON = path.join(ROOT, 'scan-error-data.json');
-const TMP_DIR = path.join(ROOT, '.scan-tmp');
+const TMP_DIR = path.join(SCAN_DIR, '.tmp');
 const LYCHEE_JSON = path.join(ROOT, 'lychee.json');
 
 // ---------- helpers ----------
@@ -110,7 +112,7 @@ function scanHtmlhint() {
   const cmd = `npx htmlhint ${files.join(' ')} --config "${rulesFile}" --format json`;
   const out = run(cmd, 'htmlhint');
   if (!out || !out.trim()) {
-    console.log('HTMLHint: empty output (tool may have failed)');
+    console.log('HTMLHint: empty output');
     return [];
   }
   const data = parseJsonFromOutput(out);
@@ -183,7 +185,7 @@ function scanStylelint() {
   return res;
 }
 
-// ---------- Playwright (smoke test) ----------
+// ---------- Playwright ----------
 function scanPlaywright() {
   console.log('Running Playwright smoke test...');
 
@@ -218,7 +220,7 @@ module.exports = defineConfig({
 });
 `, 'utf8');
 
-  // 启动 http-server（用 python3 更可靠）
+  // 启动静态服务器（用 python3）
   let server;
   try {
     server = spawn('python3', ['-m', 'http.server', '3000'], { cwd: ROOT, stdio: 'ignore' });
@@ -232,7 +234,6 @@ module.exports = defineConfig({
     return [];
   }
 
-  // 等 3 秒
   const start = Date.now();
   while (Date.now() - start < 3000) {}
 
