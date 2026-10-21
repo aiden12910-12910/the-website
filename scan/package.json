@@ -1,0 +1,11 @@
+{
+  "name": "the-website-scan",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "htmlhint": "^1.9.2",
+    "stylelint": "^15.11.0",
+    "@playwright/test": "^1.48.0"
+  }
+}
