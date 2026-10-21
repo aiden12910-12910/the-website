@@ -286,6 +286,7 @@ function buildOutput(eslint, htmlhint, stylelint, playwright, lychee) {
   const errors = all.filter(x => x.severity === 'error');
   const warnings = all.filter(x => x.severity === 'warning');
   return {
+    generatedAt: new Date().toISOString(),  // ← 加这一行
     summary: {
       total: all.length,
       errors: errors.length,
