@@ -1,707 +1,501 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Missile Game | 3kh0</title>
-  <meta name="author" content="3kh0 | 3kh0.github.io" />
-  <meta name="description" content="A 3D game using SVG and javascript" />
-  
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta content="https://3kh0.github.io/" property="og:url" />
-   <meta content="" property="og:image" />
-   <meta content="#000000" data-react-helmet="true" name="theme-color" />
-   <meta name="title" content="Missile Game">
-   <meta name="description" content="Just a simple game about missiles, what could go wrong?">
-   <meta name="keywords" content="games, ad blocker, trolls, unblocked games, web games, online games, fun, tags">
-   <meta name="robots" content="index, follow">
-   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <meta name="language" content="English">
-   <meta name="revisit-after" content="1 days">
-   <meta name="author" content="3kh0">
-  
-   <link rel="icon" sizes="192x192" href="miss.png">
- <link rel="shortcut icon" href="miss.png" type="image/x-icon"/>
- <link rel="apple-touch-icon" href="miss.png" type="image/x-icon"/>
-   
-  <!--== CSS ==============================================================-->
-  <style type="text/css">
-    /* <![CDATA[ */
-    body {
-        margin: 0;
-    }
-
-    .barrier path {
-      stroke-width: 2;
-      stroke-linejoin: round;
-    }
-
-    .hud-background {
-      stroke: none;
-      fill: white;
-      fill-opacity: 0.8;      
-    }
-
-    .hud-foreground {
-      stroke: black;
-      stroke-linejoin: round;
-      stroke-linecap: round;
-      fill: none;
-    }
-
-    text {
-      font-family: sans-serif;
-      font-weight: bold;
-    }
-
-    * {cursor:crosshair}
-
-    #fullscreen {
-      border: 3px solid black;
-      border-top: none;
-      background: white;
-      padding: 5px;
-
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-
-      top: 0px;
-      transition-property: top;
-      transition-duration: 1s;
-    }
-
-    :fullscreen > #fullscreen {
-      top: -120%;
-    }
-
-    #fullscreen button {
-      border: none;
-      background: none;
-
-      color: red;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    /* ]]> */
-  </style>
-  <style title="style-hide-mouse" type="text/css">
-    /* <![CDATA[ */
-    * {cursor:none}
-    /* ]]> */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Linear Matrix & Equation Calculator 12345</title>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<script type="application/javascript" src="/js/main.js"></script>
 <body>
-  <svg
-     version="1.1"
-     baseProfile="full"
-     xmlns="http://www.w3.org/2000/svg"
-     xmlns:svg="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink"
-     style="position: fixed; width: 100%; height: 100%; margin: 0; background: white">
-   
- 
-  <!--== TUNNEL ===============================================================-->
-    <svg id="tunnel"
-       width="100%" height="100%"
-       preserveAspectRatio="xMidYMid meet"
-       viewBox="-100 -100 200 200"
-       visibility="hidden" >
-    </svg>
-  
-  <!--== EXPLOSION!!!! ========================================================-->
-    <svg
-       width="100%" height="100%"
-       preserveAspectRatio="xMidYMid meet"
-       viewBox="-100 -100 200 200"
-       visibility="visible" >
-      <path id="explosion"
-         visibility="hidden"
-         transform="scale(3,3)"
-         fill="#f5bd3c"
-         stroke="#ff2626"       
-         stroke-width="0.5"
-         d="m -0.63488,-4.3752
-            c  0.24879,1.233, 1.1883,2.6366, 1.768,0.69037
-               0.74264,0.71431, 1.2069,0.6277, 1.6362,-0.5115
-              -0.034821,1.0871, 0.096633,1.6827, 0.74401,1.7541
-              -0.091757,1.4249, 0.70746,2.0783, 1.2188,1.8749
-              -0.894,0.93533, -0.4517,1.2793, -0.1438,1.9055
-              -0.6904,0.3722, -0.6323,1.1294, -0.2202,2.0686 
-              -0.8022,-0.0916, -1.2136,0.497, -0.9903,2.1906
-              -0.5751,-0.6694, -1.2232,-0.5666, -1.4943,1.3293
-              -0.162,-1.1736, -0.4604,-2.6908, -1.3395,-1.1883
-              -0.49014,-2.0469, -0.93497,-0.738, -1.3874,0.0043
-               0.10639,-0.88002, 0.073166,-1.5303, -0.60252,-1.123
-               0.44939,-0.82156, 1.0157,-1.7132, -0.041883,-3.03
-               0.45163,-1.7508, 0.018089,-2.1904, -0.50161,-2.5024
-               0.67964,-1.0053, 0.49818,-2.0107, 0.28858,-3.016
-               0.52476,1.1059, 0.93462,1.3608, 1.0661,-0.4466
-            z
-            m -0.15082,-1.5778
-            c  0.074098,2.0969, -0.58436,1.8254, -1.3271,1.2814
-               0.54867,2.1298, 0.033405,2.9625, -0.45613,3.8265
-               1.306,0.68211, 0.96098,2.0011, 0.39794,3.4043
-               1.3865,-0.46902, 1.0123,0.84256, 0.083778,2.7148
-               0.6771,-0.1353, 1.0998,-0.2861, 1.0191,1.6048
-               0.47854,-1.0645, 1.3389,-2.4648, 1.4732,1.0237
-               0.69655,-2.8185, 1.0794,-1.349, 1.487,0.2973
-               0.3541,-1.4463, 0.8078,-2.8978, 1.864,-1.3746
-              -0.1962,-1.8445, -0.125,-3.2698, 1.3195,-2.5424
-              -1.163,-2.1605, -0.2327,-2.5422, 0.3352,-3.2319
-              -1.4432,-0.2307, -0.4485,-0.83498, -0.0527,-1.9151
-              -1.2304,-0.5137, -1.6742,-1.4126, -1.2459,-2.7388
-              -0.9898,1.2593, -0.9672,-0.606, -1.131,-1.896
-              -0.51549,1.084, -0.9993,2.4142, -1.8584,0.82793
-              -0.92276,2.4614, -1.531,0.17894, -1.9087,-1.2819
-            z"><animate
-           attributeName="d"
-           dur="0.4s"
-           fill="freeze"
-           values="m -0.63488,-4.3752
-                   c  0.24879,1.233, 1.1883,2.6366, 1.768,0.69037
-                      0.74264,0.71431, 1.2069,0.6277, 1.6362,-0.5115
-                     -0.034821,1.0871, 0.096633,1.6827, 0.74401,1.7541
-                     -0.091757,1.4249, 0.70746,2.0783, 1.2188,1.8749
-                     -0.894,0.93533, -0.4517,1.2793, -0.1438,1.9055
-                     -0.6904,0.3722, -0.6323,1.1294, -0.2202,2.0686
-                     -0.8022,-0.0916, -1.2136,0.497, -0.9903,2.1906
-                     -0.5751,-0.6694, -1.2232,-0.5666, -1.4943,1.3293
-                     -0.162,-1.1736, -0.4604,-2.6908, -1.3395,-1.1883
-                     -0.49014,-2.0469, -0.93497,-0.738, -1.3874,0.0043
-                      0.10639,-0.88002, 0.073166,-1.5303, -0.60252,-1.123
-                      0.44939,-0.82156, 1.0157,-1.7132, -0.041883,-3.03
-                      0.45163,-1.7508, 0.018089,-2.1904, -0.50161,-2.5024
-                      0.67964,-1.0053, 0.49818,-2.0107, 0.28858,-3.016
-                      0.52476,1.1059, 0.93462,1.3608, 1.0661,-0.4466
-                   z
-                   m -0.15082,-1.5778
-                   c  0.074098,2.0969, -0.58436,1.8254, -1.3271,1.2814
-                      0.54867,2.1298, 0.033405,2.9625, -0.45613,3.8265
-                      1.306,0.68211, 0.96098,2.0011, 0.39794,3.4043
-                      1.3865,-0.46902, 1.0123,0.84256, 0.083778,2.7148
-                      0.6771,-0.1353, 1.0998,-0.2861, 1.0191,1.6048
-                      0.47854,-1.0645, 1.3389,-2.4648, 1.4732,1.0237
-                      0.69655,-2.8185, 1.0794,-1.349, 1.487,0.2973
-                      0.3541,-1.4463, 0.8078,-2.8978, 1.864,-1.3746
-                     -0.1962,-1.8445, -0.125,-3.2698, 1.3195,-2.5424
-                     -1.163,-2.1605, -0.2327,-2.5422, 0.3352,-3.2319
-                     -1.4432,-0.2307, -0.4485,-0.83498, -0.0527,-1.9151
-                     -1.2304,-0.5137, -1.6742,-1.4126, -1.2459,-2.7388
-                     -0.9898,1.2593, -0.9672,-0.606, -1.131,-1.896
-                     -0.51549,1.084, -0.9993,2.4142, -1.8584,0.82793
-                     -0.92276,2.4614, -1.531,0.17894, -1.9087,-1.2819
-                   z;
-  
-                   m -28.703,-29.65
-                   c  3.1162,7.1472, 14.884,15.283, 22.145,4.0018
-                      9.3018,4.1406, 15.117,3.6386, 20.494,-2.965
-                     -0.43617,6.3017, 1.2104,9.7538, 9.3191,10.168
-                     -1.1493,8.2598, 8.8612,12.047, 15.265,10.868
-                     -11.198,5.4215, -5.657,7.4156, -1.8,11.045,-8.648
-                      2.1575,-7.92, 6.5469,-2.759, 11.991,-10.048
-                     -0.531,-15.201, 2.881,-12.404, 12.698,-7.203
-                     -3.88,-15.32, -3.284,-18.716, 7.706,-2.0291
-                     -6.803,-5.7675, -15.598,-16.779, -6.888,-6.1392
-                     -11.865,-11.711, -4.2781,-17.378, 0.0251,1.3326
-                     -5.1012,0.91647, -8.8704,-7.5468, -6.5096,5.6288
-                     -4.7623,12.722, -9.931,-0.52467, -17.564,5.6568
-                     -10.149,0.22658, -12.697,-6.2829, -14.505,8.5128
-                     -5.8277,6.2399, -11.655,3.6145, -17.483,6.5728
-                      6.4104,11.707, 7.888,13.353, -2.5888
-                   z
-                   m -1.8891,-9.146
-                   c  0.9281,12.155, -7.3194,10.581, -16.623,7.4278
-                      6.8723,12.346, 0.4184,17.172, -5.7132,22.181
-                      16.358,3.954, 12.037,11.6, 4.9844,19.733
-                      17.367,-2.7187, 12.68,4.884, 1.0493,15.737
-                      8.4809,-0.78413, 13.776,-1.6578, 12.764,9.3027
-                      5.9945,-6.1707, 16.771,-14.287, 18.454,5.9344
-                      8.7251,-16.338, 13.519,-7.8198, 18.626,1.7233
-                      4.4356,-8.384, 10.119,-16.798, 23.349,-7.968
-                     -2.458,-10.692, -1.566,-18.955, 16.527,-14.738
-                     -14.567,-12.524, -2.916,-14.736, 4.197,-18.734
-                     -18.076,-1.3376, -5.617,-4.8404, -0.66,-11.102
-                     -15.41,-2.9776, -20.969,-8.1886, -15.605,-15.876
-                     -12.398,7.2993, -12.115,-3.5128, -14.166,-10.991
-                     -6.4567,6.2837, -12.517,13.994, -23.277,4.7992
-                     -11.558,14.268,-19.177,1.0372,-23.907,-7.4309
-                   z" />
-      </path>
-    </svg>
-  
-  <!--== HUD ==================================================================-->
-    <g id="hud"
-       visibility="hidden" >
-      <svg preserveAspectRatio="xMinYMid meet" viewBox="0 0 0.1 1">
-        <g transform="translate(0.02, 0.98), scale(0.15,-0.15)">
-        <!-- Radar Scope -->
-          <g>
-            <circle
-               class="hud-background"
-               cx="0.5"
-               cy="0.5"
-               r="0.5" />
-            <circle id="hud-radar-scope-missile-target"
-               clip-path="url(#hud-radar-scope-clip-path)"
-               fill="#777777"
-               stroke="none"
-               r="0.04"
-                cx="0.5" cy="0.5" />
-            <circle
-               id="hud-radar-scope-missile"
-               clip-path="url(#hud-radar-scope-clip-path)"
-               fill="#111111"
-               stroke="none"
-               r="0.04" />
-            <circle
-               class="hud-foreground"
-               stroke-width="0.04"
-               cx="0.5"
-               cy="0.5"
-               r="0.5" />
-            <clipPath
-               id="hud-radar-scope-clip-path" >
-              <circle
-                 cx="0.5"
-                 cy="0.5"
-                 r="0.5" />
-            </clipPath>
-          </g>
-        <!-- Speedometer-->
-          <g>
-            <g
-               transform="translate(1.1,0.1), scale(1.8,1.8)">
-              <rect
-                 class="hud-background"
-                 width="1.0"
-                 height="0.122" />
-  
-              <rect id="hud-speedometer-bar"
-                 clip-path="url(#hud-speedometer-bar-clip-path)"
-                 fill="#333333"
-                 stroke="none"
-                 x="-0.5"
-                 width="1.0"
-                 height="0.122" />
-  
-              <rect
-                 class="hud-foreground"
-                 stroke-width="0.02"
-                 width="1.0"
-                 height="0.122" />
-  
-              <clipPath id="hud-speedometer-bar-clip-path">
-                <rect
-                   width="0.5"
-                   height="0.122" />
-              </clipPath>
-            </g>
-  
-            <text id="hud-speedometer-label-text"
-               transform="translate(1.2, 0.4), scale(0.012,-0.012)">SPEED</text>
-  
-            <text id="hud-speedometer-speed-text"
-               transform="translate(3, 0.1), scale(0.02,-0.02)" />
-  
-            <clipPath
-               id="speedometer-clip-path" >
-              <rect
-                 x="1.1"
-                 y="0.1"
-                 width="1.8"
-                 height="0.22" />
-            </clipPath>
-          </g>
-  
-        <!-- Lives Indicator ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-          <g>
-            <defs>
-              <g id="hud-lives-indicator-missile"
-                 transform="rotate(-65), translate(0,-0.5), scale(0.6,0.6)">
-                <path
-                   style="fill:white; stroke: black; stroke-linejoin:round;"
-                   stroke-width="0.04"
-                   d="m -0.07, 0.01
-                      L -0.2, -0.07
-                      L  0.0,  0.6
-                      L  0.2, -0.07
-                      L  0.07, 0.01" />
-                <path
-                   fill="white"
-                   stroke="black"
-                   stroke-width="0.04"
-                   d="m -0.07, 0.0
-                      C -0.12, 0.4 -0.12,0.8  0.0,  1.0
-                      C  0.12, 0.8  0.12,0.4  0.07, 0.0
-                      z" />
-              </g>
-            </defs>
-            <use id="hud-lives-indicator-missile-1"
-               transform="translate(0.6,1.4)"
-               visibility="hidden"
-               xlink:href="#hud-lives-indicator-missile" />
-            <use id="hud-lives-indicator-missile-2"
-               transform="translate(0.6,1.7)"
-               visibility="hidden"
-               xlink:href="#hud-lives-indicator-missile" />
-            <use id="hud-lives-indicator-missile-3"
-               transform="translate(0.6,2.0)"
-               visibility="hidden"
-               xlink:href="#hud-lives-indicator-missile" />
-            <use id="hud-lives-indicator-missile-4"
-               transform="translate(0.6,2.3)"
-               visibility="hidden"
-               xlink:href="#hud-lives-indicator-missile" />
-            <use id="hud-lives-indicator-missile-5"
-               transform="translate(0.6,2.6)"
-               visibility="hidden"
-               xlink:href="#hud-lives-indicator-missile" />
-  
-            <g id="hud-lives-indicator-infinite"
-                 visibility="hidden"
-                 transform="translate(0.5,1.5)">
-              <use
-                 transform="translate(0.3,0.15), scale(1.4,1.4)"
-                 xlink:href="#hud-lives-indicator-missile" />
-              <path
-                 stroke="white"
-                 stroke-width="0.02"
-                 stroke-opacity="0.2"
-                 d="m  0.0, 0.04
-                    C  0.5, 0.5  0.5,-0.5  0.0,-0.04
-                    C -0.5,-0.5 -0.5, 0.5  0.0, 0.04
-                    M  0.035, 0.0
-                    C  0.43,-0.4  0.43, 0.4  0.035, 0.0
-                    M  -0.035, 0.0
-                    C  -0.43, 0.4 -0.43,-0.4 -0.035, 0.0" />
-            </g>
-  
-            <g id="hud-lives-indicator-none"
-                 visibility="visible"
-                 transform="translate(0.5,1.5)">
-              <use
-                 transform="translate(0.3,0.15), scale(1.4,1.4)"
-                 xlink:href="#hud-lives-indicator-missile" />
-              <path
-                 transform="scale(0.8,0.8)"
-                 stroke="white"
-                 stroke-width="0.02"
-                 stroke-opacity="0.2"
-                 d="M  0.0, 0.4
-                    A  0.4, 0.4  0 0,0  0.4, 0.0
-                    A  0.4, 0.4  0 0,0  0.0,-0.4
-                    A  0.4, 0.4  0 0,0 -0.4, 0.0
-                    A  0.4, 0.4  0 0,0  0.0, 0.4
-                    z
-                    M  0.26,-0.20
-                    A  0.328,0.328, 0 0,1 -0.20,0.26
-                    z
-                    M  -0.26,0.20
-                    A  0.328,0.328, 0 0,1 0.20,-0.26
-                    z" />
-            </g>
-  
-  
-          </g>
-        </g>
-  
-      <!-- Level Indicator ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-        <text id="hud-level-indicator"
-           transform="translate(0.035, 0.035), scale(0.0025,0.0025)" />
 
-      <!-- Frame Rate Indicator ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-        <text id="hud-frame-rate-indicator"
-           transform="translate(0.035, 0.08), scale(0.0025,0.0025)"
-           fill="#333333" />
-  
-      </svg>
+<button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme / 切换主题"
+    style="position: fixed; top: 16px; right: 16px; z-index: 999998; width: 42px; height: 42px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: background 0.2s, transform 0.2s; color: var(--text);"
+    onmouseover="this.style.transform='scale(1.1)'"
+    onmouseout="this.style.transform='scale(1)'">
+    <span id="theme-icon">🌓</span>
+</button>
 
+<div id="calculator-wrapper">
+    <div class="win-calc">
+        <div class="win-titlebar">
+            <span class="win-title">Calculator</span>
+            <div class="win-modes">
+                <button class="win-mode" data-mode="standard" onclick="winSetMode('standard')">Standard</button>
+                <button class="win-mode active" data-mode="scientific" onclick="winSetMode('scientific')">Scientific</button>
+                <button class="win-mode" data-mode="programmer" onclick="winSetMode('programmer')">Programmer</button>
+                <button class="win-mode" data-mode="date" onclick="winSetMode('date')">Date</button>
+                <button class="win-mode" data-mode="currency" onclick="winSetMode('currency')">Currency</button>
+                <button class="win-mode" data-mode="volume" onclick="winSetMode('volume')">Volume</button>
+                <button class="win-mode" data-mode="length" onclick="winSetMode('length')">Length</button>
+            </div>
+        </div>
 
-      <svg preserveAspectRatio="xMaxYMid meet" viewBox="0 0 0.06 1">
-      <!-- Progress Indicator ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-        <g
-           transform="translate(0,0.965), scale(0.95,-0.95)">
-  
-          <path
-             stroke="#333333"
-             stroke-width="0.0005"
-             fill="white"
-             opacity="0.8"
-             d="M  0.03   0.0
-                l -0.04   0.0
-                  -0.005  0.005
-                   0.0    0.26
-                   0.02   0.02
-                   0.0    0.72
-                   0.025  0
-                z" />
-  
-          <text opacity="0.8" transform="translate(0.024,0.01), rotate(90), scale(0.0026,-0.0026)">PROGRESS</text>
-  
-          <g id="hud-progress-indicator-best-progress"
-             transform="translate(0,0.2)">
-            <rect
-               x="-0.01"
-               width="0.04"
-               height="0.008"
-               fill="#777777" />
-            <text
-               fill="#777777"
-               transform="translate(-0.04,-0.002), scale(0.001,-0.001)">PB</text>
-          </g>
-  
-          <g id="hud-progress-indicator-progress"
-             transform="translate(0,0.2)">
-            <rect
-               x="-0.01"
-               width="0.04"
-               height="0.008"
-               fill="#333333" />
-          </g>
-  
-          <path
-             class="hud-foreground"
-             stroke-width="0.006"
-             d="m 0, 1.005
-                L 0.03, 1.005
-                  0.03, 0
-                  0, 0" />
-        </g>
-      </svg>
-    </g>
-  
-  <!--== FOG ==================================================================-->
-    <rect id="fog"
-      width="100%" height="100%"
-      fill="white"
-      opacity="1" />
-  
-  <!--== BANNER ===============================================================-->
-    <svg id="banner"
-       width="130%" height="100%"
-       preserveAspectRatio="xMaxYMid meet"
-       viewBox="0 0 0.01 1"
-       overflow="visible"
-       visibility="hidden" >
-      <rect
-         x="-0.1" y="0.45"
-         width="6" height="0.2"
-         fill="#000"
-         opacity="0.95"
-         stroke-linejoin="round"
-         stroke-linecap="round"
-         stroke-width="0.005" />
-  
-      <g transform="translate(-0.05,0.54) scale(0.004,0.004)">
-        <text id="banner-title"
-           fill="#fff" ></text>
-      </g>
-      <g transform="translate(0.25,0.6) scale(0.0025,0.0025)">
-        <text id="banner-text"
-           fill="#ccc" ></text>
-      </g>
-    </svg>
-  
-  
-    <defs>
-  
-  <!--== BARRIER PATHS ========================================================-->
-      <path
-         id="barrier-path-1"
-         d="M 100,0
-            A 100,100 0 0,1 0,100
-            A 100,100 0 0,1 -100,0
-            A 100,100 0 0,1 0,-100
-            A 100,100 0 0,1 100,0
-            z
-  
-            M 0,90
-            A 90,90 0 0,0 90,0
-            L 30,0
-            A 30,30 0 0,1 0,30
-            z
-  
-            M 0,-90
-            A 90,90 0 0,0 -90,0
-            L -30,0
-            A 30,30 0 0,1 0,-30
-            z" />
-  
-      <path
-         id="barrier-path-2"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M 80,0
-            A 30,30 0 0,0  50,-30
-            A 30,30 0 0,0  20, 0
-            A 30,30 0 0,0  50, 30
-            A 30,30 0 0,0  80, 0
-            z
-  
-  
-            M 5,-43.3
-            A 30,30 0 0,0 -25, -73.3
-            A 30,30 0 0,0 -55, -43.3
-            A 30,30 0 0,0 -25, -13.3
-            A 30,30 0 0,0  5,  -43.3
-            z
-  
-  
-            M 5,43.3
-            A 30,30 0 0,0 -25, 13.3
-            A 30,30 0 0,0 -55, 43.3
-            A 30,30 0 0,0 -25, 73.3
-            A 30,30 0 0,0  5,  43.3
-            z" />
-  
-      <path
-         id="barrier-path-3"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M 0,90
-            A 90,90 0 0,0 90,0
-            L 30,0
-            A 30,30 0 0,0  0, -30
-            A 30,30 0 0,0 -30, 0
-            A 30,30 0 0,0  0,  30
-            z" />
-  
-      <path
-         id="barrier-path-4"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M -30.78,84.57
-            A 90,90 0 0,0 90,0
-            L 30,0
-            A 30,30 0 0,1 -10.26,28.19
-            z" />
-  
-      <path
-         id="barrier-path-5"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M 45,77.94
-            A 90,90 0 0,0 45,-77.94
-            L 45,-45
-            A 58,58 0 0,0 45,45
-            z
-  
-            M -45,-77.94
-            A 90,90 0 0,0 -45,77.94
-            L -45,45
-            A 58,58 0 0,0 -45,-45
-            z" />
-  
-      <path
-         id="barrier-path-6"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M  80, 25
-            L  80,-25
-            L -80,-25
-            L -80, 25
-            z" />
-  
-      <path
-         id="barrier-path-blank"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M 90,0
-            A 90,90 0 0,0  0, -90
-            A 90,90 0 0,0 -90, 0
-            A 90,90 0 0,0  0,  90
-            A 90,90 0 0,0  90, 0
-            z" />
-  
-      <path
-         id="barrier-path-finish"
-         d="M 100,0
-            A 100,100 0 0,1  0,   100
-            A 100,100 0 0,1 -100, 0
-            A 100,100 0 0,1  0,  -100
-            A 100,100 0 0,1  100, 0
-            z
-  
-            M 90,0
-            A 90,90 0 0,0  -63.63,  -63.63
-            L -53.03,-53.03
-            A 75,75 0 0,0  -75,0
-            L -90,0
-            A 90,90 0 0,0  63.63,63.63
-            L 53.03,53.03
-            A 75,75 0 0,0  75,0
-            z" />
-  
-  
-  <!-- Collision Detection -->
-      <line
-         id="collision-line"
-         x1="-300"
-         y1="100"
-         x2="100"
-         y2="100" />
-    </defs>
-  </svg>
+        <div class="win-display">
+            <div class="win-indicator" id="win-indicator">DEG</div>
+            <div class="win-expr" id="win-expr"></div>
+            <div class="win-result" id="win-result">0</div>
+        </div>
 
-  <div id="fullscreen">
-    <button onclick="
-      document.body.requestFullscreen();
-      event.stopPropagation();
-      event.preventDefault();
-    ">ENTER FULLSCREEN</button>
-  </div>
+        <!-- Standard -->
+        <div id="win-panel-standard" class="win-panel" style="display:none;">
+            <div class="win-grid">
+                <button class="win-btn win-fn" onclick="winClearEntry()">CE</button>
+                <button class="win-btn win-fn" onclick="winClearAll()">C</button>
+                <button class="win-btn win-fn" onclick="winBackspace()">⌫</button>
+                <button class="win-btn win-op" onclick="winOperator('/')">÷</button>
+                <button class="win-btn" onclick="winDigit('7')">7</button>
+                <button class="win-btn" onclick="winDigit('8')">8</button>
+                <button class="win-btn" onclick="winDigit('9')">9</button>
+                <button class="win-btn win-op" onclick="winOperator('*')">×</button>
+                <button class="win-btn" onclick="winDigit('4')">4</button>
+                <button class="win-btn" onclick="winDigit('5')">5</button>
+                <button class="win-btn" onclick="winDigit('6')">6</button>
+                <button class="win-btn win-op" onclick="winOperator('-')">−</button>
+                <button class="win-btn" onclick="winDigit('1')">1</button>
+                <button class="win-btn" onclick="winDigit('2')">2</button>
+                <button class="win-btn" onclick="winDigit('3')">3</button>
+                <button class="win-btn win-op" onclick="winOperator('+')">+</button>
+                <button class="win-btn win-fn" onclick="winNegate()">±</button>
+                <button class="win-btn" onclick="winDigit('0')">0</button>
+                <button class="win-btn" onclick="winDecimal()">.</button>
+                <button class="win-btn win-eq" onclick="winEquals()">=</button>
+            </div>
+        </div>
 
-  <!--== SCRIPTS ==============================================================-->
-  
-  <!-- 2d geometry SVG library -->
-  <script type="application/javascript" src="lib/2D.js"></script>
-  <script type="application/javascript" src="lib/Path.js"></script>
-  
-  <!-- Game files -->
-  <script type="application/javascript" src="src/base.js"></script>
-  <script type="application/javascript" src="src/util.js"></script>
-  <script type="application/javascript" src="src/missile.js"></script>
-  <script type="application/javascript" src="src/wall.js"></script>
-  <script type="application/javascript" src="src/barrier.js"></script>
-  <script type="application/javascript" src="src/barrierQueue.js"></script>
-  <script type="application/javascript" src="src/game.js"></script>
-  <script type="application/javascript" src="src/hud.js"></script>
-  <script type="application/javascript" src="src/banner.js"></script>
-  <script type="application/javascript" src="src/fog.js"></script>
-  <script type="application/javascript" src="src/main.js"></script>
- 
+        <!-- Scientific -->
+        <div id="win-panel-scientific" class="win-panel">
+            <div class="win-fn-row">
+                <button class="win-btn win-fn" onclick="winUnary('sin')">sin</button>
+                <button class="win-btn win-fn" onclick="winUnary('cos')">cos</button>
+                <button class="win-btn win-fn" onclick="winUnary('tan')">tan</button>
+                <button class="win-btn win-fn" onclick="winUnary('log')">log</button>
+                <button class="win-btn win-fn" onclick="winUnary('ln')">ln</button>
+                <button class="win-btn win-fn" onclick="winUnary('sqrt')">√</button>
+                <button class="win-btn win-fn" onclick="winOperator('^')">xʸ</button>
+                <button class="win-btn win-fn" onclick="winUnary('fact')">x!</button>
+                <button class="win-btn win-fn" onclick="winDigit('π')">π</button>
+                <button class="win-btn win-fn" onclick="winDigit('e')">e</button>
+                <button class="win-btn win-fn" onclick="winToggleAngle()" id="win-angle-btn">DEG</button>
+            </div>
+            <div class="win-grid">
+                <button class="win-btn win-fn" onclick="winClearEntry()">CE</button>
+                <button class="win-btn win-fn" onclick="winClearAll()">C</button>
+                <button class="win-btn win-fn" onclick="winBackspace()">⌫</button>
+                <button class="win-btn win-op" onclick="winOperator('/')">÷</button>
+                <button class="win-btn" onclick="winDigit('7')">7</button>
+                <button class="win-btn" onclick="winDigit('8')">8</button>
+                <button class="win-btn" onclick="winDigit('9')">9</button>
+                <button class="win-btn win-op" onclick="winOperator('*')">×</button>
+                <button class="win-btn" onclick="winDigit('4')">4</button>
+                <button class="win-btn" onclick="winDigit('5')">5</button>
+                <button class="win-btn" onclick="winDigit('6')">6</button>
+                <button class="win-btn win-op" onclick="winOperator('-')">−</button>
+                <button class="win-btn" onclick="winDigit('1')">1</button>
+                <button class="win-btn" onclick="winDigit('2')">2</button>
+                <button class="win-btn" onclick="winDigit('3')">3</button>
+                <button class="win-btn win-op" onclick="winOperator('+')">+</button>
+                <button class="win-btn win-fn" onclick="winParen('(')">(</button>
+                <button class="win-btn win-fn" onclick="winParen(')')">)</button>
+                <button class="win-btn" onclick="winDigit('0')">0</button>
+                <button class="win-btn" onclick="winDecimal()">.</button>
+                <button class="win-btn win-fn" onclick="winNegate()">±</button>
+                <button class="win-btn win-fn" onclick="winPercent()">%</button>
+                <button class="win-btn win-fn" onclick="winDigit('Ans')">Ans</button>
+                <button class="win-btn win-eq" onclick="winEquals()">=</button>
+            </div>
+        </div>
+
+        <!-- Programmer -->
+        <div id="win-panel-programmer" class="win-panel" style="display:none;">
+            <div class="win-fn-row">
+                <select id="prog-base" class="win-text-input" onchange="winProgSetBase(this.value)">
+                    <option value="16">HEX</option>
+                    <option value="10" selected>DEC</option>
+                    <option value="8">OCT</option>
+                    <option value="2">BIN</option>
+                </select>
+                <span id="prog-display" class="win-prog-display">0</span>
+            </div>
+            <div class="win-fn-row">
+                <button class="win-btn win-fn" onclick="winProgBit('and')">AND</button>
+                <button class="win-btn win-fn" onclick="winProgBit('or')">OR</button>
+                <button class="win-btn win-fn" onclick="winProgBit('xor')">XOR</button>
+                <button class="win-btn win-fn" onclick="winProgBit('not')">NOT</button>
+                <button class="win-btn win-fn" onclick="winProgBit('shl')">&lt;&lt;</button>
+                <button class="win-btn win-fn" onclick="winProgBit('shr')">&gt;&gt;</button>
+                <button class="win-btn win-fn" onclick="winProgClear()">C</button>
+            </div>
+            <div class="win-grid" id="prog-grid">
+                <button class="win-btn" onclick="winProgInput('7')">7</button>
+                <button class="win-btn" onclick="winProgInput('8')">8</button>
+                <button class="win-btn" onclick="winProgInput('9')">9</button>
+                <button class="win-btn win-op" onclick="winProgOp('/')">÷</button>
+                <button class="win-btn" onclick="winProgInput('4')">4</button>
+                <button class="win-btn" onclick="winProgInput('5')">5</button>
+                <button class="win-btn" onclick="winProgInput('6')">6</button>
+                <button class="win-btn win-op" onclick="winProgOp('*')">×</button>
+                <button class="win-btn" onclick="winProgInput('1')">1</button>
+                <button class="win-btn" onclick="winProgInput('2')">2</button>
+                <button class="win-btn" onclick="winProgInput('3')">3</button>
+                <button class="win-btn win-op" onclick="winProgOp('-')">−</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('A')">A</button>
+                <button class="win-btn" onclick="winProgInput('0')">0</button>
+                <button class="win-btn" onclick="winProgBackspace()">⌫</button>
+                <button class="win-btn win-op" onclick="winProgOp('+')">+</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('B')">B</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('C')">C</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('D')">D</button>
+                <button class="win-btn win-eq" onclick="winProgEquals()">=</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('E')">E</button>
+                <button class="win-btn prog-hex" onclick="winProgInput('F')">F</button>
+                <button class="win-btn win-fn" onclick="winProgInput('(')">(</button>
+                <button class="win-btn win-fn" onclick="winProgInput(')')">)</button>
+            </div>
+        </div>
+
+        <!-- Date -->
+        <div id="win-panel-date" class="win-panel" style="display:none;">
+            <div class="win-section-title">Date Difference / 日期差</div>
+            <div class="win-fn-row">
+                <input type="date" id="date1" class="win-text-input">
+                <input type="date" id="date2" class="win-text-input">
+                <button class="win-btn win-eq" onclick="winDateDiff()">Calculate</button>
+            </div>
+            <div id="date-result" class="win-result-small">—</div>
+            <div class="win-section-title" style="margin-top:16px;">Add / Subtract Days / 加减天数</div>
+            <div class="win-fn-row">
+                <input type="date" id="date-base" class="win-text-input">
+                <input type="number" id="date-days" class="win-text-input" placeholder="±days" value="0">
+                <button class="win-btn win-eq" onclick="winDateAdd()">Apply</button>
+            </div>
+            <div id="date-add-result" class="win-result-small">—</div>
+        </div>
+
+        <!-- Currency -->
+        <div id="win-panel-currency" class="win-panel" style="display:none;">
+            <div class="win-section-title">Currency Converter / 货币换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="curr-amount" class="win-text-input" placeholder="100" value="100">
+                <select id="curr-from" class="win-text-input"><option value="USD">USD</option><option value="CNY">CNY</option><option value="EUR">EUR</option><option value="JPY">JPY</option><option value="GBP">GBP</option></select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="curr-to" class="win-text-input"><option value="CNY">CNY</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="JPY">JPY</option><option value="GBP">GBP</option></select>
+                <button class="win-btn win-eq" onclick="winCurrency()">Convert</button>
+            </div>
+            <div id="curr-result" class="win-result-small">—</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:8px;">Rates are approximate. / 汇率为近似值。</div>
+        </div>
+
+        <!-- Volume -->
+        <div id="win-panel-volume" class="win-panel" style="display:none;">
+            <div class="win-section-title">Volume Converter / 体积换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="vol-amount" class="win-text-input" placeholder="1" value="1">
+                <select id="vol-from" class="win-text-input"><option value="L">Liter</option><option value="mL">Milliliter</option><option value="m3">Cubic meter</option><option value="gal">Gallon (US)</option><option value="qt">Quart (US)</option><option value="pt">Pint (US)</option><option value="cup">Cup (US)</option><option value="floz">Fluid ounce (US)</option></select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="vol-to" class="win-text-input"><option value="mL">Milliliter</option><option value="L">Liter</option><option value="m3">Cubic meter</option><option value="gal">Gallon (US)</option><option value="qt">Quart (US)</option><option value="pt">Pint (US)</option><option value="cup">Cup (US)</option><option value="floz">Fluid ounce (US)</option></select>
+                <button class="win-btn win-eq" onclick="winVolume()">Convert</button>
+            </div>
+            <div id="vol-result" class="win-result-small">—</div>
+        </div>
+
+        <!-- Length -->
+        <div id="win-panel-length" class="win-panel" style="display:none;">
+            <div class="win-section-title">Length Converter / 长度换算</div>
+            <div class="win-fn-row">
+                <input type="number" id="len-amount" class="win-text-input" placeholder="1" value="1">
+                <select id="len-from" class="win-text-input"><option value="m">Meter</option><option value="km">Kilometer</option><option value="cm">Centimeter</option><option value="mm">Millimeter</option><option value="mi">Mile</option><option value="yd">Yard</option><option value="ft">Foot</option><option value="in">Inch</option></select>
+                <span style="color:var(--text-muted);">→</span>
+                <select id="len-to" class="win-text-input"><option value="ft">Foot</option><option value="m">Meter</option><option value="km">Kilometer</option><option value="cm">Centimeter</option><option value="mm">Millimeter</option><option value="mi">Mile</option><option value="yd">Yard</option><option value="in">Inch</option></select>
+                <button class="win-btn win-eq" onclick="winLength()">Convert</button>
+            </div>
+            <div id="len-result" class="win-result-small">—</div>
+        </div>
+    </div>
+</div>
+
+<div id="secret-game-zone">
+        <h1>🎮 Sites (Save this URL right away. 请立刻收藏这个网址。中英对照汉化还在增加中)</h1>
+
+        <div class="privacy-box">
+        <strong>Privacy / 隐私:</strong><br>
+        This site does <u>NOT</u> track anything you do inside the games. Games run in a cross-origin iframe, so their clicks and keystrokes never reach this page. Only actions on this page (clicking links, typing in the comment box, switching tabs, etc.) are logged every 60 seconds and sent to GitHub Issues.<br>
+        <strong>隐私:</strong><br>
+        本站<u>不会</u>追踪你在游戏内的任何操作。游戏在跨域 iframe 中运行，因此游戏内的点击和按键永远不会传到这里。只有<u>本页面上</u>的操作（点击链接、在留言框输入、切换标签页等）会被记录，每 60 秒打包发送到 GitHub Issues。
+        </div>
+
+        <div class="oauth-box">
+        <strong>⚠️ About OAuth 2.0 / 关于 OAuth 2.0:</strong><br>
+        This site uses Google Identity Services (OAuth 2.0) for optional sign-in. <strong>Your Google password is never seen by this site</strong> — Google handles the login and only returns your email and a unique ID. You can revoke access anytime at <a href="https://myaccount.google.com/permissions" target="_blank" style="color: inherit;">myaccount.google.com/permissions</a>.<br><br>
+        本站使用 Google Identity Services（OAuth 2.0）提供可选的登录功能。<strong>本站永远看不到你的 Google 密码</strong> —— 登录由 Google 处理，只返回你的邮箱和一个唯一 ID。你可以随时在 <a href="https://myaccount.google.com/permissions" target="_blank" style="color: inherit;">myaccount.google.com/permissions</a> 撤销授权。
+        </div>
+
+        <div id="google-signin-container" style="margin-bottom: 10px; display: none;">
+            <div id="google-signin-btn"></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Sign in with Google to help us track visits (optional). / 用 Google 登录帮助我们统计访问（可选）。</div>
+        </div>
+
+        <div id="manual-login-container" style="margin-bottom: 10px; display: none;">
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Or sign in manually (no password): / 或手动登录（无需密码）：</div>
+            <div style="display: flex; gap: 6px;">
+                <input type="email" id="manual-email-input" placeholder="your@email.com" style="flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box; background: var(--screen-bg); color: var(--screen-text);">
+                <button onclick="manualLogin()" style="padding: 8px 14px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Sign In / 登录</button>
+            </div>
+            <div id="manual-login-status" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;"></div>
+            <div style="font-size: 10px; color: var(--text-light); margin-top: 2px;">Manual login is session-only; refresh will sign you out. / 手动登录仅当前会话有效，刷新会掉线。</div>
+        </div>
+
+        <div id="dev-toggle-container" style="margin-bottom: 10px; display: none;">
+            <button onclick="toggleDevPanel()" style="background: #1e1e1e; color: #4ec9b0; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: monospace;">🛠️ Toggle Dev Mode / 切换开发者模式</button>
+        </div>
+
+        <div class="link-container">
+            <span class="game-link" style="cursor: pointer; text-decoration: underline; display: inline-block; margin-bottom: 12px;"
+                  onclick="document.getElementById('infoModal').style.display='flex'">
+                📖 How to use / 使用说明
+            </span>
+
+            <div id="infoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: var(--bg); color: var(--text); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); width: 92%; max-width: 900px; height: 90vh; display: flex; flex-direction: column; position: relative; box-sizing: border-box;">
+                    <div style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                        <h2 style="margin: 0; font-size: 20px; color: var(--heading);">📖 How to use / 使用说明</h2>
+                        <span style="cursor: pointer; color: var(--text-muted); font-size: 28px; line-height: 1; user-select: none; padding: 0 8px;"
+                              onclick="document.getElementById('infoModal').style.display='none'">&times;</span>
+                    </div>
+                    <div style="flex: 1; overflow-y: auto; padding: 24px; font-size: 14px; line-height: 1.7; color: var(--text);">
+                        <section style="margin-bottom: 32px;">
+                            <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+                                How "open site inside" works / “页面内打开”的使用说明
+                            </h3>
+                            <p style="margin: 0 0 10px 0;">
+                                This site uses "openSiteInside" to load content within the current page. Hover the mouse over the top area to reveal a gray bar; click it to return to the "disguise" page. Alternatively, press the Esc key twice — the first press releases the mouse/keyboard from the game context, and the second returns you to the previous view. Some websites may open in a new tab because they reject being loaded inside another page.
+                            </p>
+                            <p style="margin: 0; color: var(--text-muted);">
+                                本站使用 “openSiteInside” 在当前页面内加载内容。把鼠标移到页面顶部会显示一条灰色横条，点击它即可回到“伪装”页面。也可以按两次 Esc 键 —— 第一次把鼠标/键盘从游戏上下文中释放，第二次返回上一个视图。部分网站因为拒绝被嵌入其他页面，会在新标签页中打开。
+                            </p>
+                        </section>
+                        <section style="margin-bottom: 32px;">
+                            <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+                                Notice / 公告
+                            </h3>
+                            <p style="margin: 0 0 10px 0;">
+                                The GitHub Pages URL has been discontinued. All users can no longer access the old URL; anyone opening it will be redirected to the new URL after Oct. 31. There is now only one official URL — the Vercel page (this site).
+                            </p>
+                            <p style="margin: 0; color: var(--text-muted);">
+                                GitHub Pages 网址已停用。所有用户都无法再访问旧网址；10 月 31 日之后，打开旧网址的用户会被重定向到新网址。现在只有一个官方网址 —— Vercel 页面（即本网站）。
+                            </p>
+                        </section>
+                        <section style="margin-bottom: 32px;">
+                            <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+                                Tracking / 追踪说明
+                            </h3>
+                            <p style="margin: 0 0 10px 0;">
+                                I can see what you do on this site and at what time. Even though I don't know your name, I assign a pseudo-UUID to your tab. GitHub couldn't handle this, which is why I abandoned GitHub Pages in favor of Vercel. And don't even think about getting my GitHub PAT (Personal Access Token) — if anyone got it, they could edit or delete my things. I'm not stupid enough to hardcode it into the HTML or JS.
+                            </p>
+                            <p style="margin: 0; color: var(--text-muted);">
+                                我能看到你在本站做了什么、以及在什么时间做的。虽然我不知道你的名字，但我会给你的标签页分配一个伪 UUID。GitHub 处理不了这个，所以我把 GitHub Pages 换成了 Vercel。也别想拿到我的 GitHub PAT（个人访问令牌）—— 谁拿到它就能编辑或删除我的东西。我还不至于蠢到把它硬编码进 HTML 或 JS 里。
+                            </p>
+                        </section>
+                        <section>
+                            <h3 style="font-size: 17px; color: var(--link); margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+                                Sign out / 退出登录
+                            </h3>
+                            <p style="margin: 0 0 10px 0;">
+                                Open the browser console (press F12 or fn+F12), paste the following lines, and press Enter:
+                            </p>
+                            <p style="margin: 0 0 10px 0; color: var(--text-muted);">
+                                打开浏览器控制台（按 F12 或 fn+F12），粘贴以下内容并回车：
+                            </p>
+                            <pre style="background: #1e1e1e; color: #d4d4d4; padding: 14px 16px; border-radius: 8px; font-family: 'Monaco', 'Consolas', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; margin: 0;">localStorage.removeItem('site_user_id_v1');
+localStorage.removeItem('site_user_email_v1');
+localStorage.removeItem('site_login_ts_v1');
+location.reload();</pre>
+                        </section>
+                    </div>
+                    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0;">
+                        <button onclick="document.getElementById('infoModal').style.display='none'"
+                                style="padding: 10px 24px; background: #0066cc; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                            Close / 关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <a onclick="openSiteInside('https://aiden12910-12910.github.io/Eaglercraft/minecraft-github/')" class="game-link">1-1. Minecraft Java 1.5.2 (Very slow on Chromebook — not recommended; it may freeze the system. / 在 Chromebook 上非常慢，不建议使用，可能导致系统卡死。)</a>
+            <a onclick="openSiteInside('https://minecraft-free-online.github.io/minecraft-github/')" class="game-link">1-2. Spare link #1 — Minecraft Java 1.5.2 / 备用链接 #1</a>
+            <a onclick="openSiteInside('https://d1tm91r4ytbt54.cloudfront.net/2779cbcb-a02f-48a3-9e2e-95a8d123d165/1685483461665/web/index.html')" class="game-link">1-3. Spare link #2 — Minecraft Java 1.5.2 / 备用链接 #2</a>
+            <a href="https://bilibili.com" target="_blank" class="game-link">2. Bilibili (Main Node) — opens in a new tab/ 哔哩哔哩（主节点）- 在新标签页打开</a>
+            <a onclick="openSiteInside('https://slope-pro.github.io/')" class="game-link">3-1. Slope Pro (Includes Slope 1 & 3 — most recommended / 包含 Slope 1 和 3，最推荐)</a>
+            <a onclick="openSiteInside('https://slope-pro-dun.vercel.app/')" class="game-link">3-2. Slope Pro (Spare link / 备用链接)</a>
+            <a href="https://neal.fun" target="_blank" class="game-link">4. Neal.Fun (Interactive Sandbox — opens in a new tab / 交互式沙盒，在新标签页打开)</a>
+            <a onclick="openSiteInside('https://dnrweqffuwjtx.cloudfront.net/')" class="game-link">5. Chromebook Unlocked Hub — Classroom games / Chromebook 解锁中心 — 课堂游戏</a>
+            <a href="https://www.google.com/search?q=%E2%80%AAGoogle+games&sca_esv=bc87673d3ad1280f&hl=en&ei=Ycz4abfqJeS9ptQP8b7k4Ag&biw=1366&bih=599&ved=0ahUKEwj3nvLkiaCUAxXknokEHXEfGYwQ4dUDCBE&uact=5&oq=%E2%80%AAGoogle+games&gs_lp=Egxnd3Mtd2l6LXNlcnAiD-KAqkdvb2dsZSBnYW1lczIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeSIQxUABYxSVwAHgBkAECmAHDCqAB30iqAQszLTEuMS4xLjIuNbgBA8gBAPgBAZgCBqACrinCAgIQJsICCBAAGIAEGKIEwgIFEAAY7wXCAgQQABgemAMAkgcJNC0yLjAuMi4yoAfxLbIHCTQtMi4wLjIuMrgHrinCBwMzLTbIB0WACAE&sclient=gws-wiz-serp&safe=active&ssui=on" target="_blank" class="game-link">6. Google Doodles (You can also search "Google Games" — opens in a new tab / 也可以搜索 “Google Games”，在新标签页打开)</a>
+            <a onclick="openSiteInside('https://aiden12910-12910.github.io/Unblocked-Websites/')" class="game-link">7. Unblocked Websites (will be removed / 即将移除)</a>
+            <a onclick="openSiteInside('https://bigratiscool.github.io/bigratemporium/htmlgames.html')" class="game-link">8-1. Big rat's emporium</a>
+            <a onclick="openSiteInside('https://bigratemporium-cyan.vercel.app/htmlgames.html')" class="game-link">8-2. Big rat's emporium</a>
+            <a onclick="openSiteInside('https://minecraft-free-online.github.io/')" class="game-link">9. Minecraft Unblocked on GitHub (not just Minecraft / 不只是 Minecraft)</a>
+            <a onclick="openSiteInside('https://basketball-random12910.vercel.app/')" class="game-link">10. Basketball Random (A friend asked for it. / 朋友要求的。)</a>
+            <a onclick="openSiteInside('https://d1tmbzjih4bfq6.cloudfront.net/')" class="game-link">11. Completely Science — Unblocked Games / Completely Science — 解锁游戏</a>
+            <a onclick="openSiteInside('https://d3rtzzzsiu7gdr.cloudfront.net/library.html')" class="game-link">12. Hypackel games(Pokemon included)</a>
+            <a onclick="openSiteInside('https://d3rtzzzsiu7gdr.cloudfront.net/play/index.html?Pokemon%20-%20Emerald')" class="game-link">12-2. Hypackel games-Pokemon </a>
+            <a onclick="openSiteInside('https://aiden12910-12910.github.io/geometry-dash-lite/')" class="game-link">￥-1-1. Geometry Dash Lite — Link 1 / 链接 1</a>
+            <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-lite.html')" class="game-link">￥-1-2. Geometry Dash Lite — Link 2 / 链接 2</a>
+            <a onclick="openSiteInside('https://aiden12910-12910.github.io/geometry-dash-meltdown/')" class="game-link">￥-2-1. Geometry Dash Meltdown — Link 1 / 链接 1</a>
+            <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-meltdown.html')" class="game-link">￥-2-2. Geometry Dash Meltdown — Link 2 / 链接 2</a>
+            <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-subzero.html')" class="game-link">￥-3. Geometry Dash Subzero</a>
+
+            <span class="game-link" style="cursor: pointer; text-decoration: underline;" onclick="document.getElementById('customModal2').style.display='flex'">More info about Geometry Dash Subzero / 关于 Geometry Dash Subzero 的更多信息</span>
+            <div id="customModal2" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('customModal2').style.display='none'">&times;</span>
+                    <p style="color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;">
+                    Finally found this Subzero thing. The link may change — it's deployed on Vercel because it queued so long on GitHub Pages (I don't know why; maybe it's too large). It runs quite sluggishly — this has nothing to do with me, at least on a Chromebook; it might be the same on other devices, I don't know. If you know of any alternatives, please open an issue on GitHub. After all, this is just a remake; the original was built in C++, whereas this one is HTML-based. — Oct. 5, 2026<br><br>
+                    终于找到这个 Subzero 了。链接可能会变 —— 它部署在 Vercel 上，因为在 GitHub Pages 上排队排了很久（不知道为什么，也许是文件太大）。它运行起来相当卡 —— 这与我无关，至少在 Chromebook 上是这样；其他设备上可能也一样，我不确定。如果你知道任何替代方案，请在 GitHub 上开 Issue。毕竟这只是重制版；原版是用 C++ 写的，而这个是基于 HTML 的。 —— 2026 年 10 月 5 日
+                    </p>
+                </div>
+            </div>
+
+            <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-world.html')" class="game-link">￥-4. Geometry Dash World</a>
+            <a onclick="openSiteInside('https://geo-dash-games-unbanned.vercel.app/play/geometry-dash-scratch.html')" class="game-link">￥-5. Geometry Dash Scratch</a>
+            <a href="https://aiden12910-12910.vercel.app/" target="_blank" class="game-link">###1. This website on Vercel (Main site, latest version / 主站，最新版本)</a>
+            <a href="https://aiden12910-12910.github.io/the-website/" target="_blank" class="game-link">###-. This website on GitHub (Deprecated — closed on 2026/10/10 because code submission using UUIDs and issue IDs stopped working; all users accessing this link will be redirected here / 已停用 —— 2026/10/10 关闭，因为用 UUID 和 Issue ID 提交代码的方式失效了；所有访问此链接的用户都会被重定向到这里)</a>
+            <a href="https://github.com/aiden12910-12910/the-website/" target="_blank" class="game-link">@. My repo on GitHub / 我的 GitHub 仓库</a>
+            <a href="https://vercel.com/aiden-1b27/aiden" target="_blank" class="game-link">@. My project on Vercel / 我的 Vercel 项目</a>
+            <a href="https://aiden12910-12910.vercel.app/qinshihuang.gif" target="_blank" class="game-link">秦始皇骑北极熊.gif</a>
+            <a href="https://aiden12910-12910.vercel.app/License/LICENSE.txt" target="_blank" class="game-link">MIT License / MIT 许可证</a>
+
+            <span id="issueTrigger" class="game-link" style="display: none; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('issueModal').style.display='flex'">Leave an Issue / Comment / 留言或反馈</span>
+            <div id="issueModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
+                    <h3 style="color: var(--heading); margin-top: 0; margin-bottom: 15px; font-size: 18px;">Leave an Issue / Comment / 留言或反馈</h3>
+                    <form id="issueForm" onsubmit="submitIssue(); return false;">
+                        <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical; background: var(--screen-bg); color: var(--screen-text);" placeholder="Type your message here... / 在这里输入你的留言……"></textarea>
+                        <button type="submit" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit / 提交</button>
+                    </form>
+                </div>
+            </div>
+            <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 10000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 400px; position: relative; box-sizing: border-box; text-align: center;">
+                    <p style="color: var(--text); font-size: 16px; margin: 0;">✓ Issue submitted successfully! / Issue 提交成功！</p>
+                    <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 15px; padding: 8px 16px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close / 关闭</button>
+                </div>
+            </div>
+
+            <span style="color: var(--text); cursor: pointer; text-decoration: underline; font-size: 16px;" onclick="document.getElementById('customModal').style.display='flex'">More Info / 更多信息</span>
+            <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9999; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none'">
+                <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 450px; position: relative; box-sizing: border-box;">
+                    <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('customModal').style.display='none'">&times;</span>
+                    <p style="color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;">
+                    This website was created with AI assistance. Visit my GitHub project page at https://github.com/aiden12910-12910/the-website/ to learn more. Please leave a comment if you have suggestions for unblocked websites, or if a link stops working. Type "12345" to unlock the site — the calculator on the cover page is fully functional. This site will be updated frequently. All "block" or "blocked" in this website means "blocked by the school firewall". I think the calculator on the front page has some bugs when using web translation. The "link may change" note is because some websites are deployed under my school's GitHub account. — Oct. 5, 2026<br><br>
+                    本网站是在 AI 协助下创建的。想了解更多，请访问我的 GitHub 项目页面：https://github.com/aiden12910-12910/the-website/。如果你有推荐的无屏蔽网站，或者发现某个链接失效了，欢迎留言。输入 “12345” 即可解锁本站 —— 封面上的计算器是完全可用的。本站会经常更新。本网站中所有 “block” 或 “blocked” 都指“被学校防火墙屏蔽”。我认为首页计算器在使用网页翻译时会有一些 bug。“链接可能变化”的提示是因为部分网站部署在我学校的 GitHub 账号下。 —— 2026 年 10 月 19 日
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panic-hover-bar" onclick="forceReturnToHome()">◀ Hover to reveal - Click here to close game and return to calculator </div>
+
+<div id="secure-backdoor-layer">
+    <iframe id="secure-iframe-target" allowfullscreen></iframe>
+    <div id="iframe-error-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: #fff; z-index: 1000001; display: none; flex-direction: column; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; box-sizing: border-box; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+        <h2 style="margin: 0 0 16px 0; font-size: 22px;">Failed to load / 加载失败</h2>
+        <p style="margin: 0 0 12px 0; font-size: 15px; opacity: 0.8; max-width: 600px;">The site may have blocked embedding, or the network is slow.<br>该网站可能禁止被嵌入，或者网络较慢。</p>
+        <p id="iframe-error-url" style="margin: 0 0 24px 0; font-size: 13px; opacity: 0.6; word-break: break-all; max-width: 600px;"></p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="retryIframe()" style="padding: 12px 24px; background: #0066cc; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">Retry / 重试</button>
+            <button onclick="forceReturnToHome()" style="padding: 12px 24px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">Back / 返回</button>
+            <a id="iframe-error-open" href="#" target="_blank" style="padding: 12px 24px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; text-decoration: none;">Open in new tab / 新标签打开</a>
+        </div>
+    </div>
+</div>
+
+<script src="/js/tracking.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/onload.js"></script>
+
+<script>
+// ===== 主题切换（不持久化，刷新后回到跟随系统）=====
+(function() {
+    var currentTheme = 'auto';
+
+    function applyTheme(theme) {
+        var html = document.documentElement;
+        if (theme === 'auto') {
+            html.removeAttribute('data-theme');
+        } else {
+            html.setAttribute('data-theme', theme);
+        }
+        updateIcon(theme);
+    }
+
+    function updateIcon(theme) {
+        var icon = document.getElementById('theme-icon');
+        if (!icon) return;
+        if (theme === 'auto') icon.textContent = '🌓';
+        else if (theme === 'light') icon.textContent = '☀️';
+        else icon.textContent = '🌙';
+    }
+
+    window.toggleTheme = function() {
+        if (currentTheme === 'auto') currentTheme = 'light';
+        else if (currentTheme === 'light') currentTheme = 'dark';
+        else currentTheme = 'auto';
+        applyTheme(currentTheme);
+        console.log('Theme changed to:', currentTheme);
+    };
+
+    applyTheme('auto');
+
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            if (currentTheme === 'auto') applyTheme('auto');
+        });
+    }
+})();
+</script>
+
+<div id="dev-panel">
+    <span class="dev-close" onclick="document.getElementById('dev-panel').style.display='none'">&times;</span>
+    <h3>🛠️ Dev Mode</h3>
+    <div class="dev-section">
+        <div class="dev-label">Identity</div>
+        <div class="dev-value" id="dev-identity">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Current iframe URL</div>
+        <div class="dev-value" id="dev-current-url">(none)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">History (last 20)</div>
+        <div class="dev-log" id="dev-url-history">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Log Buffer</div>
+        <div class="dev-value" id="dev-logbuffer">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Recent Logs</div>
+        <div class="dev-log" id="dev-recent-logs">(empty)</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Performance</div>
+        <div class="dev-value" id="dev-perf">loading...</div>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Actions</div>
+        <button onclick="devClearHistory()">Clear History</button>
+        <button onclick="devFlushLog()">Flush Log Now</button>
+        <button class="danger" onclick="devTriggerClearIssues()">Clear GitHub Issues</button>
+        <button class="danger" onclick="devClearStorage()">Clear localStorage</button>
+    </div>
+    <div class="dev-section">
+        <div class="dev-label">Status</div>
+        <div class="dev-value" id="dev-status">idle</div>
+    </div>
+</div>
+
 </body>
 </html>
