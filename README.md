@@ -1,3 +1,5 @@
+`Uran1um`
+
 I am hosting the source files for some simple front-end games in this branch and deploying them via GitHub Pages (since the main branch is already deployed on Vercel and cannot be changed).
 Please note that accessing `aiden12910-12910.github.io/the-website` or `aiden12910-12910.github.io/the-website/index.html` directly will not work.
 To play a specific game, you need to use the following URL structure: `aiden12910-12910.github.io/the-website/[game_folder_name]/[filename].html` (there may also be subfolders, such as `/html/`). Note that the filename might not always be `index.html`—it could be something like `examplegame.html`. Also, please ensure there is no trailing slash at the end of the URL (unless it refers to a directory).
