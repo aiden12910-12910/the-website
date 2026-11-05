@@ -4,20 +4,16 @@ export default async function handler(req, res) {
   }
 
   let body = req.body;
-
-  if (typeof body === 'string') {
+  if (typeof body === 'string' || Buffer.isBuffer(body)) {
     try {
-      body = JSON.parse(body);
+      body = JSON.parse(body.toString());
     } catch (e) {
-      console.error('Failed to parse JSON:', e);
       return res.status(400).json({ error: 'Invalid JSON' });
     }
   }
 
   const { title, body: issueBody, type = 'log', email = '' } = body || {};
-
-  if (!title || !issueBody) {
-    console.error('Missing title or body:', { title, issueBody });
+  if (typeof title !== 'string' || !title.trim() || typeof issueBody !== 'string' || !issueBody.trim()) {
     return res.status(400).json({ error: 'Missing title or body' });
   }
 
@@ -26,22 +22,23 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Token not configured' });
   }
 
+  const labelsByType = {
+    log: ['User-Log'],
+    comment: ['comment'],
+    message: ['message'],
+    error: ['error']
+  };
+  const labels = labelsByType[type] || ['no-name'];
+  const issue = {
+    title: title.trim(),
+    body: email
+      ? `**Reporter Email:** ${String(email).trim()}\n\n---\n\n${issueBody}`
+      : issueBody,
+    labels
+  };
+
   try {
-    let labels = [];
-
-    if (type === 'log') {
-      labels = ['User-Log'];
-    } else if (type === 'comment') {
-      labels = ['comment'];
-    } else if (type === 'message') {
-      labels = ['message'];
-    } else if (type === 'error') {
-      labels = ['error'];
-    } else {
-      labels = ['no-name']; // 兜底，避免完全没标签
-    }
-
-    const response = await fetch('https://api.github.com/repos/aiden12910-12910/the-website/issues', {
+    const request = (payload) => fetch('https://api.github.com/repos/aiden12910-12910/the-website/issues', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -49,20 +46,30 @@ export default async function handler(req, res) {
         'X-GitHub-Api-Version': '2022-11-28',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        title,
-        body: email ? `**Reporter Email:** ${email}\n\n---\n\n${issueBody}` : issueBody,
-        labels
-      })
+      body: JSON.stringify(payload)
     });
 
-    const text = await response.text();
+    let response = await request(issue);
+    let text = await response.text();
+
+    // GitHub rejects the whole issue request if a configured label no longer exists.
+    // Retry once without labels so user feedback can still be submitted.
+    if (response.status === 422 && /label/i.test(text)) {
+      response = await request({ title: issue.title, body: issue.body });
+      text = await response.text();
+    }
 
     if (!response.ok) {
       return res.status(response.status).json({ error: 'GitHub API error', details: text });
     }
 
-    return res.status(200).json({ ok: true, data: JSON.parse(text) });
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      return res.status(502).json({ error: 'Invalid response from GitHub' });
+    }
+    return res.status(200).json({ ok: true, data });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
