@@ -216,6 +216,7 @@
       tag: detail && detail.tag ? detail.tag : 'N/A',
       meta: getDeviceMeta()
     };
+    window.addLog = addLog;
     operationLog.push(entry);
     window.devLogBufferCount = operationLog.length;
     if (window.devRefreshLogBuffer) window.devRefreshLogBuffer();
