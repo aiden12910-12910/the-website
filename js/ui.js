@@ -30,91 +30,62 @@ window.submitIssue = function() {
 
     addLog('Submit Issue', { target: 'issueContent', tag: 'comment' });
 
-    var payload = { title: 'User Comment (Anonymous)', body: content, type: 'comment', email: window.currentUserEmail || '' };
-    if (navigator.sendBeacon) { navigator.sendBeacon('/api/log-issue', JSON.stringify(payload)); }
-    else {
-        fetch('/api/log-issue', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload), keepalive: true
-        }).catch(function(err) { console.error('Request error:', err); });
-    }
-    document.getElementById('issueContent').value = '';
-    document.getElementById('issueModal').style.display = 'none';
-    document.getElementById('successModal').style.display = 'flex';
-    setTimeout(function() { document.getElementById('successModal').style.display = 'none'; }, 3000);
+    var payload = {
+        title: 'User Comment (Anonymous)',
+        body: content,
+        type: 'comment',
+        email: window.currentUserEmail || ''
+    };
+
+    fetch('/api/log-issue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(function(res) {
+        return res.json().then(function(data) {
+            return { ok: res.ok, status: res.status, data: data };
+        });
+    })
+    .then(function(result) {
+        if (!result.ok || !result.data.ok) {
+            var msg = result.data && result.data.error ? result.data.error : ('HTTP ' + result.status);
+            alert('提交失败: ' + msg);
+            return;
+        }
+        document.getElementById('issueContent').value = '';
+        document.getElementById('issueModal').style.display = 'none';
+        document.getElementById('successModal').style.display = 'flex';
+        setTimeout(function() {
+            document.getElementById('successModal').style.display = 'none';
+        }, 3000);
+    })
+    .catch(function(err) {
+        alert('提交失败: ' + err.message);
+    });
 };
 
 // ============================================================
-// Open site inside iframe
+// Bind form submit (prevent page reload)
 // ============================================================
-var iframeLoadTimeout = null;
-var iframeCurrentUrl = '';
-
-function openSiteInside(targetUrl) {
-    if (typeof winReset === 'function') winReset();
-
-    iframeCurrentUrl = targetUrl;
-
-    // 隐藏错误层
-    var errorOverlay = document.getElementById('iframe-error-overlay');
-    if (errorOverlay) errorOverlay.style.display = 'none';
-
-    // 清除之前的超时
-    if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
-
-    // 设置 30 秒超时：如果 iframe 没触发 onload，就认为加载失败
-    iframeLoadTimeout = setTimeout(function() {
-        // 检查 iframe 是否真的加载了
-        // 跨域时无法读 contentDocument，只能靠 onload 是否触发
-        if (!window.__iframeLoaded) {
-            showIframeError(targetUrl);
-        }
-    }, 30000);
-
-    window.__iframeLoaded = false;
-
-    // 监听 iframe 加载成功
-    iframe.onload = function() {
-        // 跨域 iframe 的 onload 会在页面加载时触发（即使内容是错误页）
-        // 但如果是 X-Frame-Options 拒绝，onload 可能不触发或立即触发
-        window.__iframeLoaded = true;
-        if (iframeLoadTimeout) {
-            clearTimeout(iframeLoadTimeout);
-            iframeLoadTimeout = null;
-        }
-        console.log('iframe loaded:', targetUrl);
-    };
-
-    iframe.onerror = function() {
-        showIframeError(targetUrl);
-    };
-
-    iframe.src = targetUrl;
-    layer.style.display = 'block';
-    panicBar.style.display = 'block';
-    setTimeout(function() {
-        iframe.focus();
-        if (iframe.contentWindow) iframe.contentWindow.focus();
-    }, 200);
-    if (window.devRecordUrl) window.devRecordUrl(targetUrl);
-}
-
-function showIframeError(url) {
-    var errorOverlay = document.getElementById('iframe-error-overlay');
-    if (!errorOverlay) return;
-    var urlEl = document.getElementById('iframe-error-url');
-    if (urlEl) urlEl.textContent = url || '';
-    var openEl = document.getElementById('iframe-error-open');
-    if (openEl && url) openEl.href = url;
-    errorOverlay.style.display = 'flex';
-    console.warn('iframe load failed or timeout:', url);
-}
-
-function retryIframe() {
-    if (iframeCurrentUrl) {
-        openSiteInside(iframeCurrentUrl);
+(function() {
+    function bindForm() {
+        var form = document.getElementById('issueForm');
+        if (!form) return;
+        // 防止重复绑定
+        if (form._bound) return;
+        form._bound = true;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            window.submitIssue();
+        });
     }
-}
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindForm);
+    } else {
+        bindForm();
+    }
+})();
 // ============================================================
 // Force return to home
 // ============================================================
