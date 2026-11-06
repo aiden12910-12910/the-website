@@ -376,7 +376,7 @@ location.reload();</pre>
                 <div style="background: var(--bg); color: var(--text); padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 90%; max-width: 500px; position: relative; box-sizing: border-box;">
                     <span class="game-link" style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; color: var(--text-muted); user-select: none;" onclick="document.getElementById('issueModal').style.display='none'">&times;</span>
                     <h3 style="color: var(--heading); margin-top: 0; margin-bottom: 15px; font-size: 18px;">BUG,DO NOT USE##Leave an Issue / Comment / 留言或反馈</h3>
-                    <form id="issueForm" onsubmit="submitIssue(); return false;">
+                    <form id="issueForm">
                         <textarea id="issueContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 14px; box-sizing: border-box; resize: vertical; background: var(--screen-bg); color: var(--screen-text);" placeholder="Type your message here... / 在这里输入你的留言……"></textarea>
                         <button type="submit" style="margin-top: 15px; padding: 10px 20px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Submit / 提交</button>
                     </form>
