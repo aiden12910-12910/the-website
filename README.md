@@ -1,5 +1,6 @@
 something.
 Pla/ying ga/mes and going under/cover at school.
+can't google signin and send log for a month because my vercel account exceeding hobby plan limits so got paused.
 
 **Password / 密码:** `12345`
 You can type it on the keyboard, or click the calculator buttons in that order.
