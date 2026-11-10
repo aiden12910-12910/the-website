@@ -290,7 +290,6 @@ function openSiteInside(url) {
     if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
     iframeLoadTimeout = null;
 }
-}
 
 function retryIframe() {
     var errorOverlay = document.getElementById('iframe-error-overlay');
