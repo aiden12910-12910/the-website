@@ -171,6 +171,16 @@ export default {
     if (url.pathname === '/api/log-issue' && request.method === 'POST') return handleLogIssue(request, env);
     if (url.pathname === '/api/trigger-clear-issues' && request.method === 'POST') return handleTriggerClearIssues(request, env);
 
-    return env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(request);
+    if (response.status === 404) {
+      const notFound = await env.ASSETS.fetch(new Request(new URL('/404.html', url), request));
+      if (notFound.ok) {
+        return new Response(notFound.body, {
+          status: 404,
+          headers: notFound.headers
+        });
+      }
+    }
+    return response;
   }
 };
