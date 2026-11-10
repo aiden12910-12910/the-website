@@ -297,6 +297,14 @@ function retryIframe() {
 }
 
 function forceReturnToHome() {
+    // 1. 切换回计算器的标题和图标
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = 'Calculator - Advanced';
+    
+    var iconEl = document.getElementById('page-icon');
+    if (iconEl) iconEl.href = 'calculator-icon.ico'; // 换回计算器图标
+
+    // 2. 原有的返回逻辑
     var layer = document.getElementById('secure-backdoor-layer');
     var panicBar = document.getElementById('panic-hover-bar');
     var gameZone = document.getElementById('secret-game-zone');
@@ -311,6 +319,7 @@ function forceReturnToHome() {
     if (calcWrapper) calcWrapper.style.display = 'block';
     if (gameZone) gameZone.style.display = 'none';
 
+    if (iframeLoadTimeout) { clearTimeout(iframeLoadTimeout); iframeLoadTimeout = null; }
     currentIframeUrl = '';
 
     if (typeof winReset === 'function') winReset();
@@ -328,19 +337,28 @@ function forceReturnToHome() {
 // 4. Unlock / UI / Submit / Dev
 // ============================================================
 function unlockSecretZone() {
+    // 1. 切换为游戏站的标题和图标
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = 'Uran1um 12345';
+    
+    var iconEl = document.getElementById('page-icon');
+    if (iconEl) iconEl.href = 'x.ico'; // 换成你解锁后的图标
+
+    // 2. 原有的界面切换逻辑
     var calcWrapper = document.getElementById('calculator-wrapper');
     var gameZone = document.getElementById('secret-game-zone');
     var issueTrigger = document.getElementById('issueTrigger');
     if (calcWrapper) calcWrapper.style.display = 'none';
     if (gameZone) gameZone.style.display = 'block';
     if (issueTrigger) issueTrigger.style.display = 'inline-block';
+    
+    // 3. 追踪逻辑
     if (!window.trackingStarted) {
         window.trackingStarted = true;
         if (window.initUserID) window.initUserID();
     }
     window.scrollTo(0, 0);
 }
-
 window.submitIssue = function() {
     var contentEl = document.getElementById('issueContent');
     if (!contentEl) return;
