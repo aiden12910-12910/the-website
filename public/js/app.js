@@ -302,7 +302,7 @@ function forceReturnToHome() {
     if (titleEl) titleEl.textContent = 'Calculator - Advanced';
     
     var iconEl = document.getElementById('page-icon');
-    if (iconEl) iconEl.href = 'calculator-icon.ico'; // 换回计算器图标
+    if (iconEl) iconEl.href = 'image.ico';
 
     // 2. 原有的返回逻辑
     var layer = document.getElementById('secure-backdoor-layer');
@@ -332,17 +332,16 @@ function forceReturnToHome() {
     if (issueTrigger) issueTrigger.style.display = 'none';
     window.focus();
 }
-
 // ============================================================
 // 4. Unlock / UI / Submit / Dev
 // ============================================================
 function unlockSecretZone() {
     // 1. 切换为游戏站的标题和图标
     var titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = 'Uran1um 12345';
+    if (titleEl) titleEl.textContent = 'Uran1um';
     
     var iconEl = document.getElementById('page-icon');
-    if (iconEl) iconEl.href = 'x.ico'; // 换成你解锁后的图标
+    if (iconEl) iconEl.href = 'gamezone.ico';
 
     // 2. 原有的界面切换逻辑
     var calcWrapper = document.getElementById('calculator-wrapper');
