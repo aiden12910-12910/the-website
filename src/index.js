@@ -161,31 +161,7 @@ async function handleTriggerClearIssues(request, env) {
   }
 }
 
-async function handleTriggerScan(request, env) {
-  let body;
-  try { body = await request.json(); } catch (e) { return jsonResponse({ error: 'Invalid JSON' }, 400); }
-  const email = String(body && body.email || '').trim().toLowerCase();
-  if (!env.MY_GITHUB_TOKEN) return jsonResponse({ error: 'Token not configured' }, 500);
 
-  try {
-    const { content } = await readAllowedEmails(env);
-    const developers = (content.developers || []).map(e => e.toLowerCase());
-    if (!email || !developers.includes(email)) return jsonResponse({ error: 'Forbidden' }, 403);
-
-    const res = await fetch(`${API_BASE}/repos/${REPO}/actions/workflows/scan.yml/dispatches`, {
-      method: 'POST',
-      headers: ghHeaders(env, { 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ ref: 'main' })
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      return jsonResponse({ error: 'GitHub API error', details: text }, res.status);
-    }
-    return jsonResponse({ ok: true });
-  } catch (err) {
-    return jsonResponse({ error: err.message }, 500);
-  }
-}
 
 export default {
   async fetch(request, env) {
@@ -194,7 +170,6 @@ export default {
     if (url.pathname === '/api/check-email' && request.method === 'POST') return handleCheckEmail(request, env);
     if (url.pathname === '/api/log-issue' && request.method === 'POST') return handleLogIssue(request, env);
     if (url.pathname === '/api/trigger-clear-issues' && request.method === 'POST') return handleTriggerClearIssues(request, env);
-    if (url.pathname === '/api/trigger-scan' && request.method === 'POST') return handleTriggerScan(request, env);
 
     return env.ASSETS.fetch(request);
   }
