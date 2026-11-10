@@ -288,15 +288,6 @@ function openSiteInside(url) {
     try { iframe.src = url; } catch (e) { window.open(url, '_blank'); return; }
 
     if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
-    iframeLoadTimeout = setTimeout(function() {
-        if (errorOverlay) {
-            var urlEl = document.getElementById('iframe-error-url');
-            var openLink = document.getElementById('iframe-error-open');
-            if (urlEl) urlEl.textContent = url;
-            if (openLink) openLink.href = url;
-            errorOverlay.style.display = 'flex';
-        }
-    }, 8000);
 }
 
 function retryIframe() {
@@ -320,7 +311,6 @@ function forceReturnToHome() {
     if (calcWrapper) calcWrapper.style.display = 'block';
     if (gameZone) gameZone.style.display = 'none';
 
-    if (iframeLoadTimeout) { clearTimeout(iframeLoadTimeout); iframeLoadTimeout = null; }
     currentIframeUrl = '';
 
     if (typeof winReset === 'function') winReset();
