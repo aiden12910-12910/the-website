@@ -288,6 +288,8 @@ function openSiteInside(url) {
     try { iframe.src = url; } catch (e) { window.open(url, '_blank'); return; }
 
     if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+    iframeLoadTimeout = null;
+}
 }
 
 function retryIframe() {
