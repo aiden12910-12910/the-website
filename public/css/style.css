@@ -119,6 +119,72 @@ h1 { font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--border
 [data-theme="light"] .oauth-box { background: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
 [data-theme="light"] .migrationbox { background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20; }
 
+/* 渐变推广框 */
+/* 横幅基础与浅色模式样式 */
+.promo-banner {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #ff0050, #00f2ea);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(255, 0, 80, 0.3);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promo-banner-badge {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #fff;
+    opacity: 0.9;
+    margin-bottom: 6px;
+}
+
+.promo-banner-title {
+    display: inline-block;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    text-decoration: none;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.promo-banner-title:hover {
+    text-decoration: underline;
+}
+
+.promo-banner-desc {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+/* 系统自动暗黑模式 */
+@media (prefers-color-scheme: dark) {
+    .promo-banner {
+        background: linear-gradient(135deg, #3b0a2a, #09363d);
+        border: 1px solid rgba(0, 242, 234, 0.25);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* 手动切换暗黑模式 */
+[data-theme="dark"] .promo-banner {
+    background: linear-gradient(135deg, #3b0a2a, #09363d);
+    border: 1px solid rgba(0, 242, 234, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 手动切换浅色模式 */
+[data-theme="light"] .promo-banner {
+    background: linear-gradient(135deg, #ff0050, #00f2ea);
+    border: none;
+    box-shadow: 0 4px 20px rgba(255, 0, 80, 0.3);
+}
+
+
 
 /* Scientific Calculator */
 .sci-calc {
